@@ -1,0 +1,761 @@
+<?php
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/**
+ * Services_Trackback.
+ *
+ * This is the main file of the Services_Trackback package. This file has to be
+ * included for usage of Services_Trackback.
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Webservices
+ * @package    Trackback
+ * @author     Tobias Schlitt <toby@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version    CVS: $Id$
+ * @link       http://pear.php.net/package/Services_Trackback
+ * @since      File available since Release 0.0.1
+ */
+ 
+    // {{{ require_once
+
+/**
+ * Load PEAR error handling
+ */
+
+require_once 'PEAR.php';
+    
+/**
+ * PEAR::HTTP_Request is required only when needed.
+ * @see Services_Trackback::send().
+ */
+// require_once 'HTTP/Request.php';
+
+
+    // }}}
+    // {{{ Constants
+
+/**
+ * This constant is used with the @see Services_Trackback::autodiscover() method.
+ * Using this constant you supress the URL check described in the trackback specs.
+ */
+define('SERVICES_TRACKBACK_STRICTNESS_LOW', 1);
+
+/**
+ * This constant is used with the @see Services_Trackback::autodiscover() method.
+ * Using this constant you use a not so strict URL check than described in the 
+ * trackback specs. Only the domain name is checked.
+ */
+define('SERVICES_TRACKBACK_STRICTNESS_MIDDLE', 2);
+
+/**
+ * This constant is used with the @see Services_Trackback::autodiscover() method.
+ * Using this constant activate the URL check described in the trackback specs.
+ */
+define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
+
+    // }}}
+
+/**
+ * Trackback 
+ * A generic class to send/receive trackbacks.
+ *
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @category   Webservices
+ * @package    Trackback
+ * @author     Tobias Schlitt <toby@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @version    Release: @package_version@
+ * @link       http://pear.php.net/package/Services_Trackback
+ * @since      0.0.1
+ * @access     public
+ */
+class Services_Trackback {
+
+    // {{{ var $_data
+
+    /**
+     * The necessary trackback data.
+     *
+     * @var array
+     * @access private
+     */
+    var $_data = array(
+        'id'            => '',
+        'title'         => '',
+        'excerpt'       => '',
+        'blog_name'     => '',
+        'url'           => '',
+        'trackback_url' => '',
+    );
+
+    // }}}
+    // {{{ var $_options
+    
+    /**
+     * Options to influence Services_Trackback.
+     *
+     * @see Services_Trackback::create()
+     * @since 0.4.0
+     * @var array
+     * @access private
+     */
+
+    var $_options = array(
+        'strictness'        => SERVICES_TRACKBACK_STRICTNESS_LOW,
+        'timeout'           => 30,          // seconds
+        'allowRedirects'    => true,
+        'maxRedirects'      => 2,
+        'fetchlines'        => 30,
+        'useragent'         => 'PEAR::Services_Trackback v@package_version@'
+    );
+
+    // }}}
+    // {{{ Services_Trackback()
+
+    /**
+     * Constructor 
+     * Creates a new Trackback object. Private because of factory use.
+     *  
+     * @since 0.1 
+     * @access private
+     * @return void
+     */
+    function Services_Trackback ( )
+    {
+    }
+
+    // }}}
+    // {{{ create()
+
+    /**
+     * Factory
+     * This static method is used to create a trackback object. (Services_Trackback::create($data))
+     * The factory requires a data array as described below for creation. The 'id' key is
+     * obligatory for this method. Every other data is not quite necessary for the creation, but
+     * might be necessary for calling other methods afterwards. See the specific methods for
+     * further info on which data is required.
+     *
+     * @since 0.2
+     * @static
+     * @access public
+     * @param array $data Data for the trackback, which is obligatory:
+     *      'id'                The ID of the trackback target.
+     *  Data which is optional (for construction, not for specific methods):
+     *      'title'             string  Title of the trackback sending/receiving blog entry.
+     *      'excerpt'           string  Abstract of the trackback sending/receiving blog entry.
+     *      'blog_name'         string  Name of the trackback sending/receiving weblog.
+     *      'url'               string  URL of the trackback sending/receiving blog entry.
+     *      'trackback_url'     string  URL to send trackbacks to.
+     * @param array $options Options to set for this trackback. Valid options:
+     *      'strictness':       int     The default strictness to use in @see Services_Trackback::autodiscover().
+     *      'timeout':          int     The default timeout for network operations in seconds.
+     *      'allowRedirects':   bool    Wether to follow HTTP redirects or not.
+     *      'maxRedirects':     int     Maximum number of redirects.
+     *      'fetchsize':        int     The max file size to fetch over the network.
+     *      'useragent':        string  The user agent to use for HTTP requests.
+     *
+     * @return object(Services_Trackback) The newly created Trackback.
+     */
+    function &create($data, $options = null) {
+        $options = (isset($options)) ? $options : array();
+        $trackback = new Services_Trackback();
+        $res = $trackback->_fromArray($data);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        $res = $trackback->setOptions($options);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        return $trackback;
+    }
+    
+    // }}}
+    // {{{ setOptions()
+
+    /**
+     * setOptions
+     * Set options for the trackback.
+     *
+     * @since 0.4.0
+     * @access public
+     * @see Services_Trackback::create()
+     * @see Services_Trackback::getOptions()
+     * @param array $options Pairs of 'option' => 'value' as described at @see Services_Trackback::create().
+     * @return mixed Bool true on success, otherwise PEAR::Error().
+     */
+    function setOptions($options) {
+        foreach($options as $option => $value) {
+            if (!isset($this->_options[$option])) {
+                return PEAR::raiseError('Desired option "'.$option.'" not found.');
+            }
+            switch ($option) {
+                case 'strictness':
+                    if (!is_int($value) || ($value < 1) || ($value > 3)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                    }
+                    break;
+                case 'timeout':
+                    if (!is_int($value) || ($value < 0)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                    }
+                    break;
+                case 'allowRedirects':
+                    if (!is_bool($value)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                    }
+                    break;
+                case 'maxRedirects':
+                    if (!is_int($value) || ($value < 0)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                    }
+                    break;
+                case 'fetchsize':
+                    if (!is_int($value) || ($value < 1)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                    }
+                    break;
+            }
+            $this->_options[$option] = $value;
+        }
+        return true;
+    }
+  
+    // }}}
+    // {{{ getOptions()
+
+    /**
+     * getOptions
+     * Get the currently set option set.
+     *
+     * @since 0.4.0
+     * @access public
+     * @see Services_Trackback::setOptions()
+     * @see Services_Trackback::create()
+     * @return array The currently active options.
+     */
+    function getOptions()
+    {
+        return $this->_options;
+    }
+  
+    // }}}
+    // {{{ autodiscover()
+
+    /**
+     * autodiscover
+     * Checks a given URL for trackback autodiscovery code. This is another factory method.
+     *
+     * @since 0.2.0
+     * @access public
+     * @return mixed Services_Trackback object on success, otherwise PEAR::Error.
+     */
+    function autodiscover()
+    {
+        $necessaryData = array('url');
+        $res = $this->_checkData($necessaryData);
+        if (PEAR::isError($res))  {
+            return $res;
+        }
+
+        $url = $this->_data['url'];
+        
+        /*
+            Sample autodiscovery code
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                xmlns:dc="http://purl.org/dc/elements/1.1/"
+                xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+                <rdf:Description
+                    rdf:about="http://pear.php.net/package/Net_FTP"
+                    dc:identifier="http://pear.php.net/package/Net_FTP"
+                    dc:title="Net_FTP"
+                    trackback:ping="http://pear.php.net/trackback/trackback.php?id=Net_FTP" />
+            </rdf:RDF>
+        */
+
+        // Receive file contents
+        $content = $this->_getContent($url);
+        if (PEAR::isError($content)) {
+            return $content;
+        }
+        
+        // Get trackback identifier
+        if (!preg_match('@dc:identifier\s*=\s*["\'](http:[^"\']+)"@i', $content, $matches)) {
+            return PEAR::raiseError('No trackback RDF found in "'.$url.'".');
+        }
+        $identifier = trim($matches[1]);
+        
+        // Get trackback URI
+        if (!preg_match('@trackback:ping\s*=\s*["\'](http:[^"\']+)"@i', $content, $matches)) {
+            return PEAR::raiseError('No trackback URI found in "'.$url.'".');
+        }
+        $trackbackUrl = trim($matches[1]);
+
+        // Check if the URL to trackback matches the identifier from the autodiscovery code
+        $res = $this->_checkURLs($url, $identifier, $strictness);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        
+        $this->_data['trackback_url'] = $trackbackUrl;
+        return true;
+    }
+
+    // }}}
+    // {{{ send()
+
+    /**
+     * send
+     * This method sends a trackback to the trackback_url saved in it. The 
+     * data array of the trackback object can be completed by submitting the
+     * necessary data through the $data parameter of this method.
+     * The following data has to be set to call this method:
+     *              'title'             Title of the weblog entry sending the trackback.
+     *              'url'               URL of the weblog entry sending the trackback.
+     *              'excerpt'           Excerpt of the weblog entry sending the trackback.
+     *              'blog_name'         Name of the weblog sending the trackback.
+     *              'trackback_url'     URL to send the trackback to.
+     * Services_Trackback::send() requires HTTP_Request.
+     *
+     * @since 0.3.0
+     * @access public
+     * @param string $data Additional data to complete the trackback.
+     * @return mixed True on success, otherwise PEAR::Error.
+     */
+    function send($data = null)
+    {
+        // Load HTTP_Request
+        @require_once 'HTTP/Request.php';
+        if (!class_exists('HTTP_Request')) {
+            return PEAR::raiseError('Unable to load PEAR::HTTP_Request');
+        }
+        
+        // Consistancy check
+        if (!isset($data))
+            $data = array();
+        $this->_data = array_merge($this->_data, $data);
+        $necessaryData = array('title', 'url', 'excerpt', 'blog_name', 'trackback_url');
+        $res = $this->_checkData($necessaryData);
+        if (PEAR::isError($res))
+            return $res;
+
+        // Get URL
+        $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
+
+        // Create new HTTP_Request
+        $req = new HTTP_Request($url, array(
+            'timeout'           => $this->_options['timeout'],
+            'allowRedirects'    => $this->_options['allowRedirects'],
+            'maxRedirects'      => $this->_options['maxRedirects'],
+        ));
+        $req->setMethod(HTTP_REQUEST_METHOD_POST);
+        
+        // Add HTTP headers
+        $req->addHeader("User-Agent", $this->options['useragent']);
+        
+        // Adding data to send
+        $req->addPostData('url', $this->_data['url']);
+        $req->addPostData('title', $this->_data['title']);
+        $req->addPostData('blog_name', $this->_data['blog_name']);
+        $req->addPostData('excerpt', strip_tags($this->_data['excerpt']));
+
+        // Send POST request
+        $res = $req->sendRequest();
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+
+        // Check return code
+        if ($req->getResponseCode() != 200) {
+            return PEAR::raiseError('Host returned Error '.$req->getRequestCode().'.');
+        }
+        return $this->_interpretTrackbackResponse($req->getResponseBody());
+    }
+ 
+    // }}}
+    // {{{ getAutodiscoveryCode()
+
+    /**
+     * getAutodiscoverCode 
+     * Returns the RDF Code for a given website to let weblogs autodiscover
+     * the possibility of tracking it back.
+     * The following data has to be set to call this method:
+     *              'id'
+     *              'title'
+     *              'url'
+     *              'trackback_url'
+     * @since 0.1.0
+     * @access public
+     * @param bool $comments Whether to include HTML comments around the RDF using <!-- -->
+     * @return string RDF code
+     */
+    function getAutodiscoveryCode($comments = true)
+    {
+        $necessaryData = array('title', 'url', 'trackback_url');
+        $res = $this->_checkData($necessaryData);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        $data = $this->_getEncodedData($necessaryData);
+        $res =  <<<EOD
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+    <rdf:Description
+        rdf:about="%s"
+        dc:identifier="%s"
+        dc:title="%s"
+        trackback:ping="%s" />
+</rdf:RDF>
+EOD;
+        $res = sprintf($res, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
+        if ($comments) {
+            return "<!--\n".$res."\n-->\n";
+        } else {
+            return $res."\n";
+        }
+    }
+
+    // }}}
+    // {{{ receive()
+
+    /**
+     * receive 
+     * Receives a trackback. The following data has to be set in the data array to fulfill this
+     * operation:
+     *      'id'
+     *  
+     * @since 0.1.0
+     * @access public
+     * @return object Services_Trackback
+     */
+    function receive($data = null)
+    {
+        if (!isset($data)) {
+            $data = $_POST;
+        }
+        $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name');
+        $res = $this->_checkData(array('id'));
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        $res = $this->_checkData($necessaryPostData, $data);
+        if (PEAR::isError($res)) {
+            return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
+        }
+        $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
+        return true;
+    }
+
+    // }}}
+    // {{{ getResponseSuccess()
+
+    /**
+     * getResponseSuccess 
+     * Returns an XML response for a successful trackback.
+     *  
+     * @since 0.1.0
+     * @access public
+     * @static
+     * @return string The XML code
+     */
+    function getResponseSuccess ()
+    {
+        return <<<EOD
+<?xml version="1.0" encoding="iso-8859-1"?>
+<response>
+<error>0</error>
+</response>
+EOD;
+    }
+
+    // }}}
+    // {{{ getResponseError()
+
+    /**
+     * getResponseError 
+     * Returns an XML response for a trackback error.
+     *  
+     * @since 0.1.0 
+     * @access public
+     * @param int $code The error code
+     * @param string $message The error message
+     * @return void
+     */
+    function getResponseError($message, $code)
+    {
+        $data = Services_Trackback::_getEncodedData(array('code', 'message'), array('code' => $code, 'message' => $message));
+        $res = <<<EOD
+<?xml version="1.0" encoding="iso-8859-1"?>
+<response>
+<error>%s</error>
+<message>%s</message>
+</response>
+EOD;
+        return sprintf($res, $data['code'], $data['message']);
+    }
+    
+    // }}}
+    // {{{ get()
+
+    /**
+     * get
+     * Get data from the trackback. Returns the value of a given
+     * key or PEAR::Error.
+     * 
+     * @since 0.2.0
+     * @access public
+     * @param string $key The key to fetch a value for.
+     * @return mixed A string value or a PEAR::Error on failure.
+     */
+    function get($key)
+    {
+        return (isset($this->_data[$key])) ? $this->_data[$key] : PEAR::raiseError('Key '.$key.' not found.');
+    }
+    
+    // }}}
+    // {{{ set()
+
+    /**
+     * set
+     * Set data of the trackback. Saves the value of a given
+     * key , returning true on success, PEAR::Error on faulure.
+     * 
+     * @since 0.2.0
+     * @access public
+     * @param string $key The key to set a value for.
+     * @param string $val The value for the key.
+     * @return mixed Boolean true on success or a PEAR::Error on failure.
+     */
+    function set($key, $val)
+    {
+        $this->_data[$key] = $val;
+        return true;
+    }
+
+    // }}}
+    // {{{ _fromArray()
+
+    /**
+     * Create a Trackback from a $data array.
+     *
+     * @since 0.2.0
+     * @access private
+     * @param array $data The data array (@see Services_Trackback::create()).
+     * @return mixed True on success, otherwise PEAR::Error.
+     */
+    function _fromArray($data) {
+        $res = $this->_checkData(array('id'), $data);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
+        $this->_data = $data;
+        return true;
+    }
+
+    // }}}
+    // {{{ _getContent()
+
+    /**
+     * _getContent 
+     * Receive the content from a specific URL.
+     *  
+     * @since 0.4.0
+     * @access private
+     * @param string $url The URL to download data from.
+     * @return string The content.
+     */
+    function _getContent($url)
+    {
+        $handle = fopen($url, 'r');
+        $tmpTrack = new Services_Trackback();
+        stream_set_timeout($handle, $tmpTrack->_options['timeout']);
+        if (!is_resource($handle)) {
+            return PEAR::raiseError('Could not open URL "'.$url.'"');
+        }
+        $content = '';
+        for ($i = 0; ($i < $tmpTrack->_options['fetchlines']) && !feof($handle);$i++) {
+            $content .= fgets($handle);
+        }
+        return $content;
+    }
+    
+    // }}}
+    // {{{ _getEncodedData()
+
+    /**
+     * _getEncodedData 
+     * Receives a number of data from the internal data store, encoded for XML usage.
+     *  
+     * @since 0.1.0
+     * @access private
+     * @param array $keys Data keys to receive
+     * @param array $data Optionally the data to check (default is the object data).
+     * @return void
+     */
+    function _getEncodedData($keys, $data =  null)
+    {
+        if (!isset($data)) {
+            $data =& $this->_data;
+        }
+        foreach ($keys as $key) {
+            $res[$key] = htmlentities($data[$key]);
+        }
+        return $res;
+    }
+
+    // }}}
+    // {{{ _getDecodedData()
+
+    /**
+     * _getDecodedData 
+     * Receives a number of data from the internal data store.
+     *  
+     * @since 0.1.0
+     * @access private
+     * @param array $keys Data keys to receive
+     * @param array $data Optionally the data to check (default is the object data).
+     * @return void
+     */
+    function _getDecodedData($keys, $data =  null)
+    {
+        if (!isset($data)) {
+            $data =& $this->_data;
+        }
+        foreach ($keys as $key) {
+            $res[$key] = $data[$key];
+        }
+        return $res;
+    }
+    
+    // }}}
+    // {{{ _checkData()
+
+    /**
+     * _checkData 
+     * Checks a given array of keys for the validity of their data.
+     *  
+     * @since 0.1.0
+     * @access private
+     * @param array $keys Data keys to check.
+     * @param array $data Optionally the data to check (default is the object data).
+     * @return void
+     */
+    function _checkData($keys, $data = null)
+    {
+        if (!isset($data)) {
+            $data =& $this->_data;
+        }
+        foreach ($keys as $key) {
+            if (empty($data[$key])) {
+                return PEAR::raiseError('Invalid data. Key "'.$key.'" missing.');
+            }
+        }
+        return true;
+    }
+
+    // }}}
+    // {{{ _checkURLs()
+
+    /**
+     * _checkURLs
+     * This little method checks if 2 URLs (the URL to trackback against the trackback
+     * identifier found in the autodiscovery code) are equal.
+     * 
+     * @see Services_Trackback::autodiscover()
+     * @since 0.2.0
+     * @access private
+     * @param string $url1 The first URL.
+     * @param string $url2 The second URL.
+     * @param constant $strictness How strict to check URLs. Use one of SERVICES_TRACKBACK_STRICTNESS_* constants.
+     * @return mixed True on success, otherwise PEAR::Error.
+     */
+    function _checkURLs($url1, $url2, $strictness)
+    {
+        switch ($strictness) {
+            case SERVICES_TRACKBACK_STRICTNESS_HIGH:
+                if ($url1 !== $url2) {
+                    return PEAR::raiseError('URLs mismatch. "'.$url.'" !== "'.$identifier.'".');
+                }
+                break;
+            
+            case SERVICES_TRACKBACK_STRICTNESS_MIDDLE:
+                $domainRegex = "@http://([^/]+).*@";
+                $res = preg_match($domainRegex, $url1, $matches);
+                if (!$res)
+                    return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
+                $domain1 = $matches[1];
+                $res = preg_match($domainRegex, $url2, $matches);
+                if (!$res)
+                    return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
+                $domain2 = $matches[1];
+                if ($domain1 !== $domain2)
+                    return PEAR::raiseError('URLs missmatch. "'.$domain1.'" !== "'.$domain2.'".');
+                break;
+            
+            case SERVICES_TRACKBACK_STRICTNESS_LOW:
+            default:
+                // No checks, when strictness is low.
+                break;
+        }
+        return true;
+    }
+    
+    // }}}
+    // {{{ _interpretTrackbackResponse()
+
+    /**
+     * Interpret the returned XML code, when sending a trackback. 
+     *  
+     * @see Services_Trackback::send()
+     * @since 0.3.0
+     * @access private
+     * @return void Mixed true on success, otherwise PEAR::Error.
+     */
+    function _interpretTrackbackResponse($response)
+    {
+        if (!preg_match('@<error>([0-9]+)</error>@', $response, $matches)) {
+            return PEAR::raiseError('Invalid trackback response, error code not found.');
+        }
+        $errorCode = $matches[1];
+        
+        // Error code 0 means no error.
+        if ($errorCode == 0) {
+            return true;
+        }
+        
+        if (!preg_match('@<message>([^<]+)</message>@', $response, $matches)) {
+            return PEAR::raiseError('Error code '.$errorCode.', no message received.');
+        } else {
+            return PEAR::raiseError('Error code '.$errorCode.', message "'.$matches[1].'" received.');
+        }
+    }
+    
+    // }}}
+    
+    /**
+     * Overloading
+     * 
+     * @since 0.1.0
+     * @access public
+     * @deprecated
+     */
+    /*
+
+    // Removed since 0.2
+    
+    */
+}
+    
+
+?>
