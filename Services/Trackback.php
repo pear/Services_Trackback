@@ -185,16 +185,18 @@ class Services_Trackback {
      * @return object(Services_Trackback) The newly created Trackback.
      */
     function &create($data, $options = null) {
-        $options = (isset($options)) ? $options : array();
+        $options = isset($options) ? $options : array();
         $trackback = new Services_Trackback();
         $res = $trackback->_fromArray($data);
         if (PEAR::isError($res)) {
             return $res;
         }
+
         $res = $trackback->setOptions($options);
         if (PEAR::isError($res)) {
             return $res;
         }
+
         return $trackback;
     }
     
@@ -350,13 +352,16 @@ class Services_Trackback {
         }
         
         // Consistancy check
-        if (!isset($data))
+        if (!isset($data)) {
             $data = array();
+        }
+
         $this->_data = array_merge($this->_data, $data);
         $necessaryData = array('title', 'url', 'excerpt', 'blog_name', 'trackback_url');
         $res = $this->_checkData($necessaryData);
-        if (PEAR::isError($res))
+        if (PEAR::isError($res)) {
             return $res;
+        }
 
         // Get URL
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
@@ -388,6 +393,7 @@ class Services_Trackback {
         if ($req->getResponseCode() != 200) {
             return PEAR::raiseError('Host returned Error '.$req->getRequestCode().'.');
         }
+
         return $this->_interpretTrackbackResponse($req->getResponseBody());
     }
  
@@ -430,9 +436,9 @@ EOD;
         $res = sprintf($res, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
         if ($comments) {
             return "<!--\n".$res."\n-->\n";
-        } else {
-            return $res."\n";
         }
+
+        return $res."\n";
     }
 
     // }}}
@@ -453,15 +459,18 @@ EOD;
         if (!isset($data)) {
             $data = $_POST;
         }
+
         $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name');
         $res = $this->_checkData(array('id'));
         if (PEAR::isError($res)) {
             return $res;
         }
+
         $res = $this->_checkData($necessaryPostData, $data);
         if (PEAR::isError($res)) {
             return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
         }
+
         $data['host'] = $_SERVER['REMOTE_ADDR'];
         $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
         return true;
@@ -657,6 +666,7 @@ EOD;
             return $res;
         }
         $this->_data = $data;
+
         return true;
     }
 
@@ -679,10 +689,12 @@ EOD;
         if (!is_resource($handle)) {
             return PEAR::raiseError('Could not open URL "'.$url.'"');
         }
+
         $content = '';
         for ($i = 0; ($i < $this->_options['fetchlines']) && !feof($handle);$i++) {
             $content .= fgets($handle);
         }
+
         return $content;
     }
     
@@ -704,9 +716,11 @@ EOD;
         if (!isset($data)) {
             $data =& $this->_data;
         }
+
         foreach ($keys as $key) {
             $res[$key] = htmlentities($data[$key]);
         }
+
         return $res;
     }
 
@@ -728,9 +742,11 @@ EOD;
         if (!isset($data)) {
             $data =& $this->_data;
         }
+
         foreach ($keys as $key) {
             $res[$key] = $data[$key];
         }
+
         return $res;
     }
     
@@ -752,6 +768,7 @@ EOD;
         if (!isset($data)) {
             $data =& $this->_data;
         }
+
         foreach ($keys as $key) {
             if (empty($data[$key])) {
                 return PEAR::raiseError('Invalid data. Key "'.$key.'" missing.');
@@ -788,15 +805,18 @@ EOD;
             case SERVICES_TRACKBACK_STRICTNESS_MIDDLE:
                 $domainRegex = "@http://([^/]+).*@";
                 $res = preg_match($domainRegex, $url1, $matches);
-                if (!$res)
+                if (!$res) {
                     return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
+                }
                 $domain1 = $matches[1];
                 $res = preg_match($domainRegex, $url2, $matches);
-                if (!$res)
+                if (!$res) {
                     return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
+                }
                 $domain2 = $matches[1];
-                if ($domain1 !== $domain2)
+                if ($domain1 !== $domain2) {
                     return PEAR::raiseError('URLs missmatch. "'.$domain1.'" !== "'.$domain2.'".');
+                }
                 break;
             
             case SERVICES_TRACKBACK_STRICTNESS_LOW:
@@ -832,9 +852,9 @@ EOD;
         
         if (!preg_match('@<message>([^<]+)</message>@', $response, $matches)) {
             return PEAR::raiseError('Error code '.$errorCode.', no message received.');
-        } else {
-            return PEAR::raiseError('Error code '.$errorCode.', message "'.$matches[1].'" received.');
         }
+
+        return PEAR::raiseError('Error code '.$errorCode.', message "'.$matches[1].'" received.');
     }
     
     // }}}
