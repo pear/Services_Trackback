@@ -87,6 +87,7 @@ class Services_Trackback {
      * The necessary trackback data.
      *
      * @var array
+     * @since 0.1.0
      * @access private
      */
     var $_data = array(
@@ -96,6 +97,7 @@ class Services_Trackback {
         'blog_name'     => '',
         'url'           => '',
         'trackback_url' => '',
+        'host'          => '',
     );
 
     // }}}
@@ -111,13 +113,22 @@ class Services_Trackback {
      */
 
     var $_options = array(
+        // Options for Services_Trackback directly
         'strictness'        => SERVICES_TRACKBACK_STRICTNESS_LOW,
         'timeout'           => 30,          // seconds
-        'allowRedirects'    => true,
-        'maxRedirects'      => 2,
         'fetchlines'        => 30,
-        'useragent'         => 'PEAR::Services_Trackback v@package_version@'
+        // Options for HTTP_Request class
+        'httpRequest'       => array(
+            'allowRedirects'    => true,
+            'maxRedirects'      => 2,
+            'useragent'         => 'PEAR::Services_Trackback v@package_version@'
+        ),
     );
+    
+    // }}}
+     // {{{ var $_spamChecks
+    
+    var $_spamChecks = array();
 
     // }}}
     // {{{ Services_Trackback()
@@ -126,7 +137,7 @@ class Services_Trackback {
      * Constructor 
      * Creates a new Trackback object. Private because of factory use.
      *  
-     * @since 0.1 
+     * @since 0.1.0
      * @access private
      * @return void
      */
@@ -145,7 +156,7 @@ class Services_Trackback {
      * might be necessary for calling other methods afterwards. See the specific methods for
      * further info on which data is required.
      *
-     * @since 0.2
+     * @since 0.2.0
      * @static
      * @access public
      * @param array $data Data for the trackback, which is obligatory:
@@ -159,10 +170,17 @@ class Services_Trackback {
      * @param array $options Options to set for this trackback. Valid options:
      *      'strictness':       int     The default strictness to use in @see Services_Trackback::autodiscover().
      *      'timeout':          int     The default timeout for network operations in seconds.
-     *      'allowRedirects':   bool    Wether to follow HTTP redirects or not.
-     *      'maxRedirects':     int     Maximum number of redirects.
-     *      'fetchsize':        int     The max file size to fetch over the network.
-     *      'useragent':        string  The user agent to use for HTTP requests.
+     *      'fetchlines':       int     The max number of lines to fetch over the network.
+     *      'httpRequest'       array   The options utilized by HTTP_Request are stored here.
+     *                                  The following options are the most commonly used for HTTP_Request in
+     *                                  Services_Trackback. All other options are supported too, 
+     *                                  @see HTTP_Request::HTTP_Request() for more detailed documentation.
+     *                                  Some options for HTTP_Request are overwritten through the global settings of
+     *                                  Services_Trackback (such as timeout).
+     *          'timeout':          float   THE TIMEOUT SETTING IS OVERWRITTEN BY THE GLOBAL Services_Trackback SETTING.
+     *          'allowRedirects':   bool    Wether to follow HTTP redirects or not.
+     *          'maxRedirects':     int     Maximum number of redirects.
+     *          'useragent':        string  The user agent to use for HTTP requests.
      *
      * @return object(Services_Trackback) The newly created Trackback.
      */
@@ -197,7 +215,7 @@ class Services_Trackback {
     function setOptions($options) {
         foreach($options as $option => $value) {
             if (!isset($this->_options[$option])) {
-                return PEAR::raiseError('Desired option "'.$option.'" not found.');
+                return PEAR::raiseError('Desired option "'.$option.'" not available.');
             }
             switch ($option) {
                 case 'strictness':
@@ -206,16 +224,6 @@ class Services_Trackback {
                     }
                     break;
                 case 'timeout':
-                    if (!is_int($value) || ($value < 0)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
-                    }
-                    break;
-                case 'allowRedirects':
-                    if (!is_bool($value)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
-                    }
-                    break;
-                case 'maxRedirects':
                     if (!is_int($value) || ($value < 0)) {
                         return PEAR::raiseError('Invalid value for option "'.$option.'".');
                     }
@@ -283,7 +291,7 @@ class Services_Trackback {
             </rdf:RDF>
         */
 
-        // Receive file contents
+        // Receive file contents.
         $content = $this->_getContent($url);
         if (PEAR::isError($content)) {
             return $content;
@@ -325,7 +333,8 @@ class Services_Trackback {
      *              'excerpt'           Excerpt of the weblog entry sending the trackback.
      *              'blog_name'         Name of the weblog sending the trackback.
      *              'trackback_url'     URL to send the trackback to.
-     * Services_Trackback::send() requires HTTP_Request.
+     * Services_Trackback::send() requires PEAR::HTTP_Request. The options for the HTTP_Request
+     * object are stored in the global options array using the key 'http_request'.
      *
      * @since 0.3.0
      * @access public
@@ -337,7 +346,7 @@ class Services_Trackback {
         // Load HTTP_Request
         @require_once 'HTTP/Request.php';
         if (!class_exists('HTTP_Request')) {
-            return PEAR::raiseError('Unable to load PEAR::HTTP_Request');
+            return PEAR::raiseError('Unable to load PEAR::HTTP_Request.');
         }
         
         // Consistancy check
@@ -352,12 +361,12 @@ class Services_Trackback {
         // Get URL
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
 
+        // Changed in 0.5.0 All HTTP_Request options are now supported.
+        $options = $this->_options['httpRequest'];
+        $options['timeout'] = $this->_options['timeout'];
+        
         // Create new HTTP_Request
-        $req = new HTTP_Request($url, array(
-            'timeout'           => $this->_options['timeout'],
-            'allowRedirects'    => $this->_options['allowRedirects'],
-            'maxRedirects'      => $this->_options['maxRedirects'],
-        ));
+        $req = new HTTP_Request($url, $options);
         $req->setMethod(HTTP_REQUEST_METHOD_POST);
         
         // Add HTTP headers
@@ -453,6 +462,7 @@ EOD;
         if (PEAR::isError($res)) {
             return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
         }
+        $data['host'] = $_SERVER['REMOTE_ADDR'];
         $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
         return true;
     }
@@ -503,6 +513,93 @@ EOD;
 </response>
 EOD;
         return sprintf($res, $data['code'], $data['message']);
+    }
+    
+    // }}}
+    // {{{ addSpamCheck()
+    
+    /**
+     * addSpamCheck
+     * Add a spam check module to the trackback.
+     *
+     * @since 0.5.0 
+     * @access public
+     * @see Services_Trackback::removeSpamCheck()
+     * @see Services_Trackback::checkSpam()
+     * @param object(Services_Trackback_SpamCheck) $spamCheck The spam check module to add.
+     * @param int $priority A priority value for the spam check. Lower priority indices are processed earlier. 
+     *                      If no priority level is set, 0 is assumed.
+     * @return bool True on success, otherwise PEAR::Error().
+     */
+    function addSpamCheck(&$spamCheck, $priority = 0)
+    {
+        if (!is_object($spamCheck) || !is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck')) {
+            return PEAR::raiseError('Invalid spam check module.', -1);
+        }
+        $this->_spamChecks[$priority][] =& $spamCheck;
+        return true;
+    }
+    
+    // }}}
+    // {{{ removeSpamCheck()
+    
+    /**
+     * removeSpamCheck
+     * Remove a spam check module from the trackback.
+     *  
+     * @since 0.5.0 
+     * @access public
+     * @see Services_Trackback::addSpamCheck()
+     * @see Services_Trackback::checkSpam()
+     * @param object(Services_Trackback_SpamCheck) The spam check module to remove.
+     * @return bool True on success, otherwise PEAR::Error().
+     */
+    function removeSpamCheck(&$spamCheck)
+    {
+        foreach ($this->_spamChecks as $priority => $spamChecks) {
+            foreach ($spamChecks as $id => $spamCheck) {
+                if ($this->_spamChecks[$priority][$id] === $spamCheck) {
+                    unset($this->_spamChecks[$priority][$id]);
+                    return true;
+                }
+            }
+        }
+        return PEAR::raiseError('Given spam check module not found.', -1);
+    }
+    
+    // }}}
+    // {{{ checkSpam()
+    
+    /**
+     * checkSpam
+     * Checks the given trackback against several spam protection sources
+     * such as DNSBL, SURBL, Word BL,... The sources to check are defined using
+     * Services_Trackback_SpamCheck modules.
+     *  
+     * @since 0.5.0 
+     * @access public
+     * @see Services_Trackback::addSpamCheck()
+     * @see Services_Trackback::removeSpamCheck()
+     * @param bool $continouseCheck Wether to check all spam protection modules or 
+     *                              quit checking if one modules returns a positive result.
+     * @return bool True, if one of the sources 
+     */
+    function checkSpam($continouse = false)
+    {
+        $spam = false;
+        foreach ($this->_spamChecks as $priority => $spamChecks) {
+            foreach ($spamChecks as $id => $spamCheck) {
+                if (!$continouse && $spam) {
+                    // No need to check further
+                    $this->_spamChecksResults[$priority][$id] = false;
+                } else {
+                    $tmpRes = $this->_spamChecks[$priority][$id]->check($this);
+                    $this->_spamChecksResults[$priority][$id] = $tmpRes;
+                    $spam = ($spam || $tmpRes);
+                }
+            }
+        }
+        return $spam;
     }
     
     // }}}
@@ -578,13 +675,12 @@ EOD;
     function _getContent($url)
     {
         $handle = fopen($url, 'r');
-        $tmpTrack = new Services_Trackback();
-        stream_set_timeout($handle, $tmpTrack->_options['timeout']);
+        stream_set_timeout($handle, $this->_options['timeout']);
         if (!is_resource($handle)) {
             return PEAR::raiseError('Could not open URL "'.$url.'"');
         }
         $content = '';
-        for ($i = 0; ($i < $tmpTrack->_options['fetchlines']) && !feof($handle);$i++) {
+        for ($i = 0; ($i < $this->_options['fetchlines']) && !feof($handle);$i++) {
             $content .= fgets($handle);
         }
         return $content;
@@ -752,7 +848,7 @@ EOD;
      */
     /*
 
-    // Removed since 0.2
+    // Removed since 0.2.0
     
     */
 }
