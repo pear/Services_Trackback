@@ -54,18 +54,43 @@ require_once 'Net/DNSBL.php';
  * @since      0.5.0
  * @access     public
  */
-class Services_Trackback_SpamProtection_DNSBL {
+class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamProtection {
 
+    /**
+     * Options for the SpamProtection.
+     *
+     * @var array
+     * @since 0.5.0
+     * @access protected
+     */
     var $_options = array(
         'continuose'    => false,
         'sources'       => array(
             'bl.spamcop.net'
         ),
-        'DNSBL'         => array(),
     );
 
+    /**
+     * The Net_DNSBL object for checking.
+     *
+     * @var object(Net_DNSBL)
+     * @since 0.5.0
+     * @access protected
+     */
     var $_dnsbl;
 
+    /**
+     * Factory.
+     * Create a new instance of the DNSBL spam protection module.
+     *
+     * @since 0.5.0
+     * @static
+     * @access public
+     * @param array $options An array of options for this spam protection module. General options are
+     *                       'continuose':  Whether to continue checking more sources, if a match has been found.
+     *                       'sources':     List of blacklist nameservers. Indexed.
+     * @return object(Services_Trackback_SpamCheck_DNSBL) The newly created SpamCheck object.
+     */
     function create($options = null)
     {
         $this->_options = $options;
@@ -76,10 +101,5 @@ class Services_Trackback_SpamProtection_DNSBL {
     {
         $this->_dnsbl->setBlacklists(array($source));
         return $this->_dnsbl->isListed($trackback->get('host'));
-    }
-
-    function getResults()
-    {
-        return PEAR::raiseError('Driver method not implemented. Driver implementation error.', -1);
     }
 }

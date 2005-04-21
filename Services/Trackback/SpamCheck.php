@@ -59,9 +59,9 @@ class Services_Trackback_SpamProtection {
      * Options for the spam check module. General and module specific.
      *
      * @var array
-     * @access private
+     * @since 0.5.0
+     * @access protected
      */
-
     var $_options = array(
         'continuose'    => false,
         'sources'       => array(),
@@ -71,9 +71,8 @@ class Services_Trackback_SpamProtection {
      * Array of results, indexed analogue to the 'sources' option (boolean result value per source).
      *
      * @var array
-     * @access private
+     * @access protected
      */
-
     var $_results = array();
 
     /**
@@ -118,6 +117,22 @@ class Services_Trackback_SpamProtection {
             }
         }
         return $spam;
+    }
+
+    /**
+     * Check a specific source if a trackback has to be considered spam.
+     * Check a specific source if a trackback has to be considered spam.
+     *
+     * @since 0.5.0
+     * @access protected
+     * @abstract
+     * @param mixed $source Element of the _sources array to check.
+     * @param object(Services_Trackback) The trackback to check.
+     * @return bool True if trackback is spam, false, if not, PEAR_Error on error. 
+     */
+    function _checkSource($source, $trackback)
+    {
+       PEAR::raiseError('Method not implemented.', -1);
     }
 
     /**

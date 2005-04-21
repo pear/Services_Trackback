@@ -88,7 +88,7 @@ class Services_Trackback {
      *
      * @var array
      * @since 0.1.0
-     * @access private
+     * @access protected
      */
     var $_data = array(
         'id'            => '',
@@ -109,7 +109,7 @@ class Services_Trackback {
      * @see Services_Trackback::create()
      * @since 0.4.0
      * @var array
-     * @access private
+     * @access protected
      */
 
     var $_options = array(
@@ -138,7 +138,7 @@ class Services_Trackback {
      * Creates a new Trackback object. Private because of factory use.
      *  
      * @since 0.1.0
-     * @access private
+     * @access protected
      * @return void
      */
     function Services_Trackback ( )
@@ -656,7 +656,7 @@ EOD;
      * Create a Trackback from a $data array.
      *
      * @since 0.2.0
-     * @access private
+     * @access protected
      * @param array $data The data array (@see Services_Trackback::create()).
      * @return mixed True on success, otherwise PEAR::Error.
      */
@@ -678,7 +678,7 @@ EOD;
      * Receive the content from a specific URL.
      *  
      * @since 0.4.0
-     * @access private
+     * @access protected
      * @param string $url The URL to download data from.
      * @return string The content.
      */
@@ -706,7 +706,7 @@ EOD;
      * Receives a number of data from the internal data store, encoded for XML usage.
      *  
      * @since 0.1.0
-     * @access private
+     * @access protected
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
      * @return void
@@ -732,7 +732,7 @@ EOD;
      * Receives a number of data from the internal data store.
      *  
      * @since 0.1.0
-     * @access private
+     * @access protected
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
      * @return void
@@ -758,7 +758,7 @@ EOD;
      * Checks a given array of keys for the validity of their data.
      *  
      * @since 0.1.0
-     * @access private
+     * @access protected
      * @param array $keys Data keys to check.
      * @param array $data Optionally the data to check (default is the object data).
      * @return void
@@ -787,7 +787,7 @@ EOD;
      * 
      * @see Services_Trackback::autodiscover()
      * @since 0.2.0
-     * @access private
+     * @access protected
      * @param string $url1 The first URL.
      * @param string $url2 The second URL.
      * @param constant $strictness How strict to check URLs. Use one of SERVICES_TRACKBACK_STRICTNESS_* constants.
@@ -835,7 +835,7 @@ EOD;
      *  
      * @see Services_Trackback::send()
      * @since 0.3.0
-     * @access private
+     * @access protected
      * @return void Mixed true on success, otherwise PEAR::Error.
      */
     function _interpretTrackbackResponse($response)
@@ -872,6 +872,3 @@ EOD;
     
     */
 }
-    
-
-?>
