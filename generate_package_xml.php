@@ -14,7 +14,7 @@
 	$category = 'Services';
 	$package = 'Services_Trackback';
 	
-	$version = '0.4.0';
+	$version = '0.5.0';
 	$state = 'alpha';
 	
 	$summary = 'Trackback - A generic class for sending and receiving trackbacks.';
