@@ -56,8 +56,10 @@ require_once 'Net/SURBL.php';
  */
 class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_SpamProtection {
 
+    // {{{ _options
+    
     /**
-     * Options for the SpamProtection.
+     * Options for the Wordlist.
      *
      * @var array
      * @since 0.5.0
@@ -69,15 +71,34 @@ class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_Spam
             'porn',
             'sex',
             'viagra',
+            'erection',
+            'anal',
             'gambling',
+            'poker',
+            'casino',
+            'pharmacy',
+            'drugs',
+            'adipex',
+            'naproxen',
+            'xanax',
+            'phentermine',
+            'diet',
+            'smoking',
+            'rheuma',
+            'roulette',
+            'payday',
+            'loan',
         ),
         'elements'      => array(
             'title',
             'excerpt',
         ),
-        'casesensitive' => false,
+        'comparefunc' => 'stripos',
         'minmatches'    => 1,
     );
+
+    // }}}
+    // {{{ create()
 
     /**
      * Factory.
@@ -89,26 +110,47 @@ class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_Spam
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuose':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist servers. Indexed.
+     *                       'comparefunc': A compare function callback with parameters $haystack, $needle (like 'stripos').
+     *                       'minmatches':  How many words have to be found to consider spam.
      * @return object(Services_Trackback_SpamCheck_SURBL) The newly created SpamCheck object.
      */
     function create($options = null)
     {
         $this->_options = $options;
     }
+    
+    // }}}
+    // {{{ check()
 
+    function check($trackback)
+    {
+        $spamCount = 0;
+        foreach ($this->_options['sources'] as $id => $source) {
+            if ($spam > 0 && !$this->_options['continuose']) {
+                // We already found spam and shall not continue
+                $this->_results[$id] = false;
+            } else {
+                $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
+            }
+        }
+        return ($spamCount >= $this->_options['minmatches']);
+    }
+
+    // }}}
+    // {{{ _checkSource()
+    
     function _checkSource(&$source, $trackback)
     {
-        if (!isset($this->_urls)) {
-            $this->_extractURLs($trackback);
-        }
-        $this->_dnsbl->setBlacklists(array($source));
         $spam = false;
-        foreach ($this->_urls as $url) {
-            $spam = ($spam || $this->_dnsbl->isListed($url));
-            if ($spam) {
+        foreach ($this->_options['elements'] as $element) {
+            if (false !== $this->_options['comparefunc']($source, $trackback->get($element)) {
+                $spam = true;
                 break;
             }
         }
         return $spam;
     }
+
+    // }}}
+    
 }

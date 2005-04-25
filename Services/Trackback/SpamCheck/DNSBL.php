@@ -56,6 +56,8 @@ require_once 'Net/DNSBL.php';
  */
 class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamProtection {
 
+    // {{{ _options
+    
     /**
      * Options for the SpamProtection.
      *
@@ -70,6 +72,9 @@ class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamPro
         ),
     );
 
+    // }}}
+    // {{{ _dnsbl
+    
     /**
      * The Net_DNSBL object for checking.
      *
@@ -79,6 +84,9 @@ class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamPro
      */
     var $_dnsbl;
 
+    // }}}
+    // {{{ create()
+    
     /**
      * Factory.
      * Create a new instance of the DNSBL spam protection module.
@@ -97,9 +105,15 @@ class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamPro
         $this->_dnsbl = new Net_DNSBL();
     }
 
+    // }}}
+    // {{{ _checkSource
+    
     function _checkSource(&$source, $trackback)
     {
         $this->_dnsbl->setBlacklists(array($source));
         return $this->_dnsbl->isListed($trackback->get('host'));
     }
+    
+    // }}}
+
 }

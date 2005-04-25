@@ -76,7 +76,7 @@ define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
  * @copyright  1997-2005 The PHP Group
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.0.1
+i * @since     0.1.0
  * @access     public
  */
 class Services_Trackback {

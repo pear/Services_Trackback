@@ -41,12 +41,14 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
             'id'    => 'Test'
         );
         $options = array(
-            'useragent'         => 'Mozilla 10.0',
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
-            'allowRedirects'    => false,
-            'maxRedirects'      => 0,
             'fetchlines'        => 100,
+            'httpRequest'       => array(
+                'allowRedirects'    => false,
+                'maxRedirects'      => 0,
+                'useragent'         => 'Mozilla 10.0',
+            ),
         );
         $fakeTrack = new Services_Trackback;
         $fakeTrack->_options = $options;
@@ -59,12 +61,14 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 
     function test_setOptions_success() {
         $options = array(
-            'useragent'         => 'Mozilla 10.0',
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
-            'allowRedirects'    => false,
-            'maxRedirects'      => 0,
             'fetchlines'        => 100,
+            'httpRequest'       => array(
+                'allowRedirects'    => false,
+                'maxRedirects'      => 0,
+                'useragent'         => 'Mozilla 10.0',
+            ),
         );
         $fakeTrack = new Services_Trackback;
         $fakeTrack->_options = $options;
@@ -73,52 +77,19 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
         $this->assertTrue($realTrack == $fakeTrack);
     }
 
-    function test_setOptions_failure_1()
-    {
-        $options = array(
-            'useragent'         => 'Mozilla 10.0',
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
-            'timeout'           => 10,
-            'allowRedirects'    => 'Test',
-            'maxRedirects'      => 0,
-            'fetchlines'        => 100,
-        );
-        $fakeTrack = new Services_Trackback;
-        $fakeTrack->_options = $options;
-        $realTrack = new Services_Trackback;
-        $res = $realTrack->setOptions($options);
-        $this->assertTrue(PEAR::isError($res));
-    }
-    
-    function test_setOptions_failure_2()
-    {
-        $options = array(
-            'useragent'         => 'Mozilla 10.0',
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
-            'timeout'           => 10,
-            'allowRedirects'    => false,
-            'maxRedirects'      => 0,
-            'fetchlines'        => 100,
-            'foobarbaz'         => 'No real option'
-        );
-        $fakeTrack = new Services_Trackback;
-        $fakeTrack->_options = $options;
-        $realTrack = new Services_Trackback;
-        $res = $realTrack->setOptions($options);
-        $this->assertTrue(PEAR::isError($res));
-    }
-
     // }}}
     // {{{ Test getOptions()
 
     function test_getOptions_success() {
         $options = array(
-            'useragent'         => 'Mozilla 10.0',
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
-            'allowRedirects'    => false,
-            'maxRedirects'      => 0,
             'fetchlines'        => 100,
+            'httpRequest'       => array(
+                'allowRedirects'    => false,
+                'maxRedirects'      => 0,
+                'useragent'         => 'Mozilla 10.0',
+            ),
         );
         $track = new Services_Trackback;
         $track->_options = $options;
@@ -260,6 +231,48 @@ EOD;
     }
     
     // }}}
+    // {{{ Test addSpamCheck
+    
+    function test_addSpamCheck_success()
+    {
+        $trackback = new Services_Trackback();
+        $spamCheck = new Services_Trackback_SpamCheck();
+        $this->assertTrue($trackback->addSpamCheck($spamCheck));
+    }
+    
+    function test_addSpamCheck_failure()
+    {
+        $trackback = new Services_Trackback();
+        $spamCheck = new Services_Trackback();
+        $this->assertTrue(PEAR::isError($trackback->addSpamCheck($spamCheck)));
+    }
+    
+    // }}}
+    // {{{ Test removeSpamCheck
+    
+    function test_removeSpamCheck_success()
+    {
+        $trackback = new Services_Trackback();
+        $spamCheck = new Services_Trackback_SpamCheck();
+        $trackback->addSpamCheck($spamCheck);
+        $this->assertTrue($trackback->removeSpamCheck($spamCheck));
+    }
+    
+    function test_addSpamCheck_failure()
+    {
+        $trackback = new Services_Trackback();
+        $spamCheck = new Services_Trackback_SpamCheck();
+        $trackback->addSpamCheck($spamCheck);
+        $spamCheck2 = new Services_Trackback_SpamCheck()
+        $this->assertTrue(PEAR::isError($trackback->removeSpamCheck($spamCheck2)));
+    }
+    
+    // }}}
+    // {{{ Test removeSpamCheck
+   
+    // To be implemented when spam check modules are unitested.
+   
+    // }}}
     // {{{ Test _fromArray()
 
     function test_fromArray() {
@@ -294,6 +307,7 @@ EOD;
 </BODY>
 </HTML>
 EOD;
+
         $this->assertTrue(trim(Services_Trackback::_getContent($url)) == trim($res));
     }
 

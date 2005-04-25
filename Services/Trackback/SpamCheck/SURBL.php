@@ -56,6 +56,8 @@ require_once 'Net/SURBL.php';
  */
 class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamProtection {
 
+    // {{{ _options
+    
     /**
      * Options for the SpamProtection.
      *
@@ -74,6 +76,9 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
         ),
     );
 
+    // }}}
+    // {{{ _surbl
+    
     /**
      * The Net_DNSBL_SURBL object for checking.
      *
@@ -83,6 +88,9 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
      */
     var $_surbl;
 
+    // }}}
+    // {{{ _urls
+    
     /**
      * URLs extracted from the trackback.
      *
@@ -92,6 +100,9 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
      */
     var $_urls;
 
+    // }}}
+    // {{{ create()
+    
     /**
      * Factory.
      * Create a new instance of the SURBL spam protection module.
@@ -112,6 +123,9 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
         $this->_dnsbl = new Net_DNSBL_SURBL();
     }
 
+    // }}}
+    // {{{ _checkSource()
+
     function _checkSource(&$source, $trackback)
     {
         if (!isset($this->_urls)) {
@@ -127,4 +141,7 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
         }
         return $spam;
     }
+
+    // }}}
+    
 }

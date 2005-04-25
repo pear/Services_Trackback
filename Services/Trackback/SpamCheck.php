@@ -55,6 +55,7 @@ require_once 'PEAR.php';
  */
 class Services_Trackback_SpamProtection {
 
+    // {{{ _options
     /**
      * Options for the spam check module. General and module specific.
      *
@@ -67,6 +68,9 @@ class Services_Trackback_SpamProtection {
         'sources'       => array(),
     );
 
+    // }}}
+    // {{{ _results
+    
     /**
      * Array of results, indexed analogue to the 'sources' option (boolean result value per source).
      *
@@ -75,6 +79,9 @@ class Services_Trackback_SpamProtection {
      */
     var $_results = array();
 
+    // }}}
+    // {{{ create()
+    
     /**
      * Factory.
      * Create a new instance of a spam protection module.
@@ -93,6 +100,9 @@ class Services_Trackback_SpamProtection {
     {
         $this->_options = $options;
     }
+    
+    // }}}
+    // {{{ check()
 
     /**
      * Check for spam using this module.
@@ -118,6 +128,8 @@ class Services_Trackback_SpamProtection {
         }
         return $spam;
     }
+    // }}}
+    // {{{ _checkSource()
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -134,7 +146,10 @@ class Services_Trackback_SpamProtection {
     {
        PEAR::raiseError('Method not implemented.', -1);
     }
-
+    
+    // }}}
+    // {{{ check()
+    
     /**
      * Get spam check results.
      * Receive the results determined by the spam check.
@@ -147,6 +162,7 @@ class Services_Trackback_SpamProtection {
     {
         return $this->_results;
     }
-}
+    
+    // }}}
 
-?>
+}
