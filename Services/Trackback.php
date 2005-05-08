@@ -264,11 +264,11 @@ class Services_Trackback {
 
     /**
      * autodiscover
-     * Checks a given URL for trackback autodiscovery code. This is another factory method.
+     * Checks a given URL for trackback autodiscovery code.
      *
      * @since 0.2.0
      * @access public
-     * @return mixed Services_Trackback object on success, otherwise PEAR::Error.
+     * @return bool True on success, otherwise PEAR::Error.
      */
     function autodiscover()
     {
