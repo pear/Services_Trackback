@@ -101,7 +101,7 @@ class Services_Trackback_SpamCheck {
         $filename = 'Services/Trackback/SpamCheck/' . $type . '.php';
         $classname = 'Services_Trackback_SpamCheck_' . $type;
 
-        @include_once $filename;
+        include_once $filename;
         if (!class_exists($classname)) {
             return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
         }

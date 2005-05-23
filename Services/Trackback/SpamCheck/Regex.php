@@ -78,7 +78,7 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
             'url',
         ),
         'delimiter'     => '@',
-        'modifiers'     => 'i',
+        'modifier'     => 'i',
         'minmatches'    => 1,
     );
 

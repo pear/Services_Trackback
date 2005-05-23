@@ -583,7 +583,7 @@ EOD;
         }
         
         $spamCheck =& call_user_func($createfunc, $spamCheckType, $options);
-        $res =& $this->addSpamCheck($spamCheck);
+        $res =& $this->addSpamCheck($spamCheck, $priority);
         
         return $res;
     }
