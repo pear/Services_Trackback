@@ -5,13 +5,25 @@ set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path(
 
     // {{{ require_once
 
+// Services_Trackback classes
 require_once 'Services/Trackback.php';
+require_once 'Services/Trackback/SpamCheck.php';
+require_once 'Services/Trackback/SpamCheck/Wordlist.php';
+
+// Unittest suite
 require_once 'PHPUnit.php';
+
+// Testdata
+require_once 'test/trackback_data.php';
 
     // }}}
 
 class Webservices_Trackback_SpamCheck_TestCase extends PHPUnit_TestCase
 {
+
+    var $trackbacks = array();
+
+    var $spamCheck;
     
     // {{{ Webservices_Trackback_SpamCheck_TestCase()
     
@@ -24,7 +36,10 @@ class Webservices_Trackback_SpamCheck_TestCase extends PHPUnit_TestCase
     // {{{ setup()
     
     function setUp() {
-        $this->_trackback = new Services_Trackback();
+        global $trackbackData;
+        $this->_trackbacks['nospam'] = Services_Trackback::create($trackbackData['nospam']);
+        $this->_trackbacks['spam'] =  Services_Trackback::create($trackbackData['all']);
+        $this->spamCheck = new Services_Trackback_SpamCheck_Wordlist();
     }
 
     // }}}
@@ -37,29 +52,44 @@ class Webservices_Trackback_SpamCheck_TestCase extends PHPUnit_TestCase
     // {{{ Test create()
 
     function test_create() {
-        $data = array(
-            'title' => 'Test title.',
-            'id'    => 'Test'
-        );
-        $options = array(
-            'useragent'         => 'Mozilla 10.0',
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
-            'timeout'           => 10,
-            'allowRedirects'    => false,
-            'maxRedirects'      => 0,
-            'fetchlines'        => 100,
-        );
-        $fakeTrack = new Services_Trackback;
-        $fakeTrack->_options = $options;
-        $fakeTrack->_data = $data;
-        $this->assertTrue(Services_Trackback::create($data, $options) == $fakeTrack);
+        $realCheck = Services_Trackback_SpamCheck::create('Wordlist');
+        $this->assertTrue($this->spamCheck == $realCheck);
+    }
+
+    // }}}
+    // {{{ Test check()
+
+    function test_check_success() {
+        $this->assertTrue($this->spamCheck->check($this->_trackbacks['spam']));
+    }
+    
+    function test_check_failure() {
+        $this->assertTrue(!$this->spamCheck->check($this->_trackbacks['nospam']));
+    }
+
+    // }}}
+    // {{{ Test getResults()
+
+    function test_getResults() {
+        $this->spamCheck->check($this->_trackbacks['spam']);
+        $results = $this->spamCheck->getResults();
+        $this->assertTrue($results[6]);
+    }
+
+    // }}}
+    // {{{ Test reset()
+
+    function test_reset() {
+        $this->spamCheck->check($this->_trackbacks['spam']);
+        $this->spamCheck->_results = array();
+        $fakeCheck = Services_Trackback_SpamCheck::create('Wordlist');
+        $this->assertTrue($this->spamCheck == $fakeCheck);
     }
 
     // }}}
 
 }
-
-$suite  = new PHPUnit_TestSuite("Webservices_Trackback_TestCase");
+$suite  = new PHPUnit_TestSuite("Webservices_Trackback_SpamCheck_TestCase");
 $result = PHPUnit::run($suite);
 
 echo $result->toString();
