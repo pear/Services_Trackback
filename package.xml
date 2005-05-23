@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
-<package version="1.0" packagerversion="1.4.0a4">
+<package version="1.0" packagerversion="1.4.0a12">
  <name>Services_Trackback</name>
  <summary>Trackback - A generic class for sending and receiving trackbacks.</summary>
  <description>A generic class for sending and receiving trackbacks.
@@ -14,55 +14,89 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>0.4.0</version>
-  <date>2005-03-11</date>
+  <version>0.5.0</version>
+  <date>2005-05-23</date>
   <license>PHP License</license>
   <state>alpha</state>
-  <notes>* Initial release on PEARWeb.
+  <notes>* New API to check if a trackback is spam.
+* Implemented spam checks using Wordlist, Regex, DNSBL, SURBL.
+* Completed unit tests.
+* Refined overall API.
   </notes>
   <deps>
-   <dep type="pkg" rel="ge" version="1.2.4" optional="no">HTTP_Request</dep>
+   <dep type="php" rel="ge" version="4.3.0" optional="no"/>
   </deps>
   <filelist>
    <dir name="/" baseinstalldir="">
     <dir name="Services">
-     <file role="php" name="Trackback.php"/>
+     <dir name="Trackback">
+      <dir name="SpamCheck">
+       <file role="php" name="DNSBL.php">
+        <replace from="@package_version@" to="version" type="package-info"/>
+       </file>
+       <file role="php" name="Regex.php">
+        <replace from="@package_version@" to="version" type="package-info"/>
+       </file>
+       <file role="php" name="SURBL.php">
+        <replace from="@package_version@" to="version" type="package-info"/>
+       </file>
+       <file role="php" name="Wordlist.php">
+        <replace from="@package_version@" to="version" type="package-info"/>
+       </file>
+      </dir> <!-- /Services/Trackback/SpamCheck -->
+      <file role="php" name="SpamCheck.php">
+       <replace from="@package_version@" to="version" type="package-info"/>
+      </file>
+     </dir> <!-- /Services/Trackback -->
+     <file role="php" name="Trackback.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
     </dir> <!-- /Services -->
     <dir name="test">
-     <file role="test" name="Services_Trackback_Test.php"/>
-     <file role="test" name="simple_test.php"/>
+     <file role="test" name="failed_tests.sh">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_SpamCheck_DNSBL_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_SpamCheck_Regex_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_SpamCheck_SURBL_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_SpamCheck_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_SpamCheck_Wordlist_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_Test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="Services_Trackback_TestAll.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="simple_test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="trackback_data.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
     </dir> <!-- /test -->
    </dir> <!-- / -->
   </filelist>
  </release>
  <changelog>
    <release>
-    <version>0.2.0</version>
-    <date>2005-02-25</date>
-    <license>PHP License</license>
-    <state>devel</state>
-    <notes>* Removed overloading.
- * Refactored.
- * Added autodiscver().
- * Added PEAR 1.4 conform package2.xml (package.xml version 2.0).
-    </notes>
-   </release>
-   <release>
-    <version>0.3.0</version>
-    <date>2005-02-26</date>
-    <license>PHP License</license>
-    <state>devel</state>
-    <notes>* Refactored.
- * Added send().
- * Added dependency to HTTP_Request for the send() method.
-    </notes>
-   </release>
-   <release>
-    <version>0.4.0</version>
-    <date>2005-03-11</date>
+    <version>0.5.0</version>
+    <date>2005-05-23</date>
     <license>PHP License</license>
     <state>alpha</state>
-    <notes>* Initial release on PEARWeb.
+    <notes>* New API to check if a trackback is spam.
+* Implemented spam checks using Wordlist, Regex, DNSBL, SURBL.
+* Completed unit tests.
+* Refined overall API.
     </notes>
    </release>
  </changelog>
