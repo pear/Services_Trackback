@@ -23,7 +23,10 @@ A generic class for sending and receiving trackbacks.
 EOT;
 
 	$notes = <<<EOT
-* Initial release on PEARWeb.
+* New API to check if a trackback is spam.
+* Implemented spam checks using Wordlist, Regex, DNSBL, SURBL.
+* Completed unit tests.
+* Refined overall API.
 EOT;
 	
 	$e = $pkg->setOptions(
@@ -35,7 +38,7 @@ EOT;
 	          'packagedirectory'  => $packagedir,
 	          'pathtopackagefile' => $packagedir,
               'state'             => $state,
-              'filelistgenerator' => 'file',
+              'filelistgenerator' => 'cvs',
               'notes'             => $notes,
 			  'package'           => $package,
 			  'dir_roles' => array(
@@ -61,7 +64,10 @@ EOT;
     	exit;
 	}
 
-    $e = $pkg->addDependency('HTTP_Request', '1.2.4', 'ge', 'pkg');
+    $e = $pkg->addDependency('HTTP_Request', '1.2.4', 'ge', 'pkg', true);
+    $e = $pkg->addDependency('Net_DNSBL', '1.0.0', 'ge', 'pkg', true);
+
+    $e = $pkg->addGlobalReplacement('package-info', '@package_version@', 'version');;
 
 	if (PEAR::isError($e)) {
     	echo $e->getMessage();
