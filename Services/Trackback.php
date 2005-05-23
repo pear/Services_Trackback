@@ -23,7 +23,7 @@
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.0.1
+ * @since      File available since Release 0.1.0
  */
  
     // {{{ require_once
@@ -76,7 +76,7 @@ define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
  * @copyright  1997-2005 The PHP Group
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Services_Trackback
-i * @since     0.1.0
+ * @since      0.1.0
  * @access     public
  */
 class Services_Trackback {
