@@ -101,7 +101,7 @@ class Services_Trackback_SpamCheck {
         $filename = 'Services/Trackback/SpamCheck/' . $type . '.php';
         $classname = 'Services_Trackback_SpamCheck_' . $type;
 
-        include_once $filename;
+        @include_once $filename;
         if (!class_exists($classname)) {
             return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
         }
@@ -187,13 +187,7 @@ class Services_Trackback_SpamCheck {
      */
     function _checkSource($source, $trackback)
     {
-        $this->_surbl->setBlacklists(array($source));
-        foreach ($this->_urls as $url) {
-            if ($this->_surbl->isListed($url)) {
-                return true;
-            }
-        }
-        return false;
+        return PEAR::raiseError('Method not implemented.', -1);
     }
     
     // }}}
