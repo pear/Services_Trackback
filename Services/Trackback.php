@@ -574,7 +574,7 @@ EOD;
         
         // SpamCheck class already included?
         if (!class_exists($createfunc[0])) {
-            include_once $filename;
+            @include_once $filename;
         }
 
         // SpamCheck class successfully included?
