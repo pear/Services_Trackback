@@ -40,7 +40,7 @@ require_once 'PEAR.php';
     // }}}
 
 /**
- * SpamProtection
+ * SpamCheck
  * Base class for Services_Trackback spam protection modules.
  *
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
@@ -53,7 +53,7 @@ require_once 'PEAR.php';
  * @since      0.5.0
  * @access     public
  */
-class Services_Trackback_SpamProtection {
+class Services_Trackback_SpamCheck {
 
     // {{{ _options
     /**
@@ -96,9 +96,17 @@ class Services_Trackback_SpamProtection {
      *                       All further options depend on the specific module.
      * @return object(Services_Trackback_SpamCheck) The newly created SpamCheck object.
      */
-    function create($options = null)
+    function &create($type, $options = null)
     {
-        $this->_options = $options;
+        $filename = 'Services/Trackback/SpamCheck/' . $type . '.php';
+        $classname = 'Services_Trackback_SpamCheck_' . $type;
+
+        include_once $filename;
+        if (!class_exists($classname)) {
+            return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
+        }
+        
+        return new $classname(@$options);
     }
     
     // }}}
@@ -117,6 +125,7 @@ class Services_Trackback_SpamProtection {
      */
     function check($trackback)
     {
+        $this->reset();
         $spam = false;
         foreach ($this->_options['sources'] as $id => $source) {
             if ($spam && !$this->_options['continuose']) {
@@ -124,10 +133,44 @@ class Services_Trackback_SpamProtection {
                 $this->_results[$id] = false;
             } else {
                 $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
+                $spam = ($spam || $this->_results[$id]);
             }
         }
         return $spam;
     }
+    // }}}
+    // {{{ getResults()
+    
+    /**
+     * Get spam check results.
+     * Receive the results determined by the spam check.
+     *
+     * @since 0.5.0
+     * @access public
+     * @return array Array of specific spam check results.
+     */
+    function getResults()
+    {
+        return $this->_results;
+    }
+    
+    // }}}
+    // {{{ reset()
+    
+    /**
+     * Reset results.
+     * Reset results to reuse SpamCheck.
+     *
+     * @since 0.5.0
+     * @static
+     * @access public
+     * @return null
+     */
+    function reset()
+    {
+        $this->_results = array();
+    }
+
     // }}}
     // {{{ _checkSource()
 
@@ -144,23 +187,13 @@ class Services_Trackback_SpamProtection {
      */
     function _checkSource($source, $trackback)
     {
-       PEAR::raiseError('Method not implemented.', -1);
-    }
-    
-    // }}}
-    // {{{ check()
-    
-    /**
-     * Get spam check results.
-     * Receive the results determined by the spam check.
-     *
-     * @since 0.5.0
-     * @access public
-     * @return array Array of specific spam check results.
-     */
-    function getResults()
-    {
-        return $this->_results;
+        $this->_surbl->setBlacklists(array($source));
+        foreach ($this->_urls as $url) {
+            if ($this->_surbl->isListed($url)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     // }}}

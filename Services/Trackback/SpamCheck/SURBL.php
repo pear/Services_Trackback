@@ -26,17 +26,22 @@
  * @since      File available since Release 0.5.0
  */
     
-    // {{{ require_once
+     // {{{ require_once
 
 /**
  * Load PEAR error handling
  */
 require_once 'PEAR.php';
-   
+ 
+/**
+ * Load SpamCheck base.
+ */
+require_once 'Services/Trackback/SpamCheck.php';
+ 
 /**
  * Load Net_SURBL for spam cheching
  */
-require_once 'Net/SURBL.php';
+require_once 'Net/DNSBL/SURBL.php';
    
     // }}}
 
@@ -54,12 +59,12 @@ require_once 'Net/SURBL.php';
  * @since      0.5.0
  * @access     public
  */
-class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamProtection {
+class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // {{{ _options
     
     /**
-     * Options for the SpamProtection.
+     * Options for the SpamCheck.
      *
      * @var array
      * @since 0.5.0
@@ -71,6 +76,7 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
             'multi.surbl.org'
         ),
         'elements'      => array(
+            'url',
             'title',
             'excerpt',
         ),
@@ -98,17 +104,16 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
      * @access private
      * @since 0.5.0
      */
-    var $_urls;
+    var $_urls = array();
 
     // }}}
-    // {{{ create()
+    // {{{ Services_Trackback_SpamCheck_SURBL()
     
     /**
-     * Factory.
+     * Constructor.
      * Create a new instance of the SURBL spam protection module.
      *
      * @since 0.5.0
-     * @static
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuose':  Whether to continue checking more sources, if a match has been found.
@@ -117,10 +122,32 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
      *                                      and 'excerpt').
      * @return object(Services_Trackback_SpamCheck_SURBL) The newly created SpamCheck object.
      */
-    function create($options = null)
+    function Services_Trackback_SpamCheck_SURBL($options = null)
     {
-        $this->_options = $options;
-        $this->_dnsbl = new Net_DNSBL_SURBL();
+        if (is_array($options)) {
+            foreach ($options as $key => $val) {
+                $this->_options[$key] = $val;
+            }
+        }
+        $this->_surbl = new Net_DNSBL_SURBL();
+    }
+
+    // }}}
+    // {{{ reset()
+    
+    /**
+     * Reset results.
+     * Reset results to reuse SpamCheck.
+     *
+     * @since 0.5.0
+     * @static
+     * @access public
+     * @return null
+     */
+    function reset()
+    {
+        $this->_urls = array();
+        $this->_results = array();
     }
 
     // }}}
@@ -128,18 +155,47 @@ class Services_Trackback_SpamProtection_SURBL extends Services_Trackback_SpamPro
 
     function _checkSource(&$source, $trackback)
     {
-        if (!isset($this->_urls)) {
+        if (count($this->_urls) == 0) {
             $this->_extractURLs($trackback);
         }
-        $this->_dnsbl->setBlacklists(array($source));
+        $this->_surbl->setBlacklists(array($source));
         $spam = false;
         foreach ($this->_urls as $url) {
-            $spam = ($spam || $this->_dnsbl->isListed($url));
+            $spam = ($spam || $this->_surbl->isListed($url));
             if ($spam) {
                 break;
             }
         }
         return $spam;
+    }
+
+    // }}}
+    // {{{ _extractURLs()
+
+    function _extractURLs($trackback)
+    {
+        $urls = '(?:http|file|ftp)';
+        $ltrs = 'a-z0-9';
+        $gunk = '.-';
+        $any = "$ltrs$gunk";
+        $regex = "{
+                      $urls   ://
+                      [$any]+
+
+
+                      (?=
+                        [$punc]*
+                        [^$any]
+                      |
+                      )
+                  }x";
+        foreach ($this->_options['elements'] as $element) {
+	        if (0 !== preg_match_all($regex, $trackback->get($element), $matches)) {
+	            foreach ($matches[0] as $match) {
+	                $this->_urls[md5($match)] = $match;
+	            }
+            }
+	    }
     }
 
     // }}}

@@ -32,11 +32,12 @@
  * Load PEAR error handling
  */
 require_once 'PEAR.php';
-   
+  
 /**
- * Load Net_SURBL for spam cheching
+ * Load SpamCheck base class
  */
-require_once 'Net/SURBL.php';
+
+require_once 'Services/Trackback/SpamCheck.php';
    
     // }}}
 
@@ -54,7 +55,7 @@ require_once 'Net/SURBL.php';
  * @since      0.5.0
  * @access     public
  */
-class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_SpamProtection {
+class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck {
 
     // {{{ _options
     
@@ -92,31 +93,35 @@ class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_Spam
         'elements'      => array(
             'title',
             'excerpt',
+            'blog_name',
         ),
-        'comparefunc' => 'stripos',
+        'comparefunc' => array('Services_Trackback_SpamCheck_Wordlist', '_stripos'),
         'minmatches'    => 1,
     );
 
     // }}}
-    // {{{ create()
+    // {{{ Services_Trackback_SpamCheck_Wordlist()
 
     /**
-     * Factory.
-     * Create a new instance of the SURBL spam protection module.
+     * Constructor.
+     * Create a new instance of the Wordlist spam protection module.
      *
      * @since 0.5.0
-     * @static
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuose':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist servers. Indexed.
      *                       'comparefunc': A compare function callback with parameters $haystack, $needle (like 'stripos').
      *                       'minmatches':  How many words have to be found to consider spam.
-     * @return object(Services_Trackback_SpamCheck_SURBL) The newly created SpamCheck object.
+     * @return object(Services_Trackback_SpamCheck_WordList) The newly created SpamCheck object.
      */
-    function create($options = null)
+    function Services_Trackback_SpamCheck_Wordlist($options = null)
     {
-        $this->_options = $options;
+        if (is_array($options)) {
+            foreach ($options as $key => $val) {
+                $this->_options[$key] = $val;
+            }
+        }
     }
     
     // }}}
@@ -126,11 +131,13 @@ class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_Spam
     {
         $spamCount = 0;
         foreach ($this->_options['sources'] as $id => $source) {
-            if ($spam > 0 && !$this->_options['continuose']) {
+            if ($spamCount >= $this->_options['minmatches']  && !$this->_options['continuose']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
             } else {
-                $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
+                $res = $this->_checkSource($this->_options['sources'][$id], $trackback);
+                $spamCount += ($res === true) ? 1 : 0;
+                $this->_results[$id] = $res;
             }
         }
         return ($spamCount >= $this->_options['minmatches']);
@@ -143,12 +150,21 @@ class Services_Trackback_SpamProtection_Wordlist extends Services_Trackback_Spam
     {
         $spam = false;
         foreach ($this->_options['elements'] as $element) {
-            if (false !== $this->_options['comparefunc']($source, $trackback->get($element)) {
+            if (false !== call_user_func($this->_options['comparefunc'], $source, $trackback->get($element))) {
                 $spam = true;
                 break;
             }
         }
         return $spam;
+    }
+
+    // }}}
+    // {{{ _stripos()
+    
+    function _stripos($source, $element)
+    {
+        // echo "Search in " . strtolower($element) . " for '" . strtolower($source) . "'\n";
+        return (strpos(strtolower($element), strtolower($source)));
     }
 
     // }}}

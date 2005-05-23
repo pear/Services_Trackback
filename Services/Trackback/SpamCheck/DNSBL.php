@@ -37,7 +37,12 @@ require_once 'PEAR.php';
  * Load Net_DNSBL for spam cheching
  */
 require_once 'Net/DNSBL.php';
-   
+
+/**
+ * Load SpamCheck base class
+ */
+require_once 'Services/Trackback/SpamCheck.php';
+
     // }}}
 
 /**
@@ -54,7 +59,7 @@ require_once 'Net/DNSBL.php';
  * @since      0.5.0
  * @access     public
  */
-class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamProtection {
+class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck {
 
     // {{{ _options
     
@@ -85,23 +90,26 @@ class Services_Trackback_SpamProtection_DNSBL extends Services_Trackback_SpamPro
     var $_dnsbl;
 
     // }}}
-    // {{{ create()
+    // {{{ Services_Trackback_SpamCheck_DNSBL()
     
     /**
-     * Factory.
+     * Constructor.
      * Create a new instance of the DNSBL spam protection module.
      *
      * @since 0.5.0
-     * @static
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuose':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist nameservers. Indexed.
      * @return object(Services_Trackback_SpamCheck_DNSBL) The newly created SpamCheck object.
      */
-    function create($options = null)
+    function Services_Trackback_SpamCheck_DNSBL($options = null)
     {
-        $this->_options = $options;
+        if (is_array($options)) {
+            foreach ($options as $key => $val) {
+                $this->_options[$key] = $val;
+            }
+        }
         $this->_dnsbl = new Net_DNSBL();
     }
 
