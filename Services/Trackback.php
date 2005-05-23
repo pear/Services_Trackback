@@ -460,18 +460,18 @@ EOD;
             $data = $_POST;
         }
 
-        $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name');
+        $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name', 'host');
         $res = $this->_checkData(array('id'));
         if (PEAR::isError($res)) {
             return $res;
         }
-
+        var_dump($_SERVER['REMOTE_ADDR']);
+        $data['host'] = $_SERVER['REMOTE_ADDR'];
         $res = $this->_checkData($necessaryPostData, $data);
         if (PEAR::isError($res)) {
             return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
         }
 
-        $data['host'] = $_SERVER['REMOTE_ADDR'];
         $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
         return true;
     }

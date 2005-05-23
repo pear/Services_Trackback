@@ -177,6 +177,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
         $urls = '(?:http|file|ftp)';
         $ltrs = 'a-z0-9';
         $gunk = '.-';
+        $punc = $gunk;
         $any = "$ltrs$gunk";
         $regex = "{
                       $urls   ://
