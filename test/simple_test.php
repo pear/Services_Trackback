@@ -128,6 +128,17 @@ if (true === $conf['online']) {
 	    Var_Dump::display($trackback->checkSpam());
 	    // Var_Dump::display($trackback);
 	}
+	
+    head('Wordlist + DNSBL spam check');
+	
+	foreach ($trackbackData as $id =>  $set) {
+	    echo "\n\n-- $id --";
+	    $trackback = Services_Trackback::create($set);
+	    $trackback->createSpamCheck('Wordlist');
+	    $trackback->createSpamCheck('DNSBL');
+	    Var_Dump::display($trackback->checkSpam());
+	    // Var_Dump::display($trackback);
+	}
 
 }
     	
