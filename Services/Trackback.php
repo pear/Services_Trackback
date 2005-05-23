@@ -212,7 +212,7 @@ class Services_Trackback {
      * @see Services_Trackback::create()
      * @see Services_Trackback::getOptions()
      * @param array $options Pairs of 'option' => 'value' as described at @see Services_Trackback::create().
-     * @return mixed Bool true on success, otherwise PEAR::Error().
+     * @return mixed Bool true on success, otherwise PEAR_Error.
      */
     function setOptions($options) {
         foreach($options as $option => $value) {
@@ -268,7 +268,7 @@ class Services_Trackback {
      *
      * @since 0.2.0
      * @access public
-     * @return bool True on success, otherwise PEAR::Error.
+     * @return bool True on success, otherwise PEAR_Error.
      */
     function autodiscover()
     {
@@ -341,7 +341,7 @@ class Services_Trackback {
      * @since 0.3.0
      * @access public
      * @param string $data Additional data to complete the trackback.
-     * @return mixed True on success, otherwise PEAR::Error.
+     * @return mixed True on success, otherwise PEAR_Error.
      */
     function send($data = null)
     {
@@ -538,15 +538,54 @@ EOD;
      * @param object(Services_Trackback_SpamCheck) $spamCheck The spam check module to add.
      * @param int $priority A priority value for the spam check. Lower priority indices are processed earlier. 
      *                      If no priority level is set, 0 is assumed.
-     * @return bool True on success, otherwise PEAR::Error().
+     * @return mixed Added SpamCheck module instance on success, otherwise PEAR_Error.
      */
-    function addSpamCheck(&$spamCheck, $priority = 0)
+    function &addSpamCheck(&$spamCheck, $priority = 0)
     {
         if (!is_object($spamCheck) || !is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck')) {
             return PEAR::raiseError('Invalid spam check module.', -1);
         }
         $this->_spamChecks[$priority][] =& $spamCheck;
-        return true;
+        return $spamCheck;
+    }
+    
+    // }}}
+    // {{{ createSpamCheck()
+    
+    /**
+     * createSpamCheck
+     * Create and add a spam check module to the trackback.
+     *
+     * @since 0.5.0 
+     * @access public
+     * @see Services_Trackback::addSpamCheck()
+     * @see Services_Trackback::removeSpamCheck()
+     * @see Services_Trackback::checkSpam()
+     * @param string $spamCheckType Name of the spamcheck module to create and add.
+     * @param array $options Options for the spamcheckmodule.
+     * @param int $priority A priority value for the spam check. Lower priority indices are processed earlier. 
+     *                      If no priority level is set, 0 is assumed.
+     * @return mixed Instance of the created SpamCheck module or PEAR_Error.
+     */
+    function &createSpamCheck($spamCheckType, $options = array(), $priority = 0)
+    {
+        $filename = 'Services/Trackback/SpamCheck.php';
+        $createfunc = array('Services_Trackback_SpamCheck', 'create');
+        
+        // SpamCheck class already included?
+        if (!class_exists($createfunc[0])) {
+            include_once $filename;
+        }
+
+        // SpamCheck class successfully included?
+        if (!class_exists($createfunc[0])) {
+            return PEAR::raiseError('SpamCheck subclass not found. Broken installation!');
+        }
+        
+        $spamCheck =& call_user_func($createfunc, $spamCheckType, $options);
+        $res =& $this->addSpamCheck($spamCheck);
+        
+        return $res;
     }
     
     // }}}
@@ -561,7 +600,7 @@ EOD;
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::checkSpam()
      * @param object(Services_Trackback_SpamCheck) The spam check module to remove.
-     * @return bool True on success, otherwise PEAR::Error().
+     * @return bool True on success, otherwise PEAR_Error.
      */
     function removeSpamCheck(&$spamCheck)
     {
@@ -617,12 +656,12 @@ EOD;
     /**
      * get
      * Get data from the trackback. Returns the value of a given
-     * key or PEAR::Error.
+     * key or PEAR_Error.
      * 
      * @since 0.2.0
      * @access public
      * @param string $key The key to fetch a value for.
-     * @return mixed A string value or a PEAR::Error on failure.
+     * @return mixed A string value or a PEAR_Error on failure.
      */
     function get($key)
     {
@@ -635,13 +674,13 @@ EOD;
     /**
      * set
      * Set data of the trackback. Saves the value of a given
-     * key , returning true on success, PEAR::Error on faulure.
+     * key , returning true on success, PEAR_Error on faulure.
      * 
      * @since 0.2.0
      * @access public
      * @param string $key The key to set a value for.
      * @param string $val The value for the key.
-     * @return mixed Boolean true on success or a PEAR::Error on failure.
+     * @return mixed Boolean true on success or a PEAR_Error on failure.
      */
     function set($key, $val)
     {
@@ -658,7 +697,7 @@ EOD;
      * @since 0.2.0
      * @access protected
      * @param array $data The data array (@see Services_Trackback::create()).
-     * @return mixed True on success, otherwise PEAR::Error.
+     * @return mixed True on success, otherwise PEAR_Error.
      */
     function _fromArray($data) {
         $res = $this->_checkData(array('id'), $data);
@@ -791,7 +830,7 @@ EOD;
      * @param string $url1 The first URL.
      * @param string $url2 The second URL.
      * @param constant $strictness How strict to check URLs. Use one of SERVICES_TRACKBACK_STRICTNESS_* constants.
-     * @return mixed True on success, otherwise PEAR::Error.
+     * @return mixed True on success, otherwise PEAR_Error.
      */
     function _checkURLs($url1, $url2, $strictness)
     {
@@ -836,7 +875,7 @@ EOD;
      * @see Services_Trackback::send()
      * @since 0.3.0
      * @access protected
-     * @return void Mixed true on success, otherwise PEAR::Error.
+     * @return void Mixed true on success, otherwise PEAR_Error.
      */
     function _interpretTrackbackResponse($response)
     {
