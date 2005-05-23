@@ -5,8 +5,15 @@ set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path(
 
     // {{{ require_once
 
+// Services_Trackback classes
 require_once 'Services/Trackback.php';
+require_once 'Services/Trackback/SpamCheck.php';
+
+// Unittest suite
 require_once 'PHPUnit.php';
+
+// Testdata
+require_once 'test/trackback_data.php';
 
     // }}}
 
@@ -36,10 +43,7 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
     // {{{ Test create()
 
     function test_create() {
-        $data = array(
-            'title' => 'Test title.',
-            'id'    => 'Test'
-        );
+        global $trackbackData;
         $options = array(
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
@@ -52,8 +56,8 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
         );
         $fakeTrack = new Services_Trackback;
         $fakeTrack->_options = $options;
-        $fakeTrack->_data = $data;
-        $this->assertTrue(Services_Trackback::create($data, $options) == $fakeTrack);
+        $fakeTrack->_data = $trackbackData['nospam'];
+        $this->assertTrue(Services_Trackback::create($trackbackData['nospam'], $options) == $fakeTrack);
     }
 
     // }}}
@@ -128,7 +132,8 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 
     function test_send()
     {
-        $track = Services_Trackback::create(array('id' => 'Test', ));
+        global $trackbackData;
+        $track = Services_Trackback::create($trackbackData['nospam']);
     }
 
     // }}}
@@ -136,49 +141,45 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 
     function test_getAutodiscoveryCode_nocomments()
     {
+        global $trackbackData;
+        $data = $trackbackData['nospam'];
+        
         $xml = <<<EOD
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
     <rdf:Description
-        rdf:about="http://www.example.com/trackback_test?a=1&amp;b=2"
-        dc:identifier="http://www.example.com/trackback_test?a=1&amp;b=2"
-        dc:title="Some strange test data: @&lt;&gt;&amp;?"
-        trackback:ping="http://www.example.com/trackback/test" />
+        rdf:about="%s"
+        dc:identifier="%s"
+        dc:title="%s"
+        trackback:ping="%s" />
 </rdf:RDF>
 
 EOD;
-        $data = array(
-            'title' => 'Some strange test data: @<>&?',
-            'url'  => 'http://www.example.com/trackback_test?a=1&b=2',
-            'trackback_url' => 'http://www.example.com/trackback/test',
-            'id' => 1
-        );
+        $xml = sprintf($xml, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
         $track = Services_Trackback::create($data);
         $this->assertTrue($track->getAutodiscoveryCode(false) == $xml);
     }
     function test_getAutodiscoveryCode_comments()
     {
+        global $trackbackData;
+        $data = $trackbackData['nospam'];
+        
         $xml = <<<EOD
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
     <rdf:Description
-        rdf:about="http://www.example.com/trackback_test?a=1&amp;b=2"
-        dc:identifier="http://www.example.com/trackback_test?a=1&amp;b=2"
-        dc:title="Some strange test data: @&lt;&gt;&amp;?"
-        trackback:ping="http://www.example.com/trackback/test" />
+        rdf:about="%s"
+        dc:identifier="%s"
+        dc:title="%s"
+        trackback:ping="%s" />
 </rdf:RDF>
 -->
 
 EOD;
-        $data = array(
-            'title' => 'Some strange test data: @<>&?',
-            'url'  => 'http://www.example.com/trackback_test?a=1&b=2',
-            'trackback_url' => 'http://www.example.com/trackback/test',
-            'id' => 1
-        );
+        $xml = sprintf($xml, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
         $track = Services_Trackback::create($data);
         $this->assertTrue($track->getAutodiscoveryCode() == $xml);
     }
@@ -188,16 +189,17 @@ EOD;
     
     function test_receive()
     {
-        $postData = array(
-            'title' => 'Little test entry...',
-            'excerpt' => 'This is the story of foo, bar and baz.',
-            'url' => 'http://www.example.com/blog/entries/18-foo-bar-baz.htm',
-            'blog_name' => 'Little test blog.'
-        );
+        global $trackbackData;
+        $postData = $trackbackData['nospam'];
         $data = $postData;
+        
         $data['id'] = 1;
+        // Not set during receive()
+        unset($data['host']);
+        unset($data['trackback_url']);
+        
         $recTrack = Services_Trackback::create(array('id' => 1));
-        $recTrack->receive($data);
+        $recTrack->receive($postData);
         $this->assertTrue($recTrack == Services_Trackback::create($data));
     }
 
@@ -248,6 +250,25 @@ EOD;
     }
     
     // }}}
+    // {{{ Test createSpamCheck
+    
+    function test_createSpamCheck_success()
+    {
+        global $trackbackData;
+        $trackback = new Services_Trackback($trackbackData['nospam']);
+        $spamCheck = Services_Trackback_SpamCheck::create('DNSBL');
+        $this->assertTrue($trackback->createSpamCheck('DNSBL') == $spamCheck);
+    }
+    
+    function test_createSpamCheck_failure()
+    {
+        global $trackbackData;
+        $trackback = new Services_Trackback($trackbackData['nospam']);
+        $spamCheck = Services_Trackback_SpamCheck::create('DNS');
+        $this->assertTrue(PEAR::isError($spamCheck));
+    }
+    
+    // }}}
     // {{{ Test removeSpamCheck
     
     function test_removeSpamCheck_success()
@@ -258,32 +279,24 @@ EOD;
         $this->assertTrue($trackback->removeSpamCheck($spamCheck));
     }
     
-    function test_addSpamCheck_failure()
+    function test_removeSpamCheck_failure()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
         $trackback->addSpamCheck($spamCheck);
-        $spamCheck2 = new Services_Trackback_SpamCheck()
+        $spamCheck2 = new Services_Trackback_SpamCheck();
         $this->assertTrue(PEAR::isError($trackback->removeSpamCheck($spamCheck2)));
     }
     
     // }}}
-    // {{{ Test removeSpamCheck
-   
-    // To be implemented when spam check modules are unitested.
-   
-    // }}}
     // {{{ Test _fromArray()
 
     function test_fromArray() {
-        $data = array(
-            'title' => 'Test title.',
-            'id'    => 'Test'
-        );
+        global $trackbackData;
         $fakeTrack = new Services_Trackback;
-        $fakeTrack->_data = $data;
+        $fakeTrack->_data = $trackbackData['nospam'];
         $realTrack = new Services_Trackback;
-        $realTrack->_fromArray($data);
+        $realTrack->_fromArray($trackbackData['nospam']);
         $this->assertTrue($realTrack == $fakeTrack);
     }
 
@@ -291,7 +304,9 @@ EOD;
     // {{{ Test _getContent()
 
     function test_getContent() {
-      $url = 'http://www.example.com';
+        global $trackbackData;
+        $trackback = Services_Trackback::create($trackbackData['nospam']);
+        $url = 'http://www.example.com';
         $res = <<<EOD
 <HTML>
 <HEAD>
@@ -308,7 +323,7 @@ EOD;
 </HTML>
 EOD;
 
-        $this->assertTrue(trim(Services_Trackback::_getContent($url)) == trim($res));
+        $this->assertTrue(trim($trackback->_getContent($url)) == trim($res));
     }
 
     // }}}
