@@ -458,6 +458,7 @@ EOD;
     {
         if (!isset($data)) {
             $data = $_POST;
+            $data['host'] = $_SERVER['REMOTE_ADDR'];
         }
 
         $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name', 'host');
@@ -465,8 +466,6 @@ EOD;
         if (PEAR::isError($res)) {
             return $res;
         }
-        var_dump($_SERVER['REMOTE_ADDR']);
-        $data['host'] = $_SERVER['REMOTE_ADDR'];
         $res = $this->_checkData($necessaryPostData, $data);
         if (PEAR::isError($res)) {
             return PEAR::raiseError('POST data incomplete: '.$res->getMessage());

@@ -1,6 +1,6 @@
 <?php
 
-set_include_path('.:/cvs/pear/Services_Trackback:/usr/php4/share/pear');
+// set_include_path('.:/cvs/pear/Services_Trackback:/usr/php4/share/pear');
 
 $conf = array(
     'online' => true,

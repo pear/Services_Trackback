@@ -195,7 +195,7 @@ EOD;
         
         $data['id'] = 1;
         // Not set during receive()
-        unset($data['host']);
+        // unset($data['host']);
         unset($data['trackback_url']);
         
         $recTrack = Services_Trackback::create(array('id' => 1));
