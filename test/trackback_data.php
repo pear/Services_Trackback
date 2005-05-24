@@ -14,7 +14,7 @@ $trackbackData['nospam'] = array(
 // Spam - undetected
 $trackbackData['undetected'] = array(
     'id'        => 1,
-    'host'        => '210.240.77.6',
+    'host'        => '210.240.77.8',
     'title'     => 'texas holdem',
     'excerpt'   => 'You may find it interesting to visit the sites about <A HREF="http://www.ua-princeton.com/">texas holdem</A>',
     'url'       => 'http://www.ua-princeton.com/',
@@ -48,7 +48,7 @@ $trackbackData['host'] = array(
 // Spam - detectable by title (Wordlist)
 $trackbackData['title'] = array(
     'id'        => 1,
-    'host'      => '210.240.77.6',
+    'host'      => '210.240.77.8',
     'title'     => 'Sex porn anal oral',
     'excerpt'   => 'You may find it interesting to visit the sites about <A HREF="http://www.ua-princeton.com/">texas holdem</A>',
     'url'       => 'http://www.ua-princeton.com/',
@@ -59,7 +59,7 @@ $trackbackData['title'] = array(
 // Spam - detectable by excerpt (Wordlist, SURBL)
 $trackbackData['excerpt'] = array(
     'id'        => 1,
-    'host'        => '210.240.77.6',
+    'host'        => '210.240.77.8',
     'title'     => 'texas holdem',
     'excerpt'   => 'You can also check the sites about <A HREF="http://www.e-poker-777.com/free-online-poker.html">free online poker</A> <A HREF="http://www.juris-net.com/video-poker.html">video poker</A>',
     'url'       => 'http://www.ua-princeton.com/',
@@ -70,7 +70,7 @@ $trackbackData['excerpt'] = array(
 // Spam - detectable url (SURBL)
 $trackbackData['url'] = array(
     'id'        => 1,
-    'host'        => '210.240.77.6',
+    'host'        => '210.240.77.8',
     'title'     => 'texas holdem',
     'excerpt'   => 'You may find it interesting to visit the sites about <A HREF="http://www.ua-princeton.com/">texas holdem</A>',
     'url'       => 'http://www.e-poker-777.com/funny-crap-to-download.html',
@@ -81,7 +81,7 @@ $trackbackData['url'] = array(
 // Spam - detectable blog_name (Wordlist)
 $trackbackData['blog_name'] = array(
     'id'        => 1,
-    'host'        => '210.240.77.6',
+    'host'        => '210.240.77.8',
     'title'     => 'texas holdem',
     'excerpt'   => 'You may find it interesting to visit the sites about <A HREF="http://www.ua-princeton.com/">texas holdem</A>',
     'url'       => 'http://www.ua-princeton.com/',
