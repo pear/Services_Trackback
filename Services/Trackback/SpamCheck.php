@@ -99,13 +99,23 @@ class Services_Trackback_SpamCheck {
     function &create($type, $options = null)
     {
         $filename = 'Services/Trackback/SpamCheck/' . $type . '.php';
+        $filepathes[] = dirname(__FILE__).'/SpamCheck/'.$type.'.php';
+        $filepathes[] = dirname(__FILE__).'/'.$type.'.php';
         $classname = 'Services_Trackback_SpamCheck_' . $type;
 
-        @include_once $filename;
+        // Check if class already exists or is includeable
+        if (!class_exists($classname)) {
+            if (file_exists($filepathes[0]) || file_exists($filepathes[1])) {
+                include_once $filename;
+            } 
+        }
+       
+        // We now definitly have to have the class available else the spam check
+        // contained errors / is unavailable.
         if (!class_exists($classname)) {
             return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
         }
-        
+       
         return new $classname(@$options);
     }
     

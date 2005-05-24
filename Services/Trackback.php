@@ -568,12 +568,16 @@ EOD;
      */
     function &createSpamCheck($spamCheckType, $options = array(), $priority = 0)
     {
-        $filename = 'Services/Trackback/SpamCheck.php';
+        $filename = dirname(__FILE__).'/Trackback/SpamCheck.php';
         $createfunc = array('Services_Trackback_SpamCheck', 'create');
         
         // SpamCheck class already included?
         if (!class_exists($createfunc[0])) {
-            @include_once $filename;
+            if (!file_exists($filename)) {
+                return PEAR::raiseError('SpamCheck subclass not found. Broken installation!');
+            } else {
+                include_once $filename;
+            }
         }
 
         // SpamCheck class successfully included?
