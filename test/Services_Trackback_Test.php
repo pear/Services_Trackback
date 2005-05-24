@@ -1,7 +1,7 @@
 <?php
 
 // Includepath for local CVS development
-set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
+// set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
 
     // {{{ require_once
 
@@ -13,7 +13,7 @@ require_once 'Services/Trackback/SpamCheck.php';
 require_once 'PHPUnit.php';
 
 // Testdata
-require_once 'test/trackback_data.php';
+require_once dirname(__FILE__).'/trackback_data.php';
 
     // }}}
 

@@ -14,7 +14,7 @@ require_once 'Services/Trackback/SpamCheck/Regex.php';
 require_once 'PHPUnit.php';
 
 // Testdata
-require_once 'test/trackback_data.php';
+require_once dirname(__FILE__).'/trackback_data.php';
 
     // }}}
 

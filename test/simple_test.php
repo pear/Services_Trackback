@@ -46,7 +46,7 @@ if (isset($_SERVER['REQUEST_URI'])) {
 // }}}
 
 require_once 'Services/Trackback.php';
-require_once 'test/trackback_data.php';
+require_once dirname(__FILE__).'/trackback_data.php';
 
 $trackback = new Services_Trackback($trackbackData['nospam']);
 
