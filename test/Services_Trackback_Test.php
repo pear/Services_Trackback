@@ -307,7 +307,7 @@ EOD;
         global $trackbackData;
         $trackback = Services_Trackback::create($trackbackData['nospam']);
         $url = 'http://www.example.com';
-        $res = <<<EOD
+        $fakeRes = <<<EOD
 <HTML>
 <HEAD>
   <TITLE>Example Web Page</TITLE>
@@ -322,8 +322,14 @@ EOD;
 </BODY>
 </HTML>
 EOD;
+   
+        $res = $trackback->_getContent($url);
+        if (PEAR::isError($res)) {
+            $this->fail($res->getMessage());
+            return;
+        }
 
-        $this->assertTrue(trim($trackback->_getContent($url)) == trim($res));
+        $this->assertTrue(trim($res) == trim($fakeRes));
     }
 
     // }}}

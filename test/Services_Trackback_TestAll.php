@@ -1,5 +1,9 @@
 <?php
 
+if (isset($argc[2]) && $argc[2] == 'dev') {
+    ini_set('include_path', dirname(__FILE__).PATH_SEPERATOR.ini_get('include_path'));
+}
+
 echo "\n\nRunning test suite for Services_Trackback\n\n";
 require_once 'Services_Trackback_Test.php';
 

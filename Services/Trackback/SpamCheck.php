@@ -115,8 +115,8 @@ class Services_Trackback_SpamCheck {
         if (!class_exists($classname)) {
             return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
         }
-       
-        return new $classname(@$options);
+        $res = new $classname(@$options);
+        return $res;
     }
     
     // }}}
@@ -141,6 +141,7 @@ class Services_Trackback_SpamCheck {
             if ($spam && !$this->_options['continuose']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
+                break;
             } else {
                 $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
                 $spam = ($spam || $this->_results[$id]);

@@ -312,7 +312,7 @@ class Services_Trackback {
         $trackbackUrl = trim($matches[1]);
 
         // Check if the URL to trackback matches the identifier from the autodiscovery code
-        $res = $this->_checkURLs($url, $identifier, $strictness);
+        $res = $this->_checkURLs($url, $identifier, $this->_options['strictness']);
         if (PEAR::isError($res)) {
             return $res;
         }
@@ -346,6 +346,7 @@ class Services_Trackback {
     function send($data = null)
     {
         // Load HTTP_Request
+        // @TODO: Make include_once
         @require_once 'HTTP/Request.php';
         if (!class_exists('HTTP_Request')) {
             return PEAR::raiseError('Unable to load PEAR::HTTP_Request.');
@@ -375,7 +376,7 @@ class Services_Trackback {
         $req->setMethod(HTTP_REQUEST_METHOD_POST);
         
         // Add HTTP headers
-        $req->addHeader("User-Agent", $this->options['useragent']);
+        $req->addHeader("User-Agent", $this->_options['useragent']);
         
         // Adding data to send
         $req->addPostData('url', $this->_data['url']);
@@ -726,11 +727,11 @@ EOD;
      */
     function _getContent($url)
     {
-        $handle = fopen($url, 'r');
-        stream_set_timeout($handle, $this->_options['timeout']);
+        $handle = @fopen($url, 'r');
         if (!is_resource($handle)) {
             return PEAR::raiseError('Could not open URL "'.$url.'"');
         }
+        stream_set_timeout($handle, $this->_options['timeout']);
 
         $content = '';
         for ($i = 0; ($i < $this->_options['fetchlines']) && !feof($handle);$i++) {
@@ -840,7 +841,7 @@ EOD;
         switch ($strictness) {
             case SERVICES_TRACKBACK_STRICTNESS_HIGH:
                 if ($url1 !== $url2) {
-                    return PEAR::raiseError('URLs mismatch. "'.$url.'" !== "'.$identifier.'".');
+                    return PEAR::raiseError('URLs mismatch. "'.$url1.'" !== "'.$url2.'".');
                 }
                 break;
             
