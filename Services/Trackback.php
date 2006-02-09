@@ -19,7 +19,7 @@
  * @category   Webservices
  * @package    Trackback
  * @author     Tobias Schlitt <toby@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  2005-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Services_Trackback
@@ -73,7 +73,7 @@ define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
  * @category   Webservices
  * @package    Trackback
  * @author     Tobias Schlitt <toby@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  2005-2006 The PHP Group
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Services_Trackback
  * @since      0.1.0
