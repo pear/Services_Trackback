@@ -14,12 +14,12 @@ $trackbackData['nospam'] = array(
 // Spam - undetected
 $trackbackData['undetected'] = array(
     'id'        => 1,
-    'host'        => '210.240.77.8',
-    'title'     => 'texas holdem',
-    'excerpt'   => 'You may find it interesting to visit the sites about <A HREF="http://www.ua-princeton.com/">texas holdem</A>',
-    'url'       => 'http://www.ua-princeton.com/',
-    'blog_name' => 'texas holdem',
-    'trackback_url' => 'http://www.example.com/',
+    'host'        => '217.160.181.63',
+    'title'     => 'Test',
+    'excerpt'   => 'Test',
+    'url'       => 'http://www.schlitt.info/',
+    'blog_name' => 'Tobias Schlitt, Weblog',
+    'trackback_url' => 'http://www.schlitt.info/',
 );
 
 // Spam - detectable by host (DNSBL), title (Wordlist), excerpt (Wordlist, SURBL), url (SURBL), blog_name (Wordlist)

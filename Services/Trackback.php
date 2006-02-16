@@ -120,7 +120,7 @@ class Services_Trackback {
         'fetchlines'        => 30,
         'fetchextra'        => true,
         // Options for HTTP_Request class
-        'httpRequest'       => array(
+        'httprequest'       => array(
             'allowRedirects'    => true,
             'maxRedirects'      => 2,
             'useragent'         => 'PEAR::Services_Trackback v@package_version@'
@@ -175,7 +175,7 @@ class Services_Trackback {
      *      'strictness':       int     The default strictness to use in @see Services_Trackback::autodiscover().
      *      'timeout':          int     The default timeout for network operations in seconds.
      *      'fetchlines':       int     The max number of lines to fetch over the network.
-     *      'httpRequest'       array   The options utilized by HTTP_Request are stored here.
+     *      'httprequest'       array   The options utilized by HTTP_Request are stored here.
      *                                  The following options are the most commonly used for HTTP_Request in
      *                                  Services_Trackback. All other options are supported too, 
      *                                  @see HTTP_Request::HTTP_Request() for more detailed documentation.
@@ -189,13 +189,17 @@ class Services_Trackback {
      * @return object(Services_Trackback) The newly created Trackback.
      */
     function &create($data, $options = null) {
-        $options = isset($options) ? $options : array();
+        // Sanity check
+        $options = isset($options) && is_array($options) ? $options : array();
+        
+        // Create trackback
         $trackback = new Services_Trackback();
         $res = $trackback->_fromArray($data);
+        
         if (PEAR::isError($res)) {
             return $res;
         }
-
+        
         $res = $trackback->setOptions($options);
         if (PEAR::isError($res)) {
             return $res;
@@ -226,17 +230,27 @@ class Services_Trackback {
             switch ($option) {
                 case 'strictness':
                     if (!is_int($value) || ($value < 1) || ($value > 3)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be one of SERVICES_TRACKBACK_STRICTNESS_LOW, SERVICES_TRACKBACK_STRICTNESS_MIDDLE, SERVICES_TRACKBACK_STRICTNESS_HIGH.');
                     }
                     break;
                 case 'timeout':
                     if (!is_int($value) || ($value < 0)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 0.');
                     }
                     break;
-                case 'fetchsize':
+                case 'fetchlines':
                     if (!is_int($value) || ($value < 1)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'".');
+                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 1.');
+                    }
+                    break;
+                case 'fetchextra':
+                    if (!is_bool($value)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be bool.');
+                    }
+                    break;
+                case 'httprequest':
+                    if (!is_array($value)) {
+                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be array.');
                     }
                     break;
             }
@@ -372,7 +386,7 @@ class Services_Trackback {
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
 
         // Changed in 0.5.0 All HTTP_Request options are now supported.
-        $options = $this->_options['httpRequest'];
+        $options = $this->_options['httprequest'];
         $options['timeout'] = $this->_options['timeout'];
         
         // Create new HTTP_Request

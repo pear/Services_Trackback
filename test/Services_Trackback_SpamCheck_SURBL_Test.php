@@ -68,11 +68,11 @@ class Webservices_Trackback_SpamCheck_SURBL_TestCase extends PHPUnit_TestCase
     function test_check_success_all() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
     }
-    function test_check_failure_host() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['host']));
+    function test_check_success_host() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
     }
     function test_check_failure_title() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['title']));
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['title']));
     }
     function test_check_success_excerpt() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['excerpt']));
@@ -80,8 +80,8 @@ class Webservices_Trackback_SpamCheck_SURBL_TestCase extends PHPUnit_TestCase
     function test_check_success_url() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['url']));
     }
-    function test_check_failure_blog_name() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['blog_name']));
+    function test_check_success() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['blog_name']));
     }
     // }}}
     // {{{ Test getResults()

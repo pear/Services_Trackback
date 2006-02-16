@@ -48,7 +48,8 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
-            'httpRequest'       => array(
+            'fetchextra'        => true,
+            'httprequest'       => array(
                 'allowRedirects'    => false,
                 'maxRedirects'      => 0,
                 'useragent'         => 'Mozilla 10.0',
@@ -68,7 +69,8 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
-            'httpRequest'       => array(
+            'fetchextra'        => true,
+            'httprequest'       => array(
                 'allowRedirects'    => false,
                 'maxRedirects'      => 0,
                 'useragent'         => 'Mozilla 10.0',
@@ -200,7 +202,9 @@ EOD;
         
         $recTrack = Services_Trackback::create(array('id' => 1));
         $recTrack->receive($postData);
-        $this->assertTrue($recTrack == Services_Trackback::create($data));
+        $fakeTrack = Services_Trackback::create($data);
+        $fakeTrack->set('extra', $_SERVER);
+        $this->assertTrue($recTrack == $fakeTrack);
     }
 
     // }}}
@@ -306,22 +310,8 @@ EOD;
     function test_getContent() {
         global $trackbackData;
         $trackback = Services_Trackback::create($trackbackData['nospam']);
-        $url = 'http://www.example.com';
-        $fakeRes = <<<EOD
-<HTML>
-<HEAD>
-  <TITLE>Example Web Page</TITLE>
-</HEAD> 
-<body>  
-<p>You have reached this web page by typing &quot;example.com&quot;,
-&quot;example.net&quot;,
-  or &quot;example.org&quot; into your web browser.</p>
-<p>These domain names are reserved for use in documentation and are not available 
-  for registration. See <a href="http://www.rfc-editor.org/rfc/rfc2606.txt">RFC 
-  2606</a>, Section 3.</p>
-</BODY>
-</HTML>
-EOD;
+        $url = 'http://schlitt.info/projects/PEAR/Services_Trackback/test_getContent.txt';
+        $fakeRes = "Test text.\n";
    
         $res = $trackback->_getContent($url);
         if (PEAR::isError($res)) {
