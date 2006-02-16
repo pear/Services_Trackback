@@ -98,6 +98,7 @@ class Services_Trackback {
         'url'           => '',
         'trackback_url' => '',
         'host'          => '',
+        'extra'         => array(),
     );
 
     // }}}
@@ -117,6 +118,7 @@ class Services_Trackback {
         'strictness'        => SERVICES_TRACKBACK_STRICTNESS_LOW,
         'timeout'           => 30,          // seconds
         'fetchlines'        => 30,
+        'fetchextra'        => true,
         // Options for HTTP_Request class
         'httpRequest'       => array(
             'allowRedirects'    => true,
@@ -131,6 +133,7 @@ class Services_Trackback {
     var $_spamChecks = array();
 
     // }}}
+
     // {{{ Services_Trackback()
 
     /**
@@ -167,6 +170,7 @@ class Services_Trackback {
      *      'blog_name'         string  Name of the trackback sending/receiving weblog.
      *      'url'               string  URL of the trackback sending/receiving blog entry.
      *      'trackback_url'     string  URL to send trackbacks to.
+     *      'extra'             array   Content of $_SERVER, captured while doing Services_Trackback::receive().
      * @param array $options Options to set for this trackback. Valid options:
      *      'strictness':       int     The default strictness to use in @see Services_Trackback::autodiscover().
      *      'timeout':          int     The default timeout for network operations in seconds.
@@ -473,6 +477,9 @@ EOD;
         }
 
         $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
+        if ($this->_options['fetchextra'] === true) {
+            $this->_data['extra'] = $_SERVER;
+        }
         return true;
     }
 
@@ -655,6 +662,7 @@ EOD;
     }
     
     // }}}
+
     // {{{ get()
 
     /**
@@ -693,6 +701,7 @@ EOD;
     }
 
     // }}}
+
     // {{{ _fromArray()
 
     /**
