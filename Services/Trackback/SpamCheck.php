@@ -64,7 +64,7 @@ class Services_Trackback_SpamCheck {
      * @access protected
      */
     var $_options = array(
-        'continuose'    => false,
+        'continuous'    => false,
         'sources'       => array(),
     );
 
@@ -90,7 +90,7 @@ class Services_Trackback_SpamCheck {
      * @static
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuose':  Whether to continue checking more sources, if a match has been found.
+     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of different sources for this module to check (eg. blacklist URLs,
      *                                      word arrays,...).
      *                       All further options depend on the specific module.
@@ -126,7 +126,7 @@ class Services_Trackback_SpamCheck {
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam. Generally this method
      * may not be overwritten, but it can be, if necessary. This method calls the _checkSource() method
-     * for each source defined in the $_options array (depending on the 'continuose' option), saves the 
+     * for each source defined in the $_options array (depending on the 'continuous' option), saves the 
      * results and returns the spam status determined by the check.
      *
      * @since 0.5.0
@@ -138,7 +138,7 @@ class Services_Trackback_SpamCheck {
         $this->reset();
         $spam = false;
         foreach ($this->_options['sources'] as $id => $source) {
-            if ($spam && !$this->_options['continuose']) {
+            if ($spam && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
                 break;

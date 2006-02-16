@@ -71,7 +71,7 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck {
      * @access protected
      */
     var $_options = array(
-        'continuose'    => false,
+        'continuous'    => false,
         'sources'       => array(
             'bl.spamcop.net'
         ),
@@ -99,7 +99,7 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck {
      * @since 0.5.0
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuose':  Whether to continue checking more sources, if a match has been found.
+     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist nameservers. Indexed.
      * @return object(Services_Trackback_SpamCheck_DNSBL) The newly created SpamCheck object.
      */

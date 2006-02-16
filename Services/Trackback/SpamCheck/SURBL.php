@@ -71,7 +71,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
      * @access protected
      */
     var $_options = array(
-        'continuose'    => false,
+        'continuous'    => false,
         'sources'       => array(
             'multi.surbl.org'
         ),
@@ -116,7 +116,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
      * @since 0.5.0
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuose':  Whether to continue checking more sources, if a match has been found.
+     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist servers. Indexed.
      *                       'elements'     Array of trackback data fields extract URLs from (standard is 'title' 
      *                                      and 'excerpt').

@@ -67,7 +67,7 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
      * @access protected
      */
     var $_options = array(
-        'continuose'    => false,
+        'continuous'    => false,
         'sources'       => array(
             '(porn|sex|viagra|erection|anal|gambling|poker|casino|pharmacy|drugs|adipex|naproxen|xanax|phentermine|diet|smoking|rheuma|roulette|payday|loan)',       
         ),
@@ -92,7 +92,7 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
      * @since 0.5.0
      * @access public
      * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuose':  Whether to continue checking more sources, if a match has been found.
+     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist servers. Indexed.
      *                       'comparefunc': A compare function callback with parameters $haystack, $needle (like 'stripos').
      *                       'minmatches':  How many words have to be found to consider spam.
@@ -114,7 +114,7 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
     {
         $spamCount = 0;
         foreach ($this->_options['sources'] as $id => $source) {
-            if ($spamCount >= $this->_options['minmatches']  && !$this->_options['continuose']) {
+            if ($spamCount >= $this->_options['minmatches']  && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
             } else {
