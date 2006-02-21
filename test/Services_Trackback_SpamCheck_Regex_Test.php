@@ -68,8 +68,8 @@ class Webservices_Trackback_SpamCheck_Regex_TestCase extends PHPUnit_TestCase
     function test_check_success_all() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
     }
-    function test_check_failure_host() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['host']));
+    function test_check_success_host() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
     }
     function test_check_success_title() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['title']));

@@ -71,8 +71,8 @@ class Webservices_Trackback_SpamCheck_Wordlist_TestCase extends PHPUnit_TestCase
     function test_check_success_decode() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['decode']));
     }
-    function test_check_failure_host() {
-        $this->assertFalse($this->spamCheck->check($this->trackbacks['host']));
+    function test_check_success_host() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
     }
     function test_check_success_title() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['title']));
@@ -80,8 +80,8 @@ class Webservices_Trackback_SpamCheck_Wordlist_TestCase extends PHPUnit_TestCase
     function test_check_success_excerpt() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['excerpt']));
     }
-    function test_check_failure_url() {
-        $this->assertFalse($this->spamCheck->check($this->trackbacks['url']));
+    function test_check_success_url() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['url']));
     }
     function test_check_success_blog_name() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['blog_name']));
@@ -92,7 +92,7 @@ class Webservices_Trackback_SpamCheck_Wordlist_TestCase extends PHPUnit_TestCase
     function test_getResults() {
         $this->spamCheck->check($this->trackbacks['all']);
         $results = $this->spamCheck->getResults();
-        $this->assertTrue($results[3]);
+        $this->assertTrue($results[9]);
     }
 
     // }}}

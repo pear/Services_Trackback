@@ -69,7 +69,7 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
     var $_options = array(
         'continuous'    => false,
         'sources'       => array(
-            '(porn|sex|viagra|erection|anal|gambling|poker|casino|pharmacy|drugs|adipex|naproxen|xanax|phentermine|diet|smoking|rheuma|roulette|payday|loan)',       
+            '(acne|adipex|anal|blackjack|cash|casino|cigar|closet|daystore|drugs|erection|fundslender|gambling|hire|hydrocodone|investing|lasik|loan|mattress|mortgage|naproxen|neurontin|payday|penis|pharma|phentermine|poker|porn|rheuma|roulette|sadism|sex|smoking|texas hold|tramadol|uxury|viagra|vioxx|weight loss|xanax|zantac)',
         ),
         'elements'      => array(
             'title',
