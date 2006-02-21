@@ -89,4 +89,15 @@ $trackbackData['blog_name'] = array(
     'trackback_url' => 'http://www.example.com/',
 );
 
+// Spam - detectable by excerpt through Wordlist and Regex
+$trackbackData['decode'] = array(
+    'id'        => 1,
+    'host'      => '127.0.0.2',
+    'title'     => 'xanax',
+    'excerpt'   => 'You can also check the p&#x6F;rn sites about <A HREF="http://www.e-p&#x6F;ker-777.com/free-&#x6F;nline-p&#x6F;ker.html">free online diet</A>',
+    'url'       => 'http://www.e-p&#x6F;ker-777.com/funny-crap-t&#x6F;-d&#x6F;wnload.html',
+    'blog_name' => 'viagra-test-123',
+    'trackback_url' => 'http://www.example.com/',
+);
+
 ?>

@@ -68,6 +68,9 @@ class Webservices_Trackback_SpamCheck_Wordlist_TestCase extends PHPUnit_TestCase
     function test_check_success_all() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
     }
+    function test_check_success_decode() {
+        $this->assertTrue($this->spamCheck->check($this->trackbacks['decode']));
+    }
     function test_check_failure_host() {
         $this->assertFalse($this->spamCheck->check($this->trackbacks['host']));
     }

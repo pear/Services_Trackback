@@ -150,7 +150,10 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     {
         $spam = false;
         foreach ($this->_options['elements'] as $element) {
-            if (false !== call_user_func($this->_options['comparefunc'], $source, $trackback->get($element))) {
+            $elements[$element] = html_entity_decode($trackback->get($element));
+        }
+        foreach ($elements as $element) {
+            if (false !== call_user_func($this->_options['comparefunc'], $source, $element)) {
                 $spam = true;
                 break;
             }

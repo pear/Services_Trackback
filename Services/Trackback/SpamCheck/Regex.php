@@ -135,7 +135,10 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
         $mod = $this->_options['modifier'];
         $spam = false;
         foreach ($this->_options['elements'] as $element) {
-            if (0 !== preg_match($del.$source.$del.$mod, $trackback->get($element))) {
+            $elements[$element] = html_entity_decode($trackback->get($element));
+        }
+        foreach ($elements as $element) {
+            if (0 !== preg_match($del.$source.$del.$mod, $element)) {
                 $spam = true;
                 break;
             }
