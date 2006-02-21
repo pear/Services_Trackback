@@ -24,7 +24,7 @@ $p2->setOptions(
             'doc*',
         ),
         'dir_roles'         => array(
-            'tests'     => 'test',
+            'test'     => 'test',
         ),
         'simpleoutput'      => true,
     )
@@ -39,18 +39,19 @@ $p2->setPackageType('php');
 
 $p2->generateContents();
 
-$p2->setReleaseVersion('0.5.1');
-$p2->setAPIVersion('0.5.0');
-$p2->setReleaseStability('alpha');
-$p2->setAPIStability('alpha');
+$p2->setReleaseVersion('0.6.0');
+$p2->setAPIVersion('0.6.0');
+$p2->setReleaseStability('beta');
+$p2->setAPIStability('beta');
 
 $notes = <<<EOT
-* Fixed Bug #5667: HTTP_Request::getRequestCode( ) - no such function for the latest HTTP_Request.
-* Fixed Bug #6341: Undefined variable on line 315 & 378.
+* New data added: 'extra' contains the content of the $_SERVER array now, when 
+receiving a trackback.
+* Option 'continuous' is spelled correctly now.
+* The wordlist and regex filter do now decode HTML entities.
+* New spam check, to check against Akismet.com web service.
 * Fixed reference issues.
-* Fixed small issue in continuous spam checks.
-* Fix PEAR_Error issue in test cases.
-* Added development environment include_path settings to test runner.
+* More common spam words in the wordlist and regex spam checks.
 EOT;
 
 $p2->setNotes($notes);
@@ -68,6 +69,9 @@ $p2->setLicense('PHP License', 'http://www.php.net/license');
 
 $p2->addDependencyGroup('autodiscover', 'Usage of Services_Trackback::autodiscover().');
 $p2->addGroupPackageDepWithChannel('package', 'autodiscover', 'HTTP_Request', 'pear.php.net');
+
+$p2->addDependencyGroup('akismet', 'Akismet.com spam checks.');
+$p2->addGroupPackageDepWithChannel('package', 'akismet', 'HTTP_Request', 'pear.php.net');
 
 $p2->addDependencyGroup('dnsbl', 'DNSBL/SURBL spam checks.');
 $p2->addGroupPackageDepWithChannel('package', 'dnsbl', 'Net_DNSBL', 'pear.php.net');

@@ -14,26 +14,29 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>0.5.1</version>
-  <date>2006-02-09</date>
+  <version>0.6.0</version>
+  <date>2006-02-21</date>
   <license>PHP License</license>
-  <state>alpha</state>
-  <notes>* Fixed Bug #5667: HTTP_Request::getRequestCode( ) - no such function for the latest HTTP_Request.
-* Fixed Bug #6341: Undefined variable on line 315 &amp; 378.
+  <state>beta</state>
+  <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
+receiving a trackback.
+* Option &apos;continuous&apos; is spelled correctly now.
+* The wordlist and regex filter do now decode HTML entities.
+* New spam check, to check against Akismet.com web service.
 * Fixed reference issues.
-* Fixed small issue in continuous spam checks.
-* Fix PEAR_Error issue in test cases.
-* Added development environment include_path settings to test runner.
+* More common spam words in the wordlist and regex spam checks.
   </notes>
   <deps>
    <dep type="php" rel="ge" version="4.3.0" optional="no"/>
-   <dep type="pkg" rel="ge" version="1.0RC1" optional="no">ConsoleTools</dep>
   </deps>
   <filelist>
    <dir name="/" baseinstalldir="/">
     <dir name="Services">
      <dir name="Trackback">
       <dir name="SpamCheck">
+       <file role="php" name="Akismet.php">
+        <replace from="@package_version@" to="version" type="package-info"/>
+       </file>
        <file role="php" name="DNSBL.php">
         <replace from="@package_version@" to="version" type="package-info"/>
        </file>
@@ -56,34 +59,37 @@
      </file>
     </dir> <!-- /Services -->
     <dir name="test">
-     <file role="data" name="failed_tests.sh">
+     <file role="test" name="akismet_key.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_SpamCheck_DNSBL_Test.php">
+     <file role="test" name="failed_tests.sh">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_SpamCheck_Regex_Test.php">
+     <file role="test" name="Services_Trackback_SpamCheck_Akismet_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_SpamCheck_SURBL_Test.php">
+     <file role="test" name="Services_Trackback_SpamCheck_DNSBL_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_SpamCheck_Test.php">
+     <file role="test" name="Services_Trackback_SpamCheck_Regex_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_SpamCheck_Wordlist_Test.php">
+     <file role="test" name="Services_Trackback_SpamCheck_SURBL_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_Test.php">
+     <file role="test" name="Services_Trackback_SpamCheck_Wordlist_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="Services_Trackback_TestAll.php">
+     <file role="test" name="Services_Trackback_Test.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="simple_test.php">
+     <file role="test" name="Services_Trackback_TestAll.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
-     <file role="php" name="trackback_data.php">
+     <file role="test" name="simple_test.php">
+      <replace from="@package_version@" to="version" type="package-info"/>
+     </file>
+     <file role="test" name="trackback_data.php">
       <replace from="@package_version@" to="version" type="package-info"/>
      </file>
     </dir> <!-- /test -->
@@ -92,17 +98,20 @@
  </release>
  <changelog>
    <release>
-    <version>0.5.1</version>
-    <date>2006-02-09</date>
+    <version>0.6.0</version>
+    <date>2006-02-21</date>
     <license>PHP License</license>
-    <state>alpha</state>
-    <notes>* Fixed Bug #5667: HTTP_Request::getRequestCode( ) - no such function for the latest HTTP_Request.
-* Fixed Bug #6341: Undefined variable on line 315 &amp; 378.
+    <state>beta</state>
+    <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
+receiving a trackback.
+* Option &apos;continuous&apos; is spelled correctly now.
+* The wordlist and regex filter do now decode HTML entities.
+* New spam check, to check against Akismet.com web service.
 * Fixed reference issues.
-* Fixed small issue in continuous spam checks.
-* Fix PEAR_Error issue in test cases.
-* Added development environment include_path settings to test runner.
+* More common spam words in the wordlist and regex spam checks.
     </notes>
+   </release>
+   <release>
    </release>
  </changelog>
 </package>

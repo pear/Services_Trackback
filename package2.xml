@@ -13,28 +13,30 @@
   <email>toby@php.net</email>
   <active>yes</active>
  </lead>
- <date>2006-02-09</date>
- <time>21:39:55</time>
+ <date>2006-02-21</date>
+ <time>22:09:55</time>
  <version>
-  <release>0.5.1</release>
-  <api>0.5.0</api>
+  <release>0.6.0</release>
+  <api>0.6.0</api>
  </version>
  <stability>
-  <release>alpha</release>
-  <api>alpha</api>
+  <release>beta</release>
+  <api>beta</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
- <notes>* Fixed Bug #5667: HTTP_Request::getRequestCode( ) - no such function for the latest HTTP_Request.
-* Fixed Bug #6341: Undefined variable on line 315 &amp; 378.
+ <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
+receiving a trackback.
+* Option &apos;continuous&apos; is spelled correctly now.
+* The wordlist and regex filter do now decode HTML entities.
+* New spam check, to check against Akismet.com web service.
 * Fixed reference issues.
-* Fixed small issue in continuous spam checks.
-* Fix PEAR_Error issue in test cases.
-* Added development environment include_path settings to test runner.</notes>
+* More common spam words in the wordlist and regex spam checks.</notes>
  <contents>
   <dir baseinstalldir="/" name="/">
    <dir name="Services">
     <dir name="Trackback">
      <dir name="SpamCheck">
+      <file name="Akismet.php" role="php" />
       <file name="DNSBL.php" role="php" />
       <file name="Regex.php" role="php" />
       <file name="SURBL.php" role="php" />
@@ -45,16 +47,17 @@
     <file name="Trackback.php" role="php" />
    </dir> <!-- /Services -->
    <dir name="test">
-    <file name="failed_tests.sh" role="data" />
-    <file name="Services_Trackback_SpamCheck_DNSBL_Test.php" role="php" />
-    <file name="Services_Trackback_SpamCheck_Regex_Test.php" role="php" />
-    <file name="Services_Trackback_SpamCheck_SURBL_Test.php" role="php" />
-    <file name="Services_Trackback_SpamCheck_Test.php" role="php" />
-    <file name="Services_Trackback_SpamCheck_Wordlist_Test.php" role="php" />
-    <file name="Services_Trackback_Test.php" role="php" />
-    <file name="Services_Trackback_TestAll.php" role="php" />
-    <file name="simple_test.php" role="php" />
-    <file name="trackback_data.php" role="php" />
+    <file name="akismet_key.php" role="test" />
+    <file name="failed_tests.sh" role="test" />
+    <file name="Services_Trackback_SpamCheck_Akismet_Test.php" role="test" />
+    <file name="Services_Trackback_SpamCheck_DNSBL_Test.php" role="test" />
+    <file name="Services_Trackback_SpamCheck_Regex_Test.php" role="test" />
+    <file name="Services_Trackback_SpamCheck_SURBL_Test.php" role="test" />
+    <file name="Services_Trackback_SpamCheck_Wordlist_Test.php" role="test" />
+    <file name="Services_Trackback_Test.php" role="test" />
+    <file name="Services_Trackback_TestAll.php" role="test" />
+    <file name="simple_test.php" role="test" />
+    <file name="trackback_data.php" role="test" />
    </dir> <!-- /test -->
   </dir> <!-- / -->
  </contents>
@@ -66,13 +69,14 @@
    <pearinstaller>
     <min>1.3.0</min>
    </pearinstaller>
-   <package>
-    <name>ConsoleTools</name>
-    <channel>components.ez.no</channel>
-    <min>1.0RC1</min>
-   </package>
   </required>
   <group hint="Usage of Services_Trackback::autodiscover()." name="autodiscover">
+   <package>
+    <name>HTTP_Request</name>
+    <channel>pear.php.net</channel>
+   </package>
+  </group>
+  <group hint="Akismet.com spam checks." name="akismet">
    <package>
     <name>HTTP_Request</name>
     <channel>pear.php.net</channel>
@@ -89,21 +93,22 @@
  <changelog>
   <release>
    <version>
-    <release>0.5.1</release>
-    <api>0.5.0</api>
+    <release>0.6.0</release>
+    <api>0.6.0</api>
    </version>
    <stability>
-    <release>alpha</release>
-    <api>alpha</api>
+    <release>beta</release>
+    <api>beta</api>
    </stability>
-   <date>2006-02-09</date>
+   <date>2006-02-21</date>
    <license>PHP License</license>
-   <notes>* Fixed Bug #5667: HTTP_Request::getRequestCode( ) - no such function for the latest HTTP_Request.
-* Fixed Bug #6341: Undefined variable on line 315 &amp; 378.
+   <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
+receiving a trackback.
+* Option &apos;continuous&apos; is spelled correctly now.
+* The wordlist and regex filter do now decode HTML entities.
+* New spam check, to check against Akismet.com web service.
 * Fixed reference issues.
-* Fixed small issue in continuous spam checks.
-* Fix PEAR_Error issue in test cases.
-* Added development environment include_path settings to test runner.</notes>
+* More common spam words in the wordlist and regex spam checks.</notes>
   </release>
  </changelog>
 </package>
