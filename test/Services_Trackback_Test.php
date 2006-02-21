@@ -314,6 +314,7 @@ EOD;
         $fakeRes = "Test text.\n";
    
         $res = $trackback->_getContent($url);
+        var_dump($res);
         if (PEAR::isError($res)) {
             $this->fail($res->getMessage());
             return;

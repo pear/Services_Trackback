@@ -91,7 +91,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         ),
     );
 
-    // }}}   
+    // }}}    
     // {{{ Services_Trackback_SpamCheck_Akismet()
 
     /**
@@ -147,7 +147,53 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         return $foundSpam;
     }
 
-    // }}}
+    // }}} 
+    // {{{ submitSpam()
+
+    function submitSpam($trackback, $sourceId = 0)
+    {
+        if (empty($this->_options['url'])) {
+            return PEAR::raiseError('Missing option "url". Cannot procede without it.', 0);
+        }
+        if (empty($this->_options['key'])) {
+            return PEAR::raiseError('Missing option "key". Cannot procede without it.', 0);
+        }
+        if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
+            return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
+        }
+        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1){
+            return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
+        }
+        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-spam'))) {
+            return $res;
+        }
+        return $res === '';
+    }
+
+    // }}}  
+    // {{{ submitHam()
+
+    function submitHam($trackback, $sourceId = 0)
+    {
+        if (empty($this->_options['url'])) {
+            return PEAR::raiseError('Missing option "url". Cannot procede without it.', 0);
+        }
+        if (empty($this->_options['key'])) {
+            return PEAR::raiseError('Missing option "key". Cannot procede without it.', 0);
+        }
+        if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
+            return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
+        }
+        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1){
+            return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
+        }
+        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-ham'))) {
+            return $res;
+        }
+        return $res === '';
+    }
+
+    // }}}  
     // {{{ verifyKey()
     
     function verifyKey()
@@ -161,6 +207,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
     }
     
     // }}}
+
     // {{{ _checkSource()
     
     function _checkSource(&$source, $trackback)
@@ -188,7 +235,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         switch ($action) {
             case 'verify-key':
                 $url = 'http://' . $baseUri . $action;
-                echo $url;
                 
                 $req = new HTTP_Request($url, $httpRequestOptions);
                 $req->setMethod(HTTP_REQUEST_METHOD_POST);
@@ -210,6 +256,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
                 $req->addPostData('key', $this->_options['key']);
                 $req->addPostData('blog', $this->_options['url']);
                 
+                $req->addPostData('comment_author', $trackback->get('blog_name'));
                 $req->addPostData('comment_author_url', $trackback->get('url'));
                 $req->addPostData('user_ip', $trackback->get('host'));
                 

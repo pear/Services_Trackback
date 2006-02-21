@@ -27,9 +27,9 @@ $trackbackData['all'] = array(
     'id'        => 1,
     'host'      => '127.0.0.2',
     'title'     => 'xanax',
-    'excerpt'   => 'You can also check the sites about <A HREF="http://www.e-poker-777.com/free-online-poker.html">free online diet</A>',
+    'excerpt'   => 'You can also check the porn sites about <A HREF="http://www.e-poker-777.com/free-online-poker.html">free online diet</A>',
     'url'       => 'http://www.e-poker-777.com/funny-crap-to-download.html',
-    'blog_name' => 'xanax diet',
+    'blog_name' => 'viagra-test-123',
     'trackback_url' => 'http://www.example.com/',
 );
 

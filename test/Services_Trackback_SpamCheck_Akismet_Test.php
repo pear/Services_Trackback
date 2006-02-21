@@ -77,33 +77,19 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     // }}}
     // {{{ Test check()
     function test_check_failure_nospam() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['nospam']));
+        $this->assertFalse($this->spamCheck->check($this->trackbacks['nospam']));
     }
     function test_check_failure_undetected() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['undetected']));
+        $this->assertFalse($this->spamCheck->check($this->trackbacks['undetected']));
     }
     function test_check_success_all() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
-    }
-    function test_check_success_host() {
-        $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
-    }
-    function test_check_failure_title() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['title']));
-    }
-    function test_check_faulire_excerpt() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['excerpt']));
-    }
-    function test_check_failure_url() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['url']));
-    }
-    function test_check_failure_blog_name() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['blog_name']));
     }
     // }}}
     // {{{ Test getResults()
 
     function test_getResults() {
+        $this->spamCheck->check($this->trackbacks['all']);
         $results = $this->spamCheck->getResults();
         $this->assertTrue($results[0]);
     }
@@ -114,8 +100,7 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
         $this->spamCheck->reset();
-        $fakeCheck = Services_Trackback_SpamCheck::create('Akismet');
-        $fakeCheck->_dnsbl->blacklists = array('bl.spamcop.net');
+        $fakeCheck = Services_Trackback_SpamCheck::create('Akismet', $this->_options);
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }
 
@@ -129,6 +114,13 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     function test_verifyKey_failure() {
         $this->spamCheck->_options['key'] = 'foobar';
         $this->assertFalse($this->spamCheck->verifyKey());
+    }
+
+    // }}}
+    // {{{ Test reportSpam()
+
+    function test_reportSpam_success() {
+        $this->assertTrue($this->spamCheck->submitSpam($this->trackbacks['all']));
     }
 
     // }}}
