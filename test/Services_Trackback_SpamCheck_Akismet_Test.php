@@ -48,8 +48,8 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
             $this->trackbacks[$id]->set(
                 'extra', 
                 array(
-                    'REFERER' => 'http://www.example.com',
-                    'USER_AGENT' => 'Test',
+                    'HTTP_REFERER' => 'http://www.example.com',
+                    'HTTP_USER_AGENT' => 'Test',
                 )
             );
         }

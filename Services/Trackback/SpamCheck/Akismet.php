@@ -261,8 +261,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
                 $req->addPostData('user_ip', $trackback->get('host'));
                 
                 $extra = $trackback->get('extra');
-                $req->addPostData('user_agent', $extra['USER_AGENT']);
-                $req->addPostData('referrer', $extra['REFERER']);
+                $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
+                $req->addPostData('referrer', isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '');
             break;
             default:
                 return PEAR::raiseError('Invalid Akismet action: "'.$action.'".');
