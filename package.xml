@@ -14,17 +14,11 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>0.6.0</version>
-  <date>2006-02-21</date>
+  <version>0.6.1</version>
+  <date>2006-02-24</date>
   <license>PHP License</license>
   <state>beta</state>
-  <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
-receiving a trackback.
-* Option &apos;continuous&apos; is spelled correctly now.
-* The wordlist and regex filter do now decode HTML entities.
-* New spam check, to check against Akismet.com web service.
-* Fixed reference issues.
-* More common spam words in the wordlist and regex spam checks.
+  <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.
   </notes>
   <deps>
    <dep type="php" rel="ge" version="4.3.0" optional="no"/>
@@ -98,17 +92,11 @@ receiving a trackback.
  </release>
  <changelog>
    <release>
-    <version>0.6.0</version>
-    <date>2006-02-21</date>
+    <version>0.6.1</version>
+    <date>2006-02-24</date>
     <license>PHP License</license>
     <state>beta</state>
-    <notes>* New data added: &apos;extra&apos; contains the content of the Array array now, when 
-receiving a trackback.
-* Option &apos;continuous&apos; is spelled correctly now.
-* The wordlist and regex filter do now decode HTML entities.
-* New spam check, to check against Akismet.com web service.
-* Fixed reference issues.
-* More common spam words in the wordlist and regex spam checks.
+    <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.
     </notes>
    </release>
    <release>

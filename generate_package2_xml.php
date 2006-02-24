@@ -39,19 +39,13 @@ $p2->setPackageType('php');
 
 $p2->generateContents();
 
-$p2->setReleaseVersion('0.6.0');
+$p2->setReleaseVersion('0.6.1');
 $p2->setAPIVersion('0.6.0');
 $p2->setReleaseStability('beta');
 $p2->setAPIStability('beta');
 
 $notes = <<<EOT
-* New data added: 'extra' contains the content of the $_SERVER array now, when 
-receiving a trackback.
-* Option 'continuous' is spelled correctly now.
-* The wordlist and regex filter do now decode HTML entities.
-* New spam check, to check against Akismet.com web service.
-* Fixed reference issues.
-* More common spam words in the wordlist and regex spam checks.
+* Fix bug in naming of \$_SERVER variables in Akismet spam plugin.
 EOT;
 
 $p2->setNotes($notes);
