@@ -364,8 +364,7 @@ class Services_Trackback {
     function send($data = null)
     {
         // Load HTTP_Request
-        // @TODO: Make include_once
-        @require_once 'HTTP/Request.php';
+        include_once 'HTTP/Request.php';
         if (!class_exists('HTTP_Request')) {
             return PEAR::raiseError('Unable to load PEAR::HTTP_Request.');
         }
@@ -394,7 +393,7 @@ class Services_Trackback {
         $req->setMethod(HTTP_REQUEST_METHOD_POST);
         
         // Add HTTP headers
-        $req->addHeader("User-Agent", $this->_options['useragent']);
+        $req->addHeader("User-Agent", $options['useragent']);
         
         // Adding data to send
         $req->addPostData('url', $this->_data['url']);
