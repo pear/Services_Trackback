@@ -602,7 +602,7 @@ EOD;
      */
     function &addSpamCheck(&$spamCheck, $priority = 0)
     {
-        $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck')
+        $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck');
         if (!is_object($spamCheck) || !$subclass) {
             return PEAR::raiseError('Invalid spam check module.', -1);
         }
