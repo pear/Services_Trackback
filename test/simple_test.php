@@ -1,6 +1,23 @@
 <?php
-
-// set_include_path('.:/cvs/pear/Services_Trackback:/usr/php4/share/pear');
+/**
+ * Services_Trackback.
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ */
 
 $conf = array(
     'online' => true,
@@ -13,32 +30,42 @@ require_once 'Var_Dump.php';
 
 if (isset($_SERVER['REQUEST_URI'])) {
     // Setup for displaying XHTML output.
-    Var_Dump::displayInit(
-        array('display_mode'=>'XHTML_Text'), 
-        array(
-            'mode'          => 'wide',
-            'offset'        => 4,
-            'after_text'    => '<br />',
-        )
-    );
-    // Headline function for XHTML output.
-    function head ( $text ) {
+    Var_Dump::displayInit(array('display_mode'=>'XHTML_Text'),
+                          array(
+                              'mode'          => 'wide',
+                              'offset'        => 4,
+                              'after_text'    => '<br />',
+                          ));
+
+    /**
+     * Headline function for XHTML output.
+     *
+     * @param string $text Text to render
+     *
+     * @return void
+     */
+    function head($text)
+    {
         echo '<br /><b>'.$text.'</b><br />';
     }
 } else {
     // Setup for displaying console output.
-    Var_Dump::displayInit(
-        // Choose text mode
-        array('display_mode'    =>  'Text'),
-        // Rendere options
-        array(
-            'mode'              =>  'wide',
-            'before_text'       =>  "\n",
-            'after_text'        =>  "\n",
-        )
-    );
-    // Headline function for Text output.
-    function head ( $text ) {
+    Var_Dump::displayInit(array('display_mode'    =>  'Text'),
+                        // Rendere options
+                        array(
+                            'mode'              =>  'wide',
+                            'before_text'       =>  "\n",
+                            'after_text'        =>  "\n",
+                        ));
+    /**
+     * Headline function for Text output.
+     *
+     * @param string $text Text to render
+     *
+     * @return void
+     */
+    function head($text)
+    {
         echo "\n\n--- ".$text." ---\n\n";
     }
 }
@@ -83,7 +110,9 @@ unset($trackback);
 if (true === $conf['online']) {
     head('Autodiscovered trackback object');
 
-    $trackback = Services_Trackback::create(array('id' => 'Test', 'url' => 'http://pear.php.net/package/Net_FTP'));
+    $data = array('id' => 'Test', 'url' => 'http://pear.php.net/package/Net_FTP');
+
+    $trackback = Services_Trackback::create($data);
     Var_Dump::display($trackback->autodiscover());
     Var_Dump::display($trackback);
 
@@ -99,47 +128,47 @@ if (true === $conf['online']) {
 
     unset($trackback);
 
-	head('Wordlist spam check');
-	
-	foreach ($trackbackData as $id =>  $set) {
-	    echo "\n\n-- $id --";
-	    $trackback = Services_Trackback::create($set);
-	    $trackback->createSpamCheck('Wordlist');
-	    Var_Dump::display($trackback->checkSpam());
-	    // Var_Dump::display($trackback);
-	}
-	
-	head('DNSBL spam check');
-	
-	foreach ($trackbackData as $id =>  $set) {
-	    echo "\n\n-- $id --";
-	    $trackback = Services_Trackback::create($set);
-	    $trackback->createSpamCheck('DNSBL');
-	    Var_Dump::display($trackback->checkSpam());
-	    // Var_Dump::display($trackback);
-	}
-	
-	head('SURBL spam check');
-	
-	foreach ($trackbackData as $id =>  $set) {
-	    echo "\n\n-- $id --";
-	    $trackback = Services_Trackback::create($set);
-	    $trackback->createSpamCheck('SURBL');
-	    Var_Dump::display($trackback->checkSpam());
-	    // Var_Dump::display($trackback);
-	}
-	
+    head('Wordlist spam check');
+
+    foreach ($trackbackData as $id =>  $set) {
+        echo "\n\n-- $id --";
+        $trackback = Services_Trackback::create($set);
+        $trackback->createSpamCheck('Wordlist');
+        Var_Dump::display($trackback->checkSpam());
+        // Var_Dump::display($trackback);
+    }
+
+    head('DNSBL spam check');
+
+    foreach ($trackbackData as $id =>  $set) {
+        echo "\n\n-- $id --";
+        $trackback = Services_Trackback::create($set);
+        $trackback->createSpamCheck('DNSBL');
+        Var_Dump::display($trackback->checkSpam());
+        // Var_Dump::display($trackback);
+    }
+
+    head('SURBL spam check');
+
+    foreach ($trackbackData as $id =>  $set) {
+        echo "\n\n-- $id --";
+        $trackback = Services_Trackback::create($set);
+        $trackback->createSpamCheck('SURBL');
+        Var_Dump::display($trackback->checkSpam());
+        // Var_Dump::display($trackback);
+    }
+
     head('Wordlist + DNSBL spam check');
-	
-	foreach ($trackbackData as $id =>  $set) {
-	    echo "\n\n-- $id --";
-	    $trackback = Services_Trackback::create($set);
-	    $trackback->createSpamCheck('Wordlist');
-	    $trackback->createSpamCheck('DNSBL');
-	    Var_Dump::display($trackback->checkSpam());
-	    // Var_Dump::display($trackback);
-	}
+
+    foreach ($trackbackData as $id =>  $set) {
+        echo "\n\n-- $id --";
+        $trackback = Services_Trackback::create($set);
+        $trackback->createSpamCheck('Wordlist');
+        $trackback->createSpamCheck('DNSBL');
+        Var_Dump::display($trackback->checkSpam());
+        // Var_Dump::display($trackback);
+    }
 
 }
-    	
+
 ?>
