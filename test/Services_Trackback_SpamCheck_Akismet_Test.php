@@ -14,7 +14,7 @@ require_once 'PHPUnit.php';
 require_once dirname(__FILE__).'/trackback_data.php';
 
 // Akismet.com API key
-require_once 'test/akismet_key.php';
+require_once 'akismet_key.php';
 
     // }}}
 
@@ -26,9 +26,9 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     var $spamCheck;
 
     var $options = array();
-    
+
     // {{{ Webservices_Trackback_SpamCheck_Akismet_TestCase()
-    
+
     // constructor of the test suite
     function Webservices_Trackback_SpamCheck_Akismet_TestCase($name) {
        $this->PHPUnit_TestCase($name);
@@ -36,7 +36,7 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
 
     // }}}
     // {{{ setup()
-    
+
     function setUp() {
         global $trackbackData;
         global $akismetApiKey;
@@ -46,7 +46,7 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
         foreach ($trackbackData as $id => $set) {
             $this->trackbacks[$id] = Services_Trackback::create($set);
             $this->trackbacks[$id]->set(
-                'extra', 
+                'extra',
                 array(
                     'HTTP_REFERER' => 'http://www.example.com',
                     'HTTP_USER_AGENT' => 'Test',
@@ -62,7 +62,7 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
 
     // }}}
     // {{{ tearDown()
-    
+
     function tearDown() {
     }
 
@@ -110,7 +110,7 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     function test_verifyKey_success() {
         $this->assertTrue($this->spamCheck->verifyKey());
     }
-    
+
     function test_verifyKey_failure() {
         $this->spamCheck->_options['key'] = 'foobar';
         $this->assertFalse($this->spamCheck->verifyKey());
