@@ -16,14 +16,14 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.1.0
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     File available since Release 0.1.0
  */
 
     // {{{ require_once
@@ -69,17 +69,18 @@ define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
  * Trackback
  * A generic class to send/receive trackbacks.
  *
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.1.0
- * @access     public
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     0.1.0
+ * @access    public
  */
-class Services_Trackback {
+class Services_Trackback
+{
 
     // {{{ var $_data
 
@@ -144,7 +145,7 @@ class Services_Trackback {
      * @access protected
      * @return void
      */
-    function Services_Trackback ( )
+    function Services_Trackback()
     {
     }
 
@@ -153,47 +154,53 @@ class Services_Trackback {
 
     /**
      * Factory
-     * This static method is used to create a trackback object. (Services_Trackback::create($data))
-     * The factory requires a data array as described below for creation. The 'id' key is
-     * obligatory for this method. Every other data is not quite necessary for the creation, but
-     * might be necessary for calling other methods afterwards. See the specific methods for
-     * further info on which data is required.
+     * This static method is used to create a trackback object.
+     * (Services_Trackback::create($data))
+     * The factory requires a data array as described below for creation. The 'id'
+     * key is obligatory for this method. Every other data is not quite necessary
+     * for the creation, but might be necessary for calling other methods
+     * afterwards. See the specific methods for further info on which data is
+     * required.
+     *
+     * @param array $data    Data for the trackback, which is obligatory:
+     *                        'id'                The ID of the trackback target.
+     *                       Data which is optional (for construction, not for specific methods):
+     *                        'title'             string  Title of the trackback sending/receiving blog entry.
+     *                        'excerpt'           string  Abstract of the trackback sending/receiving blog entry.
+     *                        'blog_name'         string  Name of the trackback sending/receiving weblog.
+     *                        'url'               string  URL of the trackback sending/receiving blog entry.
+     *                        'trackback_url'     string  URL to send trackbacks to.
+     *                        'extra'             array   Content of $_SERVER, captured while doing
+     *                                                    Services_Trackback::receive().
+     * @param array $options Options to set for this trackback. Valid options:
+     *                       'strictness':       int     The default strictness to use in
+     *                                                   @see Services_Trackback::autodiscover().
+     *                       'timeout':          int     The default timeout for network operations in seconds.
+     *                       'fetchlines':       int     The max number of lines to fetch over the network.
+     *                       'httprequest'       array   The options utilized by HTTP_Request are stored here.
+     *                                                   The following options are the most commonly used for HTTP_Request in
+     *                                                   Services_Trackback. All other options are supported too,
+     *                                                   @see HTTP_Request::HTTP_Request() for more detailed documentation.
+     *                                                   Some options for HTTP_Request are overwritten through the global settings of
+     *                                                   Services_Trackback (such as timeout).
+     *                           'timeout':          float   THE TIMEOUT SETTING IS OVERWRITTEN BY THE GLOBAL Services_Trackback SETTING.
+     *                           'allowRedirects':   bool    Wether to follow HTTP redirects or not.
+     *                           'maxRedirects':     int     Maximum number of redirects.
+     *                           'useragent':        string  The user agent to use for HTTP requests.
      *
      * @since 0.2.0
      * @static
      * @access public
-     * @param array $data Data for the trackback, which is obligatory:
-     *      'id'                The ID of the trackback target.
-     *  Data which is optional (for construction, not for specific methods):
-     *      'title'             string  Title of the trackback sending/receiving blog entry.
-     *      'excerpt'           string  Abstract of the trackback sending/receiving blog entry.
-     *      'blog_name'         string  Name of the trackback sending/receiving weblog.
-     *      'url'               string  URL of the trackback sending/receiving blog entry.
-     *      'trackback_url'     string  URL to send trackbacks to.
-     *      'extra'             array   Content of $_SERVER, captured while doing Services_Trackback::receive().
-     * @param array $options Options to set for this trackback. Valid options:
-     *      'strictness':       int     The default strictness to use in @see Services_Trackback::autodiscover().
-     *      'timeout':          int     The default timeout for network operations in seconds.
-     *      'fetchlines':       int     The max number of lines to fetch over the network.
-     *      'httprequest'       array   The options utilized by HTTP_Request are stored here.
-     *                                  The following options are the most commonly used for HTTP_Request in
-     *                                  Services_Trackback. All other options are supported too,
-     *                                  @see HTTP_Request::HTTP_Request() for more detailed documentation.
-     *                                  Some options for HTTP_Request are overwritten through the global settings of
-     *                                  Services_Trackback (such as timeout).
-     *          'timeout':          float   THE TIMEOUT SETTING IS OVERWRITTEN BY THE GLOBAL Services_Trackback SETTING.
-     *          'allowRedirects':   bool    Wether to follow HTTP redirects or not.
-     *          'maxRedirects':     int     Maximum number of redirects.
-     *          'useragent':        string  The user agent to use for HTTP requests.
-     *
-     * @return object(Services_Trackback) The newly created Trackback.
+     * @return Services_Trackback The newly created Trackback.
      */
-    function &create($data, $options = null) {
+    function &create($data, $options = null)
+    {
         // Sanity check
         $options = isset($options) && is_array($options) ? $options : array();
 
         // Create trackback
         $trackback = new Services_Trackback();
+
         $res = $trackback->_fromArray($data);
 
         if (PEAR::isError($res)) {
@@ -215,44 +222,47 @@ class Services_Trackback {
      * setOptions
      * Set options for the trackback.
      *
+     * @param array $options Pairs of 'option' => 'value' as described at @see Services_Trackback::create().
+     *
      * @since 0.4.0
      * @access public
      * @see Services_Trackback::create()
      * @see Services_Trackback::getOptions()
-     * @param array $options Pairs of 'option' => 'value' as described at @see Services_Trackback::create().
      * @return mixed Bool true on success, otherwise PEAR_Error.
      */
-    function setOptions($options) {
-        foreach($options as $option => $value) {
+    function setOptions($options)
+    {
+        foreach ($options as $option => $value) {
             if (!isset($this->_options[$option])) {
                 return PEAR::raiseError('Desired option "'.$option.'" not available.');
             }
+
             switch ($option) {
-                case 'strictness':
-                    if (!is_int($value) || ($value < 1) || ($value > 3)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be one of SERVICES_TRACKBACK_STRICTNESS_LOW, SERVICES_TRACKBACK_STRICTNESS_MIDDLE, SERVICES_TRACKBACK_STRICTNESS_HIGH.');
-                    }
-                    break;
-                case 'timeout':
-                    if (!is_int($value) || ($value < 0)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 0.');
-                    }
-                    break;
-                case 'fetchlines':
-                    if (!is_int($value) || ($value < 1)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 1.');
-                    }
-                    break;
-                case 'fetchextra':
-                    if (!is_bool($value)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be bool.');
-                    }
-                    break;
-                case 'httprequest':
-                    if (!is_array($value)) {
-                        return PEAR::raiseError('Invalid value for option "'.$option.'", must be array.');
-                    }
-                    break;
+            case 'strictness':
+                if (!is_int($value) || ($value < 1) || ($value > 3)) {
+                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be one of SERVICES_TRACKBACK_STRICTNESS_LOW, SERVICES_TRACKBACK_STRICTNESS_MIDDLE, SERVICES_TRACKBACK_STRICTNESS_HIGH.');
+                }
+                break;
+            case 'timeout':
+                if (!is_int($value) || ($value < 0)) {
+                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 0.');
+                }
+                break;
+            case 'fetchlines':
+                if (!is_int($value) || ($value < 1)) {
+                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 1.');
+                }
+                break;
+            case 'fetchextra':
+                if (!is_bool($value)) {
+                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be bool.');
+                }
+                break;
+            case 'httprequest':
+                if (!is_array($value)) {
+                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be array.');
+                }
+                break;
             }
             $this->_options[$option] = $value;
         }
@@ -291,8 +301,9 @@ class Services_Trackback {
     function autodiscover()
     {
         $necessaryData = array('url');
+
         $res = $this->_checkData($necessaryData);
-        if (PEAR::isError($res))  {
+        if (PEAR::isError($res)) {
             return $res;
         }
 
@@ -357,9 +368,10 @@ class Services_Trackback {
      * Services_Trackback::send() requires PEAR::HTTP_Request. The options for the HTTP_Request
      * object are stored in the global options array using the key 'http_request'.
      *
+     * @param string $data Additional data to complete the trackback.
+     *
      * @since 0.3.0
      * @access public
-     * @param string $data Additional data to complete the trackback.
      * @return mixed True on success, otherwise PEAR_Error.
      */
     function send($data = null)
@@ -376,7 +388,10 @@ class Services_Trackback {
         }
 
         $this->_data = array_merge($this->_data, $data);
-        $necessaryData = array('title', 'url', 'excerpt', 'blog_name', 'trackback_url');
+
+        $necessaryData = array('title', 'url', 'excerpt',
+                               'blog_name', 'trackback_url');
+
         $res = $this->_checkData($necessaryData);
         if (PEAR::isError($res)) {
             return $res;
@@ -387,6 +402,7 @@ class Services_Trackback {
 
         // Changed in 0.5.0 All HTTP_Request options are now supported.
         $options = $this->_options['httprequest'];
+
         $options['timeout'] = $this->_options['timeout'];
 
         // Create new HTTP_Request
@@ -410,7 +426,8 @@ class Services_Trackback {
 
         // Check return code
         if ($req->getResponseCode() != 200) {
-            return PEAR::raiseError('Host returned Error '.$req->getResponseCode().'.');
+            $error = 'Host returned Error '.$req->getResponseCode().'.';
+            return PEAR::raiseError($error);
         }
 
         return $this->_interpretTrackbackResponse($req->getResponseBody());
@@ -428,20 +445,24 @@ class Services_Trackback {
      *              'title'
      *              'url'
      *              'trackback_url'
+     *
+     * @param bool $comments Whether to include HTML comments around the RDF
+     *
      * @since 0.1.0
      * @access public
-     * @param bool $comments Whether to include HTML comments around the RDF using <!-- -->
      * @return string RDF code
      */
     function getAutodiscoveryCode($comments = true)
     {
         $necessaryData = array('title', 'url', 'trackback_url');
+
         $res = $this->_checkData($necessaryData);
         if (PEAR::isError($res)) {
             return $res;
         }
+
         $data = $this->_getEncodedData($necessaryData);
-        $res =  <<<EOD
+        $res  = <<<EOD
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
@@ -452,7 +473,9 @@ class Services_Trackback {
         trackback:ping="%s" />
 </rdf:RDF>
 EOD;
-        $res = sprintf($res, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
+
+        $res = sprintf($res, $data['url'], $data['url'],
+                             $data['title'], $data['trackback_url']);
         if ($comments) {
             return "<!--\n".$res."\n-->\n";
         }
@@ -469,6 +492,8 @@ EOD;
      * operation:
      *      'id'
      *
+     * @param mixed[] $data An array of data, ie, from $_POST.
+     *
      * @since 0.1.0
      * @access public
      * @return object Services_Trackback
@@ -477,20 +502,24 @@ EOD;
     {
         if (!isset($data)) {
             $data = $_POST;
+
             $data['host'] = $_SERVER['REMOTE_ADDR'];
         }
 
         $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name', 'host');
+
         $res = $this->_checkData(array('id'));
         if (PEAR::isError($res)) {
             return $res;
         }
+
         $res = $this->_checkData($necessaryPostData, $data);
         if (PEAR::isError($res)) {
             return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
         }
 
-        $this->_data = array_merge($this->_data, $this->_getDecodedData($necessaryPostData, $data));
+        $decodedData = $this->_getDecodedData($necessaryPostData, $data);
+        $this->_data = array_merge($this->_data, $decodedData);
         if ($this->_options['fetchextra'] === true) {
             $this->_data['extra'] = $_SERVER;
         }
@@ -509,7 +538,7 @@ EOD;
      * @static
      * @return string The XML code
      */
-    function getResponseSuccess ()
+    function getResponseSuccess()
     {
         return <<<EOD
 <?xml version="1.0" encoding="iso-8859-1"?>
@@ -526,15 +555,19 @@ EOD;
      * getResponseError
      * Returns an XML response for a trackback error.
      *
+     * @param string $message The error message
+     * @param int    $code    The error code
+     *
      * @since 0.1.0
      * @access public
-     * @param int $code The error code
-     * @param string $message The error message
      * @return void
      */
     function getResponseError($message, $code)
     {
-        $data = Services_Trackback::_getEncodedData(array('code', 'message'), array('code' => $code, 'message' => $message));
+        $data = Services_Trackback::_getEncodedData(array('code', 'message'),
+                                                    array('code' => $code,
+                                                          'message' => $message));
+
         $res = <<<EOD
 <?xml version="1.0" encoding="iso-8859-1"?>
 <response>
@@ -552,18 +585,25 @@ EOD;
      * addSpamCheck
      * Add a spam check module to the trackback.
      *
+     * @param Services_Trackback_SpamCheck &$spamCheck The spam check module
+     *                                                 to add.
+     * @param int                          $priority   A priority value for the spam
+     *                                                 check. Lower priority indices
+     *                                                 are processed earlier.
+     *                                                 If no priority level is set,
+     *                                                 0 is assumed.
+     *
      * @since 0.5.0
      * @access public
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @param object(Services_Trackback_SpamCheck) $spamCheck The spam check module to add.
-     * @param int $priority A priority value for the spam check. Lower priority indices are processed earlier.
-     *                      If no priority level is set, 0 is assumed.
-     * @return mixed Added SpamCheck module instance on success, otherwise PEAR_Error.
+     * @return mixed Added SpamCheck module instance on success, otherwise
+     *               PEAR_Error.
      */
     function &addSpamCheck(&$spamCheck, $priority = 0)
     {
-        if (!is_object($spamCheck) || !is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck')) {
+        $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck')
+        if (!is_object($spamCheck) || !$subclass) {
             return PEAR::raiseError('Invalid spam check module.', -1);
         }
         $this->_spamChecks[$priority][] =& $spamCheck;
@@ -577,26 +617,29 @@ EOD;
      * createSpamCheck
      * Create and add a spam check module to the trackback.
      *
+     * @param string $spamCheckType Name of the spamcheck module to create and add.
+     * @param array  $options       Options for the spamcheckmodule.
+     * @param int    $priority      A priority value for the spam check. Lower
+     *                              priority indices are processed earlier.
+     *                              If no priority level is set, 0 is assumed.
+     *
      * @since 0.5.0
      * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @param string $spamCheckType Name of the spamcheck module to create and add.
-     * @param array $options Options for the spamcheckmodule.
-     * @param int $priority A priority value for the spam check. Lower priority indices are processed earlier.
-     *                      If no priority level is set, 0 is assumed.
      * @return mixed Instance of the created SpamCheck module or PEAR_Error.
      */
     function &createSpamCheck($spamCheckType, $options = array(), $priority = 0)
     {
-        $filename = dirname(__FILE__).'/Trackback/SpamCheck.php';
+        $filename   = dirname(__FILE__).'/Trackback/SpamCheck.php';
         $createfunc = array('Services_Trackback_SpamCheck', 'create');
 
         // SpamCheck class already included?
         if (!class_exists($createfunc[0])) {
             if (!file_exists($filename)) {
-                return PEAR::raiseError('SpamCheck subclass not found. Broken installation!');
+                $error = 'SpamCheck subclass not found. Broken installation!';
+                return PEAR::raiseError($error);
             } else {
                 include_once $filename;
             }
@@ -604,10 +647,12 @@ EOD;
 
         // SpamCheck class successfully included?
         if (!class_exists($createfunc[0])) {
-            return PEAR::raiseError('SpamCheck subclass not found. Broken installation!');
+            $error = 'SpamCheck subclass not found. Broken installation!';
+            return PEAR::raiseError($error);
         }
 
         $spamCheck =& call_user_func($createfunc, $spamCheckType, $options);
+
         $res =& $this->addSpamCheck($spamCheck, $priority);
 
         return $res;
@@ -620,11 +665,13 @@ EOD;
      * removeSpamCheck
      * Remove a spam check module from the trackback.
      *
+     * @param object(Services_Trackback_SpamCheck) &$spamCheck The spam check module
+     *                                                         to remove.
+     *
      * @since 0.5.0
      * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @param object(Services_Trackback_SpamCheck) The spam check module to remove.
      * @return bool True on success, otherwise PEAR_Error.
      */
     function removeSpamCheck(&$spamCheck)
@@ -649,12 +696,14 @@ EOD;
      * such as DNSBL, SURBL, Word BL,... The sources to check are defined using
      * Services_Trackback_SpamCheck modules.
      *
+     * @param bool $continouse Wether to check all spam protection modules or
+     *                         quit checking if one modules returns a positive
+     *                         result.
+     *
      * @since 0.5.0
      * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::removeSpamCheck()
-     * @param bool $continouseCheck Wether to check all spam protection modules or
-     *                              quit checking if one modules returns a positive result.
      * @return bool True, if one of the sources
      */
     function checkSpam($continouse = false)
@@ -667,7 +716,9 @@ EOD;
                     $this->_spamChecksResults[$priority][$id] = false;
                 } else {
                     $tmpRes = $this->_spamChecks[$priority][$id]->check($this);
+
                     $this->_spamChecksResults[$priority][$id] = $tmpRes;
+
                     $spam = ($spam || $tmpRes);
                 }
             }
@@ -684,14 +735,17 @@ EOD;
      * Get data from the trackback. Returns the value of a given
      * key or PEAR_Error.
      *
+     * @param string $key The key to fetch a value for.
+     *
      * @since 0.2.0
      * @access public
-     * @param string $key The key to fetch a value for.
      * @return mixed A string value or a PEAR_Error on failure.
      */
     function get($key)
     {
-        return (isset($this->_data[$key])) ? $this->_data[$key] : PEAR::raiseError('Key '.$key.' not found.');
+        $error = 'Key '.$key.' not found.';
+        return isset($this->_data[$key]) ?
+                        $this->_data[$key] : PEAR::raiseError($error);
     }
 
     // }}}
@@ -702,10 +756,11 @@ EOD;
      * Set data of the trackback. Saves the value of a given
      * key , returning true on success, PEAR_Error on faulure.
      *
-     * @since 0.2.0
-     * @access public
      * @param string $key The key to set a value for.
      * @param string $val The value for the key.
+     *
+     * @since 0.2.0
+     * @access public
      * @return mixed Boolean true on success or a PEAR_Error on failure.
      */
     function set($key, $val)
@@ -721,12 +776,14 @@ EOD;
     /**
      * Create a Trackback from a $data array.
      *
+     * @param array $data The data array (@see Services_Trackback::create()).
+     *
      * @since 0.2.0
      * @access protected
-     * @param array $data The data array (@see Services_Trackback::create()).
      * @return mixed True on success, otherwise PEAR_Error.
      */
-    function _fromArray($data) {
+    function _fromArray($data)
+    {
         $res = $this->_checkData(array('id'), $data);
         if (PEAR::isError($res)) {
             return $res;
@@ -743,9 +800,10 @@ EOD;
      * _getContent
      * Receive the content from a specific URL.
      *
+     * @param string $url The URL to download data from.
+     *
      * @since 0.4.0
      * @access protected
-     * @param string $url The URL to download data from.
      * @return string The content.
      */
     function _getContent($url)
@@ -771,10 +829,11 @@ EOD;
      * _getEncodedData
      * Receives a number of data from the internal data store, encoded for XML usage.
      *
-     * @since 0.1.0
-     * @access protected
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
+     *
+     * @since 0.1.0
+     * @access protected
      * @return void
      */
     function _getEncodedData($keys, $data =  null)
@@ -797,10 +856,11 @@ EOD;
      * _getDecodedData
      * Receives a number of data from the internal data store.
      *
-     * @since 0.1.0
-     * @access protected
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
+     *
+     * @since 0.1.0
+     * @access protected
      * @return void
      */
     function _getDecodedData($keys, $data =  null)
@@ -823,10 +883,12 @@ EOD;
      * _checkData
      * Checks a given array of keys for the validity of their data.
      *
-     * @since 0.1.0
-     * @access protected
      * @param array $keys Data keys to check.
      * @param array $data Optionally the data to check (default is the object data).
+     *
+     * @since 0.1.0
+     * @access protected
+     *
      * @return void
      */
     function _checkData($keys, $data = null)
@@ -848,49 +910,59 @@ EOD;
 
     /**
      * _checkURLs
-     * This little method checks if 2 URLs (the URL to trackback against the trackback
-     * identifier found in the autodiscovery code) are equal.
+     * This little method checks if 2 URLs (the URL to trackback against the
+     * trackback identifier found in the autodiscovery code) are equal.
+     *
+     * @param string   $url1       The first URL.
+     * @param string   $url2       The second URL.
+     * @param constant $strictness How strict to check URLs. Use one of
+     *                             SERVICES_TRACKBACK_STRICTNESS_* constants.
      *
      * @see Services_Trackback::autodiscover()
      * @since 0.2.0
      * @access protected
-     * @param string $url1 The first URL.
-     * @param string $url2 The second URL.
-     * @param constant $strictness How strict to check URLs. Use one of SERVICES_TRACKBACK_STRICTNESS_* constants.
      * @return mixed True on success, otherwise PEAR_Error.
      */
     function _checkURLs($url1, $url2, $strictness)
     {
         switch ($strictness) {
-            case SERVICES_TRACKBACK_STRICTNESS_HIGH:
-                if ($url1 !== $url2) {
-                    return PEAR::raiseError('URLs mismatch. "'.$url1.'" !== "'.$url2.'".');
-                }
-                break;
+        case SERVICES_TRACKBACK_STRICTNESS_HIGH:
+            if ($url1 !== $url2) {
+                $error = 'URLs mismatch. "'.$url1.'" !== "'.$url2.'".';
+                return PEAR::raiseError($error);
+            }
+            break;
 
-            case SERVICES_TRACKBACK_STRICTNESS_MIDDLE:
-                $matches = array();
+        case SERVICES_TRACKBACK_STRICTNESS_MIDDLE:
+            $matches = array();
 
-                $domainRegex = "@http://([^/]+).*@";
-                $res = preg_match($domainRegex, $url1, $matches);
-                if (!$res) {
-                    return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
-                }
-                $domain1 = $matches[1];
-                $res = preg_match($domainRegex, $url2, $matches);
-                if (!$res) {
-                    return PEAR::raiseError('Invalid URL1, no domain part found ("'.$url1.'").');
-                }
-                $domain2 = $matches[1];
-                if ($domain1 !== $domain2) {
-                    return PEAR::raiseError('URLs missmatch. "'.$domain1.'" !== "'.$domain2.'".');
-                }
-                break;
+            $domainRegex = "@http://([^/]+).*@";
 
-            case SERVICES_TRACKBACK_STRICTNESS_LOW:
-            default:
-                // No checks, when strictness is low.
-                break;
+            $res = preg_match($domainRegex, $url1, $matches);
+            if (!$res) {
+                $error = 'Invalid URL1, no domain part found ("'.$url1.'").';
+                return PEAR::raiseError($error);
+            }
+
+            $domain1 = $matches[1];
+
+            $res = preg_match($domainRegex, $url2, $matches);
+            if (!$res) {
+                $error = 'Invalid URL1, no domain part found ("'.$url1.'").';
+                return PEAR::raiseError($error);
+            }
+
+            $domain2 = $matches[1];
+            if ($domain1 !== $domain2) {
+                $error = 'URLs missmatch. "'.$domain1.'" !== "'.$domain2.'".';
+                return PEAR::raiseError($error);
+            }
+            break;
+
+        case SERVICES_TRACKBACK_STRICTNESS_LOW:
+        default:
+            // No checks, when strictness is low.
+            break;
         }
         return true;
     }
@@ -901,6 +973,8 @@ EOD;
     /**
      * Interpret the returned XML code, when sending a trackback.
      *
+     * @param string $response Raw XML response
+     *
      * @see Services_Trackback::send()
      * @since 0.3.0
      * @access protected
@@ -910,7 +984,8 @@ EOD;
     {
         $matches = array();
         if (!preg_match('@<error>([0-9]+)</error>@', $response, $matches)) {
-            return PEAR::raiseError('Invalid trackback response, error code not found.');
+            $error = 'Invalid trackback response, error code not found.';
+            return PEAR::raiseError($error);
         }
         $errorCode = $matches[1];
 
@@ -920,10 +995,15 @@ EOD;
         }
 
         if (!preg_match('@<message>([^<]+)</message>@', $response, $matches)) {
-            return PEAR::raiseError('Error code '.$errorCode.', no message received.');
+            $error = 'Error code '.$errorCode.', no message received.';
+            return PEAR::raiseError($error);
         }
 
-        return PEAR::raiseError('Error code '.$errorCode.', message "'.$matches[1].'" received.');
+
+        $error = 'Error code ' . $errorCode
+                    . ', message "' . $matches[1] . '" received.';
+
+        return PEAR::raiseError($error);
     }
 
     // }}}
