@@ -1,33 +1,18 @@
 <?php
 
-// Includepath for local CVS development
-// set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
-
     // {{{ require_once
 
 // Services_Trackback classes
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
 
-// Unittest suite
-require_once 'PHPUnit.php';
-
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
 
     // }}}
 
-class Webservices_Trackback_TestCase extends PHPUnit_TestCase
+class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 {
-
-    // {{{ Webservices_Trackback_TestCase()
-
-    // constructor of the test suite
-    function Webservices_Trackback_TestCase($name) {
-       $this->PHPUnit_TestCase($name);
-    }
-
-    // }}}
     // {{{ setup()
 
     function setUp() {
@@ -243,7 +228,9 @@ EOD;
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
-        $this->assertTrue($trackback->addSpamCheck($spamCheck));
+
+        $result = $trackback->addSpamCheck($spamCheck);
+        $this->assertTrue($result === true);
     }
 
     function test_addSpamCheck_failure()
@@ -280,7 +267,9 @@ EOD;
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
         $trackback->addSpamCheck($spamCheck);
-        $this->assertTrue($trackback->removeSpamCheck($spamCheck));
+
+        $result = $trackback->removeSpamCheck($spamCheck);
+        $this->assertTrue($result === true);
     }
 
     function test_removeSpamCheck_failure()
@@ -502,10 +491,4 @@ EOD;
     // }}}
 
 }
-
-$suite  = new PHPUnit_TestSuite("Webservices_Trackback_TestCase");
-$result = PHPUnit::run($suite);
-
-echo $result->toString();
-
 ?>

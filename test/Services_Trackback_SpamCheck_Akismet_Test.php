@@ -7,9 +7,6 @@ require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
 require_once 'Services/Trackback/SpamCheck/Akismet.php';
 
-// Unittest suite
-require_once 'PHPUnit.php';
-
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
 
@@ -18,7 +15,7 @@ require_once 'akismet_key.php';
 
     // }}}
 
-class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
+class Services_Trackback_SpamCheck_Akismet_Test extends PHPUnit_Framework_TestCase
 {
 
     var $trackbacks = array();
@@ -27,21 +24,13 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
 
     var $options = array();
 
-    // {{{ Webservices_Trackback_SpamCheck_Akismet_TestCase()
-
-    // constructor of the test suite
-    function Webservices_Trackback_SpamCheck_Akismet_TestCase($name) {
-       $this->PHPUnit_TestCase($name);
-    }
-
-    // }}}
     // {{{ setup()
 
     function setUp() {
         global $trackbackData;
         global $akismetApiKey;
         if (!isset($akismetApiKey) || $akismetApiKey === false) {
-            return false;
+            $this->markTestSkipped("No Akismet API key defined - see test/akismet_key.php for more");
         }
         foreach ($trackbackData as $id => $set) {
             $this->trackbacks[$id] = Services_Trackback::create($set);
@@ -126,13 +115,3 @@ class Webservices_Trackback_SpamCheck_Akismet_TestCase extends PHPUnit_TestCase
     // }}}
 
 }
-
-if (isset($akismetApiKey) && $akismetApiKey !== false) {
-    $suite  = new PHPUnit_TestSuite("Webservices_Trackback_SpamCheck_Akismet_TestCase");
-    $result = PHPUnit::run($suite);
-    echo $result->toString();
-} else {
-    echo 'Skipped test case "Webservices_Trackback_SpamCheck_Akismet_TestCase" because Akismet API key is missing. Please configure it in test/akismet_key.php!';
-}
-
-?>

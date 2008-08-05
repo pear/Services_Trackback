@@ -10,31 +10,20 @@ require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
 require_once 'Services/Trackback/SpamCheck/DNSBL.php';
 
-// Unittest suite
-require_once 'PHPUnit.php';
-
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
 
     // }}}
 
-class Webservices_Trackback_SpamCheck_DNSBL_TestCase extends PHPUnit_TestCase
+class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
 {
 
     var $trackbacks = array();
 
     var $spamCheck;
-    
-    // {{{ Webservices_Trackback_SpamCheck_DNSBL_TestCase()
-    
-    // constructor of the test suite
-    function Webservices_Trackback_SpamCheck_DNSBL_TestCase($name) {
-       $this->PHPUnit_TestCase($name);
-    }
 
-    // }}}
     // {{{ setup()
-    
+
     function setUp() {
         global $trackbackData;
         foreach ($trackbackData as $id => $set) {
@@ -45,7 +34,7 @@ class Webservices_Trackback_SpamCheck_DNSBL_TestCase extends PHPUnit_TestCase
 
     // }}}
     // {{{ tearDown()
-    
+
     function tearDown() {
     }
 
@@ -106,9 +95,4 @@ class Webservices_Trackback_SpamCheck_DNSBL_TestCase extends PHPUnit_TestCase
     // }}}
 
 }
-$suite  = new PHPUnit_TestSuite("Webservices_Trackback_SpamCheck_DNSBL_TestCase");
-$result = PHPUnit::run($suite);
 
-echo $result->toString();
-
-?>
