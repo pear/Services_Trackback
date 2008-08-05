@@ -6,7 +6,7 @@
  * Services_Trackback_SpamCheck.
  *
  * This is the base class for Services_Trackback spamchecks. Since PHP4
- * lacks abstract class support, this class acts like a virtual abstract class. 
+ * lacks abstract class support, this class acts like a virtual abstract class.
  * Each SpamCheck implementation has to extend this class and implement all of it's
  * abstract methods.
  *
@@ -19,16 +19,16 @@
  * send a note to license@php.net so we can mail you a copy immediately.
  *
  * @abstract
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.5.0
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     File available since Release 0.5.0
  */
-    
+
     // {{{ require_once
 
 /**
@@ -36,24 +36,25 @@
  */
 
 require_once 'PEAR.php';
-    
+
     // }}}
 
 /**
  * SpamCheck
  * Base class for Services_Trackback spam protection modules.
  *
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.5.0
- * @access     public
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     0.5.0
+ * @access    public
  */
-class Services_Trackback_SpamCheck {
+class Services_Trackback_SpamCheck
+{
 
     // {{{ _options
     /**
@@ -70,7 +71,7 @@ class Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ _results
-    
+
     /**
      * Array of results, indexed analogue to the 'sources' option (boolean result value per source).
      *
@@ -81,35 +82,38 @@ class Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ create()
-    
+
     /**
      * Factory.
      * Create a new instance of a spam protection module.
      *
+     * @param string $type    Name of a SpamCheck driver
+     * @param array  $options An array of options for this spam protection module. General options are
+     *                        'continuous':  Whether to continue checking more sources, if a match has been found.
+     *                        'sources':     List of different sources for this module to check (eg. blacklist URLs,
+     *                                       word arrays,...).
+     *                        All further options depend on the specific module.
+     *
      * @since 0.5.0
      * @static
      * @access public
-     * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
-     *                       'sources':     List of different sources for this module to check (eg. blacklist URLs,
-     *                                      word arrays,...).
-     *                       All further options depend on the specific module.
      * @return object(Services_Trackback_SpamCheck) The newly created SpamCheck object.
      */
     function &create($type, $options = null)
     {
-        $filename = 'Services/Trackback/SpamCheck/' . $type . '.php';
+        $filename     = 'Services/Trackback/SpamCheck/' . $type . '.php';
         $filepathes[] = dirname(__FILE__).'/SpamCheck/'.$type.'.php';
         $filepathes[] = dirname(__FILE__).'/'.$type.'.php';
+
         $classname = 'Services_Trackback_SpamCheck_' . $type;
 
         // Check if class already exists or is includeable
         if (!class_exists($classname)) {
             if (file_exists($filepathes[0]) || file_exists($filepathes[1])) {
                 include_once $filename;
-            } 
+            }
         }
-       
+
         // We now definitly have to have the class available else the spam check
         // contained errors / is unavailable.
         if (!class_exists($classname)) {
@@ -118,7 +122,7 @@ class Services_Trackback_SpamCheck {
         $res = new $classname(@$options);
         return $res;
     }
-    
+
     // }}}
     // {{{ check()
 
@@ -126,8 +130,10 @@ class Services_Trackback_SpamCheck {
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam. Generally this method
      * may not be overwritten, but it can be, if necessary. This method calls the _checkSource() method
-     * for each source defined in the $_options array (depending on the 'continuous' option), saves the 
+     * for each source defined in the $_options array (depending on the 'continuous' option), saves the
      * results and returns the spam status determined by the check.
+     *
+     * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
      * @access public
@@ -144,6 +150,7 @@ class Services_Trackback_SpamCheck {
                 break;
             } else {
                 $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
+
                 $spam = ($spam || $this->_results[$id]);
             }
         }
@@ -151,7 +158,7 @@ class Services_Trackback_SpamCheck {
     }
     // }}}
     // {{{ getResults()
-    
+
     /**
      * Get spam check results.
      * Receive the results determined by the spam check.
@@ -164,10 +171,10 @@ class Services_Trackback_SpamCheck {
     {
         return $this->_results;
     }
-    
+
     // }}}
     // {{{ reset()
-    
+
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
@@ -187,20 +194,20 @@ class Services_Trackback_SpamCheck {
 
     /**
      * Check a specific source if a trackback has to be considered spam.
-     * Check a specific source if a trackback has to be considered spam.
+     *
+     * @param mixed              $source    Element of the _sources array to check.
+     * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
      * @access protected
      * @abstract
-     * @param mixed $source Element of the _sources array to check.
-     * @param object(Services_Trackback) The trackback to check.
-     * @return bool True if trackback is spam, false, if not, PEAR_Error on error. 
+     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
      */
     function _checkSource($source, $trackback)
     {
         return PEAR::raiseError('Method not implemented.', -1);
     }
-    
+
     // }}}
 
 }
