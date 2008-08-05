@@ -16,53 +16,54 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.5.0
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     File available since Release 0.5.0
  */
-    
+
      // {{{ require_once
 
 /**
  * Load PEAR error handling
  */
 require_once 'PEAR.php';
- 
+
 /**
  * Load SpamCheck base.
  */
 require_once 'Services/Trackback/SpamCheck.php';
- 
+
 /**
  * Load Net_SURBL for spam cheching
  */
 require_once 'Net/DNSBL/SURBL.php';
-   
+
     // }}}
 
 /**
  * SURBL
  * Module for spam detecion using SURBL.
  *
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.5.0
- * @access     public
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     0.5.0
+ * @access    public
  */
-class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
+class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
+{
 
     // {{{ _options
-    
+
     /**
      * Options for the SpamCheck.
      *
@@ -84,7 +85,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ _surbl
-    
+
     /**
      * The Net_DNSBL_SURBL object for checking.
      *
@@ -96,7 +97,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ _urls
-    
+
     /**
      * URLs extracted from the trackback.
      *
@@ -108,19 +109,23 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ Services_Trackback_SpamCheck_SURBL()
-    
+
     /**
      * Constructor.
      * Create a new instance of the SURBL spam protection module.
      *
+     * @param array $options An array of options for this spam protection module.
+     *                       General options are
+     *                       'continuous':  Whether to continue checking more
+     *                                      sources, if a match has been found.
+     *                       'sources':     List of blacklist servers. Indexed.
+     *                       'elements'     Array of trackback data fields
+     *                                      extract URLs from (standard is 'title'
+     *                                      and 'excerpt').
+     *
      * @since 0.5.0
      * @access public
-     * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
-     *                       'sources':     List of blacklist servers. Indexed.
-     *                       'elements'     Array of trackback data fields extract URLs from (standard is 'title' 
-     *                                      and 'excerpt').
-     * @return object(Services_Trackback_SpamCheck_SURBL) The newly created SpamCheck object.
+     * @return Services_Trackback_SpamCheck_SURBL The newly created SpamCheck object.
      */
     function Services_Trackback_SpamCheck_SURBL($options = null)
     {
@@ -134,7 +139,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ reset()
-    
+
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
@@ -146,13 +151,24 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
      */
     function reset()
     {
-        $this->_urls = array();
+        $this->_urls    = array();
         $this->_results = array();
     }
 
     // }}}
     // {{{ _checkSource()
 
+    /**
+     * Check a specific source if a trackback has to be considered spam.
+     *
+     * @param mixed              &$source   Element of the _sources array to check.
+     * @param Services_Trackback $trackback The trackback to check.
+     *
+     * @since 0.5.0
+     * @access protected
+     * @abstract
+     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     */
     function _checkSource(&$source, $trackback)
     {
         if (count($this->_urls) == 0) {
@@ -171,14 +187,21 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ _extractURLs()
-
+    /**
+     * Extract all URLS from the Trackback
+     *
+     * @param Services_Trackback $trackback The trackback to extract urls from.
+     *
+     * @return void
+     */
     function _extractURLs($trackback)
     {
         $urls = '(?:http|file|ftp)';
         $ltrs = 'a-z0-9';
         $gunk = '.-';
         $punc = $gunk;
-        $any = "$ltrs$gunk";
+        $any  = "$ltrs$gunk";
+
         $regex = "{
                       $urls   ://
                       [$any]+
@@ -191,14 +214,14 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck {
                       )
                   }x";
         foreach ($this->_options['elements'] as $element) {
-	        if (0 !== preg_match_all($regex, $trackback->get($element), $matches)) {
-	            foreach ($matches[0] as $match) {
-	                $this->_urls[md5($match)] = $match;
-	            }
+            if (0 !== preg_match_all($regex, $trackback->get($element), $matches)) {
+                foreach ($matches[0] as $match) {
+                    $this->_urls[md5($match)] = $match;
+                }
             }
-	    }
+        }
     }
 
     // }}}
-    
+
 }
