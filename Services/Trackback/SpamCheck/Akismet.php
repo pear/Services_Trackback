@@ -9,7 +9,7 @@
  * against the spam checking webservice Akismet {@link http://akismet.com/}
  * provided by {@link http://wordpress.com}. ATTENTION: To use this spam check,
  * you need a valid WordPress.com API key.
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
@@ -27,14 +27,14 @@
  * @link       http://pear.php.net/package/Services_Trackback
  * @since      File available since Release 0.6.0
  */
-    
+
     // {{{ require_once
 
 /**
  * Load PEAR error handling
  */
 require_once 'PEAR.php';
-  
+
 /**
  * Load SpamCheck base class
  */
@@ -42,10 +42,10 @@ require_once 'PEAR.php';
 require_once 'Services/Trackback/SpamCheck.php';
 
 /**
- * HTTP_Request for sending POST requests to Akismet 
+ * HTTP_Request for sending POST requests to Akismet
  */
 require_once 'HTTP/Request.php';
-   
+
     // }}}
 
 /**
@@ -65,7 +65,7 @@ require_once 'HTTP/Request.php';
 class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck {
 
     // {{{ _options
-    
+
     /**
      * Options for the Wordlist.
      *
@@ -91,7 +91,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         ),
     );
 
-    // }}}    
+    // }}}
     // {{{ Services_Trackback_SpamCheck_Akismet()
 
     /**
@@ -113,7 +113,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
             }
         }
     }
-    
+
     // }}}
     // {{{ check()
 
@@ -147,7 +147,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         return $foundSpam;
     }
 
-    // }}} 
+    // }}}
     // {{{ submitSpam()
 
     function submitSpam($trackback, $sourceId = 0)
@@ -170,7 +170,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         return $res === '';
     }
 
-    // }}}  
+    // }}}
     // {{{ submitHam()
 
     function submitHam($trackback, $sourceId = 0)
@@ -193,23 +193,22 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         return $res === '';
     }
 
-    // }}}  
+    // }}}
     // {{{ verifyKey()
-    
+
     function verifyKey()
     {
         $tmpTrack = Services_Trackback::create(array('id' => 1));
         if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][0], $tmpTrack))) {
-            var_dump($res);
             return $res;
         }
         return $res == 'valid';
     }
-    
+
     // }}}
 
     // {{{ _checkSource()
-    
+
     function _checkSource(&$source, $trackback)
     {
         if (PEAR::isError($res = $this->_sendAkismetRequest($source, $trackback, 'comment-check'))) {
@@ -228,17 +227,17 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
     {
         $action = strtolower($action);
         $req = null;
-        
+
         $options = $trackback->getOptions();
         $httpRequestOptions = $options['httprequest'];
-                
+
         switch ($action) {
             case 'verify-key':
                 $url = 'http://' . $baseUri . $action;
-                
+
                 $req = new HTTP_Request($url, $httpRequestOptions);
                 $req->setMethod(HTTP_REQUEST_METHOD_POST);
-                
+
                 $req->addPostData('key', $this->_options['key']);
                 $req->addPostData('blog', $this->_options['url']);
             break;
@@ -246,20 +245,20 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
             case 'submit-spam':
             case 'submit-ham':
                 $url = 'http://' . $this->_options['key'] . '.' . $baseUri . $action;
-                
+
                 $req = new HTTP_Request($url, $httpRequestOptions);
                 $req->setMethod(HTTP_REQUEST_METHOD_POST);
 
                 $req->addHeader('User-Agent', $httpRequestOptions['useragent']);
                 $req->addPostData('comment_type', 'trackback');
-                
+
                 $req->addPostData('key', $this->_options['key']);
                 $req->addPostData('blog', $this->_options['url']);
-                
+
                 $req->addPostData('comment_author', $trackback->get('blog_name'));
                 $req->addPostData('comment_author_url', $trackback->get('url'));
                 $req->addPostData('user_ip', $trackback->get('host'));
-                
+
                 $extra = $trackback->get('extra');
                 $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
                 $req->addPostData('referrer', isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '');
@@ -268,7 +267,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
                 return PEAR::raiseError('Invalid Akismet action: "'.$action.'".');
                 break;
         }
-        
+
         if (($res = $req->sendRequest()) !== true) {
             return $res;
         }
@@ -276,10 +275,10 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         if ($req->getResponseCode() !== 200) {
             return PEAR::raiseError('Could not open URL "'.$url.'". Code: "'.$req->getResponseCode().'".');
         }
-        
+
         return trim($req->getResponseBody());
     }
 
     // }}}
-    
+
 }

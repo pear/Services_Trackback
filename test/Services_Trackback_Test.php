@@ -19,9 +19,9 @@ require_once dirname(__FILE__).'/trackback_data.php';
 
 class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 {
-    
+
     // {{{ Webservices_Trackback_TestCase()
-    
+
     // constructor of the test suite
     function Webservices_Trackback_TestCase($name) {
        $this->PHPUnit_TestCase($name);
@@ -29,13 +29,13 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 
     // }}}
     // {{{ setup()
-    
+
     function setUp() {
     }
 
     // }}}
     // {{{ tearDown()
-    
+
     function tearDown() {
     }
 
@@ -104,7 +104,7 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
 
     // }}}
     // {{{ Test autodiscover()
-   
+
    function test_autodiscover_success()
     {
         $data = array(
@@ -128,7 +128,7 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
         $res = $track1->autodiscover();
         $this->assertTrue(PEAR::isError($res));
     }
-    
+
     // }}}
     // {{{Test send()
 
@@ -145,7 +145,7 @@ class Webservices_Trackback_TestCase extends PHPUnit_TestCase
     {
         global $trackbackData;
         $data = $trackbackData['nospam'];
-        
+
         $xml = <<<EOD
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -166,7 +166,7 @@ EOD;
     {
         global $trackbackData;
         $data = $trackbackData['nospam'];
-        
+
         $xml = <<<EOD
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -188,18 +188,18 @@ EOD;
 
     // }}}
     // {{{ Test receive()
-    
+
     function test_receive()
     {
         global $trackbackData;
         $postData = $trackbackData['nospam'];
         $data = $postData;
-        
+
         $data['id'] = 1;
         // Not set during receive()
         // unset($data['host']);
         unset($data['trackback_url']);
-        
+
         $recTrack = Services_Trackback::create(array('id' => 1));
         $recTrack->receive($postData);
         $fakeTrack = Services_Trackback::create($data);
@@ -209,7 +209,7 @@ EOD;
 
     // }}}
     // {{{ Test getResponseSuccess()
-    
+
     function test_getResponseSuccess()
     {
         $xml = <<<EOD
@@ -223,7 +223,7 @@ EOD;
 
     // }}}
     // {{{ Test getResponseError()
-    
+
     function test_getResponseError()
     {
         $xml = <<<EOD
@@ -235,27 +235,27 @@ EOD;
 EOD;
         $this->assertTrue(Services_Trackback::getResponseError('Me & you', -2) == $xml);
     }
-    
+
     // }}}
     // {{{ Test addSpamCheck
-    
+
     function test_addSpamCheck_success()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
         $this->assertTrue($trackback->addSpamCheck($spamCheck));
     }
-    
+
     function test_addSpamCheck_failure()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback();
         $this->assertTrue(PEAR::isError($trackback->addSpamCheck($spamCheck)));
     }
-    
+
     // }}}
     // {{{ Test createSpamCheck
-    
+
     function test_createSpamCheck_success()
     {
         global $trackbackData;
@@ -263,7 +263,7 @@ EOD;
         $spamCheck = Services_Trackback_SpamCheck::create('DNSBL');
         $this->assertTrue($trackback->createSpamCheck('DNSBL') == $spamCheck);
     }
-    
+
     function test_createSpamCheck_failure()
     {
         global $trackbackData;
@@ -271,10 +271,10 @@ EOD;
         $spamCheck = Services_Trackback_SpamCheck::create('DNS');
         $this->assertTrue(PEAR::isError($spamCheck));
     }
-    
+
     // }}}
     // {{{ Test removeSpamCheck
-    
+
     function test_removeSpamCheck_success()
     {
         $trackback = new Services_Trackback();
@@ -282,7 +282,7 @@ EOD;
         $trackback->addSpamCheck($spamCheck);
         $this->assertTrue($trackback->removeSpamCheck($spamCheck));
     }
-    
+
     function test_removeSpamCheck_failure()
     {
         $trackback = new Services_Trackback();
@@ -291,7 +291,7 @@ EOD;
         $spamCheck2 = new Services_Trackback_SpamCheck();
         $this->assertTrue(PEAR::isError($trackback->removeSpamCheck($spamCheck2)));
     }
-    
+
     // }}}
     // {{{ Test _fromArray()
 
@@ -312,9 +312,9 @@ EOD;
         $trackback = Services_Trackback::create($trackbackData['nospam']);
         $url = 'http://schlitt.info/projects/PEAR/Services_Trackback/test_getContent.txt';
         $fakeRes = "Test text.\n";
-   
+
         $res = $trackback->_getContent($url);
-        var_dump($res);
+
         if (PEAR::isError($res)) {
             $this->fail($res->getMessage());
             return;
@@ -338,7 +338,7 @@ EOD;
             'bar' => 'foo &lt;&lt; baz',
             'baz' => 'foo &amp;&amp; bar'
         );
-        
+
         $this->assertTrue(Services_Trackback::_getEncodedData(array('foo', 'bar', 'baz'), $in) == $out);
     }
     // }}}
@@ -355,13 +355,13 @@ EOD;
             'foo' => 'bar & baz',
             'baz' => 'foo && bar'
         );
-        
+
         $this->assertTrue(Services_Trackback::_getDecodedData(array('foo', 'baz'), $in) == $out);
     }
 
     // }}}
     // {{{ Test _checkData
-    
+
     function test_checkData_true()
     {
         $keys = array('id', 'test');
@@ -377,7 +377,7 @@ EOD;
 
     // }}}
     // {{{ Test _checkURLs()
-    
+
     function test_checkURLs_true_1()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
@@ -448,7 +448,7 @@ EOD;
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
     }
 
-    // 
+    //
 
     // }}}
     // {{{ Test _interpretTrackbackResponse()
@@ -463,7 +463,7 @@ EOD;
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue($res);
     }
-    
+
     function test_interpretTrackbackResponse_failure() {
         $xml = <<<EOD
 <?xml version='1.0' encoding='iso-8859-1'?>
@@ -475,7 +475,7 @@ EOD;
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue(PEAR::isError($res));
     }
-    
+
     function test_interpretTrackbackResponse_invalid_1() {
         $xml = <<<EOD
 <?xml version='1.0' encoding='iso-8859-1'?>
@@ -487,7 +487,7 @@ EOD;
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue(PEAR::isError($res));
     }
-    
+
     function test_interpretTrackbackResponse_invalid_2() {
         $xml = <<<EOD
 <?xml version='1.0' encoding='iso-8859-1'?>
