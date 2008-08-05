@@ -1,105 +1,127 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
-<package version="1.0" packagerversion="1.4.6">
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>Services_Trackback</name>
+ <channel>pear.php.net</channel>
  <summary>Trackback - A generic class for sending and receiving trackbacks.</summary>
- <description>A generic class for sending and receiving trackbacks.
- </description>
- <maintainers>
-  <maintainer>
-   <user>toby</user>
-   <name>Tobias Schlitt</name>
-   <email>toby@php.net</email>
-   <role>lead</role>
-  </maintainer>
-  </maintainers>
- <release>
-  <version>0.6.1</version>
-  <date>2006-02-24</date>
-  <license>PHP License</license>
-  <state>beta</state>
-  <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.
-  </notes>
-  <deps>
-   <dep type="php" rel="ge" version="4.3.0" optional="no"/>
-  </deps>
-  <filelist>
-   <dir name="/" baseinstalldir="/">
-    <dir name="Services">
-     <dir name="Trackback">
-      <dir name="SpamCheck">
-       <file role="php" name="Akismet.php">
-        <replace from="@package_version@" to="version" type="package-info"/>
-       </file>
-       <file role="php" name="DNSBL.php">
-        <replace from="@package_version@" to="version" type="package-info"/>
-       </file>
-       <file role="php" name="Regex.php">
-        <replace from="@package_version@" to="version" type="package-info"/>
-       </file>
-       <file role="php" name="SURBL.php">
-        <replace from="@package_version@" to="version" type="package-info"/>
-       </file>
-       <file role="php" name="Wordlist.php">
-        <replace from="@package_version@" to="version" type="package-info"/>
-       </file>
-      </dir> <!-- /Services/Trackback/SpamCheck -->
-      <file role="php" name="SpamCheck.php">
-       <replace from="@package_version@" to="version" type="package-info"/>
-      </file>
-     </dir> <!-- /Services/Trackback -->
-     <file role="php" name="Trackback.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-    </dir> <!-- /Services -->
-    <dir name="test">
-     <file role="test" name="akismet_key.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="failed_tests.sh">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_SpamCheck_Akismet_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_SpamCheck_DNSBL_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_SpamCheck_Regex_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_SpamCheck_SURBL_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_SpamCheck_Wordlist_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_Test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="Services_Trackback_TestAll.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="simple_test.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-     <file role="test" name="trackback_data.php">
-      <replace from="@package_version@" to="version" type="package-info"/>
-     </file>
-    </dir> <!-- /test -->
-   </dir> <!-- / -->
-  </filelist>
- </release>
+ <description>A generic class for sending and receiving trackbacks.</description>
+ <lead>
+  <name>Tobias Schlitt</name>
+  <user>toby</user>
+  <email>toby@php.net</email>
+  <active>yes</active>
+ </lead>
+ <date>2008-08-05</date>
+ <time>00:57:40</time>
+ <version>
+  <release>0.6.1</release>
+  <api>0.6.1</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.</notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="/" md5sum="673efdbeec06a7ae1b5ad9134f0ba72c" name="Services/Trackback.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="298b14a8c0cccbfcc1865b62665dc547" name="Services/Trackback/SpamCheck.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9b61b6906dd34428fce6874d7f62fe5b" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="f036d047586c8548af94555f9015479f" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="c84d063d16a6604a3551c1b5e0eea792" name="Services/Trackback/SpamCheck/Regex.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="132198d036c3f31f598e63125ca28d04" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="1f615d1ef5751c6da90be06a1a7e12b4" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="8c83cafbf3320767632c2c85614bb0ec" name="test/akismet_key.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="d8d38073157448dd294b9fd330b19791" name="test/failed_tests.sh" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="982c9e2cc70ffcfd38fac2831c2af667" name="test/Services_Trackback_SpamCheck_Akismet_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="9062c44c8ff9580a0003d4062af76e2b" name="test/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="37e321ab6a4f8931d6138f5de63b9192" name="test/Services_Trackback_SpamCheck_Regex_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="5609c711b6585be7f707e700c7d46314" name="test/Services_Trackback_SpamCheck_SURBL_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="b6fc189e76dc58c37714db8f24eae2ac" name="test/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="a131211a9fa830ca79c332010ecfcc8a" name="test/Services_Trackback_Test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="12e0d6ef01132a17cd7a1cced31ff6a9" name="test/Services_Trackback_TestAll.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="aac45d97b55936b8ca7f7bdbec9fa530" name="test/simple_test.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="e6eb2d222096f0fce6fce7912e5a4acc" name="test/trackback_data.php" role="test">
+    <tasks:replace from="@package_version@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" md5sum="2af0bdac6268d6f3c354cbc58b76402d" name="generate_package2_xml.php" role="php" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>4.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0b1</min>
+   </pearinstaller>
+   <package>
+    <name>Var_Dump</name>
+    <channel>pear.php.net</channel>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
  <changelog>
-   <release>
-    <version>0.6.1</version>
-    <date>2006-02-24</date>
-    <license>PHP License</license>
-    <state>beta</state>
-    <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.
-    </notes>
-   </release>
-   <release>
-   </release>
+  <release>
+   <version>
+    <release />
+    <api />
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2008-08-05</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>no release notes</notes>
+  </release>
+  <release>
+   <version>
+    <release>0.6.1</release>
+    <api>0.6.1</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2008-08-05</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.</notes>
+  </release>
  </changelog>
 </package>
