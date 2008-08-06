@@ -17,7 +17,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $dir = new DirectoryIterator($path);
         $this->xml = array();
         foreach ($dir as $file) {
-            list($testName, $extension) = explode('.', (string)$file);
+            @list($testName, $extension) = explode('.', (string)$file);
 
             if ($extension !== 'xml') {
                 continue;
@@ -260,6 +260,8 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testGetContent()
     {
+        $this->markTestSkipped("See Bug #13456");
+
         global $trackbackData;
         $trackback = Services_Trackback::create($trackbackData['nospam']);
         $url = 'http://schlitt.info/projects/PEAR/Services_Trackback/test_getContent.txt';
@@ -435,3 +437,4 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     }
 }
 ?>
+cl
