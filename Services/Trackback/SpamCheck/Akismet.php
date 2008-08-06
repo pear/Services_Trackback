@@ -144,7 +144,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
         $foundSpam = false;
-        foreach ($this->_options['sources'] as $id => $source) {
+        foreach (array_keys($this->_options['sources']) as $id) {
             if ($foundSpam && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
@@ -178,7 +178,9 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
-        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-spam'))) {
+        $action = 'submit-spam';
+        $res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action);
+        if (PEAR::isError($res)) {
             return $res;
         }
         return $res === '';
@@ -201,7 +203,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
-        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-ham'))) {
+        $action = 'submit-ham';
+        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action))) {
             return $res;
         }
         return $res === '';
@@ -226,14 +229,14 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     /**
      * Check a specific source if a trackback has to be considered spam.
      *
-     * @param mixed              &$source   Element of the _sources array to check.
+     * @param mixed              $source    Element of the _sources array to check.
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
      * @access protected
      * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
      */
-    function _checkSource(&$source, $trackback)
+    function _checkSource($source, $trackback)
     {
         $res = $this->_sendAkismetRequest($source, $trackback, 'comment-check');
         if (PEAR::isError($res)) {

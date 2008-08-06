@@ -144,7 +144,7 @@ class Services_Trackback_SpamCheck
     {
         $this->reset();
         $spam = false;
-        foreach ($this->_options['sources'] as $id => $source) {
+        foreach (array_keys($this->_options['sources']) as $id) {
             if ($spam && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;

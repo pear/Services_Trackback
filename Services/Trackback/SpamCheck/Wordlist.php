@@ -173,7 +173,7 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     function check($trackback)
     {
         $spamCount = 0;
-        foreach ($this->_options['sources'] as $id => $source) {
+        foreach (array_keys($this->_options['sources']) as $id) {
             if ($spamCount >= $this->_options['minmatches']
                 && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
@@ -196,14 +196,14 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     /**
      * Check a specific source if a trackback has to be considered spam.
      *
-     * @param mixed              &$source   Element of the _sources array to check.
+     * @param mixed              $source    Element of the _sources array to check.
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
      * @access protected
      * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
      */
-    function _checkSource(&$source, $trackback)
+    function _checkSource($source, $trackback)
     {
         $spam = false;
         foreach ($this->_options['elements'] as $element) {

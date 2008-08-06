@@ -161,7 +161,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
     /**
      * Check a specific source if a trackback has to be considered spam.
      *
-     * @param mixed              &$source   Element of the _sources array to check.
+     * @param mixed              $source    Element of the _sources array to check.
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
@@ -169,7 +169,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      * @abstract
      * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
      */
-    function _checkSource(&$source, $trackback)
+    function _checkSource($source, $trackback)
     {
         if (count($this->_urls) == 0) {
             $this->_extractURLs($trackback);
@@ -196,6 +196,8 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      */
     function _extractURLs($trackback)
     {
+        $matches = array();
+
         $urls = '(?:http|file|ftp)';
         $ltrs = 'a-z0-9';
         $gunk = '.-';
