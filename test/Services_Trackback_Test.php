@@ -1,34 +1,37 @@
 <?php
-
-    // {{{ require_once
-
-// Services_Trackback classes
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
 
-// Testdata
-require_once dirname(__FILE__).'/trackback_data.php';
+require_once 'PHPUnit/Framework/TestCase.php';
 
-    // }}}
+require_once dirname(__FILE__).'/trackback_data.php';
 
 class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 {
-    // {{{ setup()
+
+    var $xml;
 
     function setUp() {
+        $path = dirname(__FILE__) . '/data/Services_Trackback_Test/';
+
+        $dir = new DirectoryIterator($path);
+        $this->xml = array();
+        foreach ($dir as $file) {
+            list($testName, $extension) = explode('.', (string)$file);
+
+            if ($extension !== 'xml') {
+                continue;
+            }
+
+            $xml = file_get_contents($path . "/" . $file);
+            $this->xml[$testName] = trim($xml);
+        }
     }
 
-    // }}}
-    // {{{ tearDown()
-
-    function tearDown() {
-    }
-
-    // }}}
-    // {{{ Test create()
-
-    function test_create() {
+    function testCreate()
+    {
         global $trackbackData;
+
         $options = array(
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
@@ -40,16 +43,17 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
                 'useragent'         => 'Mozilla 10.0',
             ),
         );
+
         $fakeTrack = new Services_Trackback;
+
         $fakeTrack->_options = $options;
-        $fakeTrack->_data = $trackbackData['nospam'];
+        $fakeTrack->_data    = $trackbackData['nospam'];
+
         $this->assertTrue(Services_Trackback::create($trackbackData['nospam'], $options) == $fakeTrack);
     }
 
-    // }}}
-    // {{{ Test setOptions()
-
-    function test_setOptions_success() {
+    function testSetOptionsSuccess()
+    {
         $options = array(
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
@@ -61,17 +65,19 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
                 'useragent'         => 'Mozilla 10.0',
             ),
         );
+
         $fakeTrack = new Services_Trackback;
-        $fakeTrack->_options = $options;
         $realTrack = new Services_Trackback;
+
+        $fakeTrack->_options = $options;
         $realTrack->setOptions($options);
+
         $this->assertTrue($realTrack == $fakeTrack);
     }
 
-    // }}}
-    // {{{ Test getOptions()
 
-    function test_getOptions_success() {
+    function testGetOptionsSuccess()
+    {
         $options = array(
             'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
             'timeout'           => 10,
@@ -82,99 +88,83 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
                 'useragent'         => 'Mozilla 10.0',
             ),
         );
+
         $track = new Services_Trackback;
+
         $track->_options = $options;
+
         $this->assertTrue($track->getOptions() == $options);
     }
 
-    // }}}
-    // {{{ Test autodiscover()
 
-   function test_autodiscover_success()
+    function testAutodiscoverSuccess()
     {
         $data = array(
             'id' => 'Test',
             'url' => 'http://pear.php.net/package/net_ftp'
         );
+
         $track1 = Services_Trackback::create($data);
         $track1->autodiscover();
 
         $data['trackback_url'] = 'http://pear.php.net/trackback/trackback.php?id=Net_FTP';
+
         $track2 = Services_Trackback::create($data);
+
         $this->assertTrue($track1 == $track2);
     }
-    function test_autodiscover_failure()
+
+    function testAutodiscoverFailure()
     {
         $data = array(
             'id' => 'Test',
             'url' => 'http://pear.php.net/'
         );
+
         $track1 = Services_Trackback::create($data);
-        $res = $track1->autodiscover();
+        $res    = $track1->autodiscover();
         $this->assertTrue(PEAR::isError($res));
     }
 
-    // }}}
-    // {{{Test send()
-
-    function test_send()
+    function testSend()
     {
         global $trackbackData;
         $track = Services_Trackback::create($trackbackData['nospam']);
     }
 
-    // }}}
-    // {{{Test getAutodiscoveryCode()
 
-    function test_getAutodiscoveryCode_nocomments()
+    function testGetAutodiscoveryCodeNoComments()
     {
         global $trackbackData;
         $data = $trackbackData['nospam'];
 
-        $xml = <<<EOD
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
-    <rdf:Description
-        rdf:about="%s"
-        dc:identifier="%s"
-        dc:title="%s"
-        trackback:ping="%s" />
-</rdf:RDF>
-
-EOD;
+        $xml = $this->xml['testGetAutodiscoveryCodeNoComments'];
         $xml = sprintf($xml, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
+
         $track = Services_Trackback::create($data);
-        $this->assertTrue($track->getAutodiscoveryCode(false) == $xml);
+
+        $result = trim($track->getAutodiscoveryCode(false));
+
+        $this->assertSame($xml, $result);
     }
-    function test_getAutodiscoveryCode_comments()
+
+    function testGetAutodiscoveryCodeComments()
     {
         global $trackbackData;
         $data = $trackbackData['nospam'];
 
-        $xml = <<<EOD
-<!--
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
-    <rdf:Description
-        rdf:about="%s"
-        dc:identifier="%s"
-        dc:title="%s"
-        trackback:ping="%s" />
-</rdf:RDF>
--->
-
-EOD;
+        $xml = $this->xml['testGetAutodiscoveryCodeComments'];
         $xml = sprintf($xml, $data['url'], $data['url'], $data['title'], $data['trackback_url']);
+
         $track = Services_Trackback::create($data);
-        $this->assertTrue($track->getAutodiscoveryCode() == $xml);
+
+        $result = trim($track->getAutodiscoveryCode());
+
+        $this->assertSame($xml, $result);
     }
 
-    // }}}
-    // {{{ Test receive()
 
-    function test_receive()
+    function testReceive()
     {
         global $trackbackData;
         $postData = $trackbackData['nospam'];
@@ -187,44 +177,27 @@ EOD;
 
         $recTrack = Services_Trackback::create(array('id' => 1));
         $recTrack->receive($postData);
+
         $fakeTrack = Services_Trackback::create($data);
         $fakeTrack->set('extra', $_SERVER);
+
         $this->assertTrue($recTrack == $fakeTrack);
     }
 
-    // }}}
-    // {{{ Test getResponseSuccess()
 
-    function test_getResponseSuccess()
+    function testGetResponseSuccess()
     {
-        $xml = <<<EOD
-<?xml version="1.0" encoding="iso-8859-1"?>
-<response>
-<error>0</error>
-</response>
-EOD;
+        $xml = $this->xml['testGetResponseSuccess'];
         $this->assertTrue(Services_Trackback::getResponseSuccess() == $xml);
     }
 
-    // }}}
-    // {{{ Test getResponseError()
-
-    function test_getResponseError()
+    function testGetResponseError()
     {
-        $xml = <<<EOD
-<?xml version="1.0" encoding="iso-8859-1"?>
-<response>
-<error>-2</error>
-<message>Me &amp; you</message>
-</response>
-EOD;
+        $xml = $this->xml['testGetResponseError'];
         $this->assertTrue(Services_Trackback::getResponseError('Me & you', -2) == $xml);
     }
 
-    // }}}
-    // {{{ Test addSpamCheck
-
-    function test_addSpamCheck_success()
+    function testAddSpamCheckSuccess()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
@@ -233,17 +206,14 @@ EOD;
         $this->assertTrue($result === true);
     }
 
-    function test_addSpamCheck_failure()
+    function testAddSpamCheckFailure()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback();
         $this->assertTrue(PEAR::isError($trackback->addSpamCheck($spamCheck)));
     }
 
-    // }}}
-    // {{{ Test createSpamCheck
-
-    function test_createSpamCheck_success()
+    function testCreateSpamCheckSuccess()
     {
         global $trackbackData;
         $trackback = new Services_Trackback($trackbackData['nospam']);
@@ -251,7 +221,7 @@ EOD;
         $this->assertTrue($trackback->createSpamCheck('DNSBL') == $spamCheck);
     }
 
-    function test_createSpamCheck_failure()
+    function testCreateSpamCheckFailure()
     {
         global $trackbackData;
         $trackback = new Services_Trackback($trackbackData['nospam']);
@@ -259,10 +229,7 @@ EOD;
         $this->assertTrue(PEAR::isError($spamCheck));
     }
 
-    // }}}
-    // {{{ Test removeSpamCheck
-
-    function test_removeSpamCheck_success()
+    function testRemoveSpamCheckSuccess()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
@@ -272,7 +239,7 @@ EOD;
         $this->assertTrue($result === true);
     }
 
-    function test_removeSpamCheck_failure()
+    function testRemoveSpamCheckFailure()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
@@ -281,10 +248,8 @@ EOD;
         $this->assertTrue(PEAR::isError($trackback->removeSpamCheck($spamCheck2)));
     }
 
-    // }}}
-    // {{{ Test _fromArray()
-
-    function test_fromArray() {
+    function testFromArray()
+    {
         global $trackbackData;
         $fakeTrack = new Services_Trackback;
         $fakeTrack->_data = $trackbackData['nospam'];
@@ -293,10 +258,8 @@ EOD;
         $this->assertTrue($realTrack == $fakeTrack);
     }
 
-    // }}}
-    // {{{ Test _getContent()
-
-    function test_getContent() {
+    function testGetContent()
+    {
         global $trackbackData;
         $trackback = Services_Trackback::create($trackbackData['nospam']);
         $url = 'http://schlitt.info/projects/PEAR/Services_Trackback/test_getContent.txt';
@@ -312,10 +275,8 @@ EOD;
         $this->assertTrue(trim($res) == trim($fakeRes));
     }
 
-    // }}}
-    // {{{ Test _getEncodedData()
-
-    function test_getEncodedData() {
+    function testGetEncodedData()
+    {
         $in = array(
             'foo' => 'bar & baz',
             'bar' => 'foo << baz',
@@ -330,10 +291,9 @@ EOD;
 
         $this->assertTrue(Services_Trackback::_getEncodedData(array('foo', 'bar', 'baz'), $in) == $out);
     }
-    // }}}
-    // {{{ Test _getDecodedData()
 
-    function test_getDecodedData() {
+    function testGetDecodedData()
+    {
         $in = array(
             'foo' => 'bar & baz',
             'bar' => 'foo << baz',
@@ -348,40 +308,38 @@ EOD;
         $this->assertTrue(Services_Trackback::_getDecodedData(array('foo', 'baz'), $in) == $out);
     }
 
-    // }}}
-    // {{{ Test _checkData
-
-    function test_checkData_true()
+    function testCheckDataTrue()
     {
         $keys = array('id', 'test');
         $data = array('id' => 1, 'test' => 'x', 'test2' => 0);
         $this->assertTrue(Services_Trackback::_checkData($keys, $data));
     }
-    function test_checkData_false()
+
+    function testCheckDataFalse()
     {
         $keys = array('id', 'test');
         $data = array('id' => 1, 'test2' => 0);
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkData($keys, $data)));
     }
 
-    // }}}
-    // {{{ Test _checkURLs()
 
-    function test_checkURLs_true_1()
+    function testCheckURLsTrue1()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.net/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
     }
-    function test_checkURLs_true_2()
+
+    function testCheckURLsTrue2()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
     }
-    function test_checkURLs_true_3()
+
+    function testCheckURLsTrue3()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
         $url1 = "http://www.example.com/trackback/index.php";
@@ -390,7 +348,7 @@ EOD;
     }
 
 
-    function test_checkURLs_false_1()
+    function testCheckURLsFalse1()
     {
         // No real test, should always return true
         $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
@@ -398,14 +356,16 @@ EOD;
         $url2 = "https://test.net/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
     }
-    function test_checkURLs_false_2()
+
+    function testCheckURLsFalse2()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
     }
-    function test_checkURLs_false_3()
+
+    function testCheckURLsFalse3()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
         $url1 = "http://www.example.com/trackback/index.php";
@@ -413,82 +373,65 @@ EOD;
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
     }
 
-    function test_checkURLs_invalid_1()
+    function testCheckURLsInvalid1()
     {
         // No real test, should always return true
         $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
+
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "https://test.net/trackbike/index.htm";
+
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
     }
-    function test_checkURLs_invalid_2()
+
+    function testCheckURLsInvalid2()
     {
         $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
+
         $url1 = "http:///trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
+
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
     }
-    function test_checkURLs_invalid_3()
+
+    function testCheckURLsInvalid3()
     {
         // No real test, URLs are not invalid, but unequal
         $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
+
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";
+
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
     }
 
-    //
-
-    // }}}
-    // {{{ Test _interpretTrackbackResponse()
-
-    function test_interpretTrackbackResponse_success() {
-        $xml = <<<EOD
-<?xml version='1.0' encoding='iso-8859-1'?>
-<response>
-<error>0</error>
-</response>
-EOD;
+    function testInterpretTrackbackResponseSuccess()
+    {
+        $xml = $this->xml['testInterpretTrackbackResponseSuccess'];
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue($res);
     }
 
-    function test_interpretTrackbackResponse_failure() {
-        $xml = <<<EOD
-<?xml version='1.0' encoding='iso-8859-1'?>
-<response>
-<error>-1</error>
-<message>No more trackbacks from this host</message>
-</response>
-EOD;
+    function testInterpretTrackbackResponseFailure()
+    {
+        $xml = $this->xml['testInterpretTrackbackResponseFailure'];
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue(PEAR::isError($res));
     }
 
-    function test_interpretTrackbackResponse_invalid_1() {
-        $xml = <<<EOD
-<?xml version='1.0' encoding='iso-8859-1'?>
-<response>
-<error></error>
-<message>No more trackbacks from this host</message>
-</response>
-EOD;
+    function testInterpretTrackbackResponseInvalid1()
+    {
+        $xml = $this->xml['testInterpretTrackbackResponseInvalid1'];
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue(PEAR::isError($res));
     }
 
-    function test_interpretTrackbackResponse_invalid_2() {
-        $xml = <<<EOD
-<?xml version='1.0' encoding='iso-8859-1'?>
-<response>
-</response>
-EOD;
+    function testInterpretTrackbackResponseInvalid2()
+    {
+        $xml = $this->xml['testInterpretTrackbackResponseInvalid2'];
 
         $res = Services_Trackback::_interpretTrackbackResponse($xml);
         $this->assertTrue(PEAR::isError($res));
     }
-
-    // }}}
-
 }
 ?>
