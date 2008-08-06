@@ -18,14 +18,14 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.6.0
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     File available since Release 0.6.0
  */
 
     // {{{ require_once
@@ -52,17 +52,18 @@ require_once 'HTTP/Request.php';
  * Akismet
  * Module for spam detecion using {@link http://akismet.com}.
  *
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.6.0
- * @access     public
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     0.6.0
+ * @access    public
  */
-class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck {
+class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
+{
 
     // {{{ _options
 
@@ -73,23 +74,19 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
      * @since 0.5.0
      * @access protected
      */
-    var $_options = array(
-        'continuous'    => false,
-        'sources'       => array(
-            'rest.akismet.com/1.1/',
-        ),
-        // URL of the blog sending the Akismet request
-        'url'           => '',
-        // WordPress.com API key to use
-        'key'           => '',
-        'elements'      => array(
-            'title',
-            'excerpt',
-            'blog_name',
-            'url',
-            'host',
-        ),
-    );
+    var $_options = array('continuous'    => false,
+                          'sources'       => array('rest.akismet.com/1.1/'),
+
+                          // URL of the blog sending the Akismet request
+                          'url'           => '',
+
+                          // WordPress.com API key to use
+                          'key'           => '',
+                          'elements'      => array('title',
+                                                   'excerpt',
+                                                   'blog_name',
+                                                   'url',
+                                                   'host'));
 
     // }}}
     // {{{ Services_Trackback_SpamCheck_Akismet()
@@ -98,11 +95,12 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
      * Constructor.
      * Create a new instance of the Akismet spam protection module.
      *
-     * @since 0.5.0
-     * @access public
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of Akismet servers URIs.
+     *
+     * @since 0.5.0
+     * @access public
      * @return object(Services_Trackback_SpamCheck_Akismet) The newly created SpamCheck object.
      */
     function Services_Trackback_SpamCheck_Akismet($options = null)
@@ -117,6 +115,20 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
     // }}}
     // {{{ check()
 
+    /**
+     * Check for spam using this module.
+     * This method is utilized by a Services_Trackback object to check for spam.
+     * Generally this method may not be overwritten, but it can be, if necessary.
+     * This method calls the _checkSource() method for each source defined in the
+     * $_options array (depending on the 'continuous' option), saves the
+     * results and returns the spam status determined by the check.
+     *
+     * @param Services_Trackback $trackback The trackback to check.
+     *
+     * @since 0.5.0
+     * @access public
+     * @return bool Whether the checked object is spam or not.
+     */
     function check($trackback)
     {
         if (empty($this->_options['url'])) {
@@ -128,7 +140,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
             return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
         }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1){
+        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
         $foundSpam = false;
@@ -140,7 +152,9 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
                 if (PEAR::isError($res = $this->_checkSource($this->_options['sources'][$id], $trackback))) {
                     return $res;
                 }
+
                 $this->_results[$id] = $res;
+
                 $foundSpam = $foundSpam || $res;
             }
         }
@@ -161,7 +175,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
             return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
         }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1){
+        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
         if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-spam'))) {
@@ -184,7 +198,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
             return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
         }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1){
+        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
             return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
         }
         if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action = 'submit-ham'))) {
@@ -209,9 +223,20 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
 
     // {{{ _checkSource()
 
+    /**
+     * Check a specific source if a trackback has to be considered spam.
+     *
+     * @param mixed              &$source   Element of the _sources array to check.
+     * @param Services_Trackback $trackback The trackback to check.
+     *
+     * @since 0.5.0
+     * @access protected
+     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     */
     function _checkSource(&$source, $trackback)
     {
-        if (PEAR::isError($res = $this->_sendAkismetRequest($source, $trackback, 'comment-check'))) {
+        $res = $this->_sendAkismetRequest($source, $trackback, 'comment-check');
+        if (PEAR::isError($res)) {
             return $res;
         }
         if ($res == 'invalid') {
@@ -226,46 +251,47 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
     function _sendAkismetRequest($baseUri, $trackback, $action = 'verify-key')
     {
         $action = strtolower($action);
-        $req = null;
+        $req    = null;
 
         $options = $trackback->getOptions();
+
         $httpRequestOptions = $options['httprequest'];
 
         switch ($action) {
-            case 'verify-key':
-                $url = 'http://' . $baseUri . $action;
+        case 'verify-key':
+            $url = 'http://' . $baseUri . $action;
 
-                $req = new HTTP_Request($url, $httpRequestOptions);
-                $req->setMethod(HTTP_REQUEST_METHOD_POST);
+            $req = new HTTP_Request($url, $httpRequestOptions);
+            $req->setMethod(HTTP_REQUEST_METHOD_POST);
 
-                $req->addPostData('key', $this->_options['key']);
-                $req->addPostData('blog', $this->_options['url']);
+            $req->addPostData('key', $this->_options['key']);
+            $req->addPostData('blog', $this->_options['url']);
             break;
-            case 'comment-check':
-            case 'submit-spam':
-            case 'submit-ham':
-                $url = 'http://' . $this->_options['key'] . '.' . $baseUri . $action;
+        case 'comment-check':
+        case 'submit-spam':
+        case 'submit-ham':
+            $url = 'http://' . $this->_options['key'] . '.' . $baseUri . $action;
 
-                $req = new HTTP_Request($url, $httpRequestOptions);
-                $req->setMethod(HTTP_REQUEST_METHOD_POST);
+            $req = new HTTP_Request($url, $httpRequestOptions);
+            $req->setMethod(HTTP_REQUEST_METHOD_POST);
 
-                $req->addHeader('User-Agent', $httpRequestOptions['useragent']);
-                $req->addPostData('comment_type', 'trackback');
+            $req->addHeader('User-Agent', $httpRequestOptions['useragent']);
+            $req->addPostData('comment_type', 'trackback');
 
-                $req->addPostData('key', $this->_options['key']);
-                $req->addPostData('blog', $this->_options['url']);
+            $req->addPostData('key', $this->_options['key']);
+            $req->addPostData('blog', $this->_options['url']);
 
-                $req->addPostData('comment_author', $trackback->get('blog_name'));
-                $req->addPostData('comment_author_url', $trackback->get('url'));
-                $req->addPostData('user_ip', $trackback->get('host'));
+            $req->addPostData('comment_author', $trackback->get('blog_name'));
+            $req->addPostData('comment_author_url', $trackback->get('url'));
+            $req->addPostData('user_ip', $trackback->get('host'));
 
-                $extra = $trackback->get('extra');
-                $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
-                $req->addPostData('referrer', isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '');
+            $extra = $trackback->get('extra');
+            $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
+            $req->addPostData('referrer', isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '');
             break;
-            default:
-                return PEAR::raiseError('Invalid Akismet action: "'.$action.'".');
-                break;
+        default:
+            return PEAR::raiseError('Invalid Akismet action: "'.$action.'".');
+            break;
         }
 
         if (($res = $req->sendRequest()) !== true) {
@@ -273,7 +299,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck 
         }
 
         if ($req->getResponseCode() !== 200) {
-            return PEAR::raiseError('Could not open URL "'.$url.'". Code: "'.$req->getResponseCode().'".');
+            $error = 'Could not open URL "'.$url .'". Code: "'.$req->getResponseCode().'".';
+            return PEAR::raiseError($error);
         }
 
         return trim($req->getResponseBody());

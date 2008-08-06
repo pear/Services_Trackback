@@ -16,49 +16,50 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      File available since Release 0.5.0
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   CVS: $Id$
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     File available since Release 0.5.0
  */
-    
+
     // {{{ require_once
 
 /**
  * Load PEAR error handling
  */
 require_once 'PEAR.php';
-  
+
 /**
  * Load SpamCheck base class
  */
 
 require_once 'Services/Trackback/SpamCheck.php';
-   
+
     // }}}
 
 /**
  * Regex
  * Module for spam detecion using perl compatible regular expressions.
  *
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @category   Webservices
- * @package    Trackback
- * @author     Tobias Schlitt <toby@php.net>
- * @copyright  2005-2006 The PHP Group
- * @version    Release: @package_version@
- * @link       http://pear.php.net/package/Services_Trackback
- * @since      0.5.0
- * @access     public
+ * @category  Webservices
+ * @package   Trackback
+ * @author    Tobias Schlitt <toby@php.net>
+ * @copyright 2005-2006 The PHP Group
+ * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/Services_Trackback
+ * @since     0.5.0
+ * @access    public
  */
-class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
+class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck
+{
 
     // {{{ _options
-    
+
     /**
      * Options for the Regex.
      *
@@ -89,14 +90,15 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
      * Constructor.
      * Create a new instance of the Regex spam protection module.
      *
-     * @since 0.5.0
-     * @access public
      * @param array $options An array of options for this spam protection module. General options are
      *                       'continuous':  Whether to continue checking more sources, if a match has been found.
      *                       'sources':     List of blacklist servers. Indexed.
      *                       'comparefunc': A compare function callback with parameters $haystack, $needle (like 'stripos').
      *                       'minmatches':  How many words have to be found to consider spam.
-     * @return object(Services_Trackback_SpamCheck_WordList) The newly created SpamCheck object.
+     *
+     * @since 0.5.0
+     * @access public
+     * @return Services_Trackback_SpamCheck_WordList The newly created object
      */
     function Services_Trackback_SpamCheck_Regex($options = null)
     {
@@ -106,10 +108,24 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
             }
         }
     }
-    
+
     // }}}
     // {{{ check()
 
+    /**
+     * Check for spam using this module.
+     * This method is utilized by a Services_Trackback object to check for spam.
+     * Generally this method may not be overwritten, but it can be, if necessary.
+     * This method calls the _checkSource() method for each source defined in the
+     * $_options array (depending on the 'continuous' option), saves the
+     * results and returns the spam status determined by the check.
+     *
+     * @param Services_Trackback $trackback The trackback to check.
+     *
+     * @since 0.5.0
+     * @access public
+     * @return bool Whether the checked object is spam or not.
+     */
     function check($trackback)
     {
         $spamCount = 0;
@@ -119,7 +135,9 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
                 $this->_results[$id] = false;
             } else {
                 $res = $this->_checkSource($this->_options['sources'][$id], $trackback);
+
                 $spamCount += ($res === true) ? 1 : 0;
+
                 $this->_results[$id] = $res;
             }
         }
@@ -128,27 +146,40 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
 
     // }}}
     // {{{ _checkSource()
-    
+
+    /**
+     * Check a specific source if a trackback has to be considered spam.
+     *
+     * @param mixed              &$source   Element of the _sources array to check.
+     * @param Services_Trackback $trackback The trackback to check.
+     *
+     * @since 0.5.0
+     * @access protected
+     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     */
     function _checkSource(&$source, $trackback)
     {
-        $del = $this->_options['delimiter'];
-        $mod = $this->_options['modifier'];
+        $del  = $this->_options['delimiter'];
+        $mod  = $this->_options['modifier'];
         $spam = false;
+
         foreach ($this->_options['elements'] as $element) {
             $elements[$element] = html_entity_decode($trackback->get($element));
         }
+
         foreach ($elements as $element) {
             if (0 !== preg_match($del.$source.$del.$mod, $element)) {
                 $spam = true;
                 break;
             }
         }
+
         return $spam;
     }
 
     // }}}
     // {{{ _stripos()
-    
+
     function _stripos($source, $element)
     {
         // echo "Search in " . strtolower($element) . " for '" . strtolower($source) . "'\n";
@@ -156,5 +187,5 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck {
     }
 
     // }}}
-    
+
 }

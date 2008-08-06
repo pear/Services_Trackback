@@ -128,9 +128,10 @@ class Services_Trackback_SpamCheck
 
     /**
      * Check for spam using this module.
-     * This method is utilized by a Services_Trackback object to check for spam. Generally this method
-     * may not be overwritten, but it can be, if necessary. This method calls the _checkSource() method
-     * for each source defined in the $_options array (depending on the 'continuous' option), saves the
+     * This method is utilized by a Services_Trackback object to check for spam.
+     * Generally this method may not be overwritten, but it can be, if necessary.
+     * This method calls the _checkSource() method for each source defined in the
+     * $_options array (depending on the 'continuous' option), saves the
      * results and returns the spam status determined by the check.
      *
      * @param Services_Trackback $trackback The trackback to check.

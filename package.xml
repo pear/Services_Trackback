@@ -11,7 +11,7 @@
   <active>yes</active>
  </lead>
  <date>2008-08-05</date>
- <time>02:07:13</time>
+ <time>02:45:51</time>
  <version>
   <release>0.6.1</release>
   <api>0.6.1</api>
@@ -24,7 +24,7 @@
  <notes>* Fix bug in naming of $_SERVER variables in Akismet spam plugin.</notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="6ca3f57337ef579d07aeb22fd810fb80" name="Services/Trackback.php" role="php">
+   <file baseinstalldir="/" md5sum="eb31e1250d590f1f62e07bd9a835ef93" name="Services/Trackback.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="0b6857210b7eabcdf8f8d2c7844bca71" name="Services/Trackback/SpamCheck.php" role="php">
@@ -51,25 +51,23 @@
    <file baseinstalldir="/" md5sum="d8d38073157448dd294b9fd330b19791" name="test/failed_tests.sh" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="4382793c0d9d2fa97865cbd2ca34e357" name="test/Services_Trackback_SpamCheck_Akismet_Test.php" role="test">
+   <file baseinstalldir="/" md5sum="0e27d36b6f81b6649690360d3f2d63f8" name="test/Services_Trackback_AllTests.php" role="php" />
+   <file baseinstalldir="/" md5sum="d219f76c5738182192b6a4db6e35553f" name="test/Services_Trackback_SpamCheck_Akismet_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="3d3dda59ae2a2dd248c99621a2fa1d12" name="test/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test">
+   <file baseinstalldir="/" md5sum="367bd8e11f0169543b9aa502f24a3684" name="test/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="3f94b0c96c1b5b3a451317014a8d5c7a" name="test/Services_Trackback_SpamCheck_Regex_Test.php" role="test">
+   <file baseinstalldir="/" md5sum="e24fba916336c1a21bc6d0aeb01539ae" name="test/Services_Trackback_SpamCheck_Regex_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="209d0c5c2f1e72340530c8c376b78dd4" name="test/Services_Trackback_SpamCheck_SURBL_Test.php" role="test">
+   <file baseinstalldir="/" md5sum="006794ec50f7d6465e7cda347e0a150f" name="test/Services_Trackback_SpamCheck_SURBL_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="2e5153806ec562dc36688411849ab8ac" name="test/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test">
+   <file baseinstalldir="/" md5sum="654d6f68972e0e305f83264beebf1844" name="test/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="f900e97139e4869fbbe21aa0b3f8b9d0" name="test/Services_Trackback_Test.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="12e0d6ef01132a17cd7a1cced31ff6a9" name="test/Services_Trackback_TestAll.php" role="test">
+   <file baseinstalldir="/" md5sum="b02f80102774b24647bb84b8d15713f6" name="test/Services_Trackback_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="3b450cfd5fac80ec545c2976caf292f8" name="test/simple_test.php" role="test">
@@ -78,7 +76,6 @@
    <file baseinstalldir="/" md5sum="e6eb2d222096f0fce6fce7912e5a4acc" name="test/trackback_data.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="2af0bdac6268d6f3c354cbc58b76402d" name="generate_package2_xml.php" role="php" />
   </dir>
  </contents>
  <dependencies>
