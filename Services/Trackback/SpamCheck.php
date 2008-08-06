@@ -73,7 +73,8 @@ class Services_Trackback_SpamCheck
     // {{{ _results
 
     /**
-     * Array of results, indexed analogue to the 'sources' option (boolean result value per source).
+     * Array of results, indexed analogue to the 'sources'
+     * option (boolean result value per source).
      *
      * @var array
      * @access protected
@@ -88,16 +89,16 @@ class Services_Trackback_SpamCheck
      * Create a new instance of a spam protection module.
      *
      * @param string $type    Name of a SpamCheck driver
-     * @param array  $options An array of options for this spam protection module. General options are
-     *                        'continuous':  Whether to continue checking more sources, if a match has been found.
-     *                        'sources':     List of different sources for this module to check (eg. blacklist URLs,
-     *                                       word arrays,...).
-     *                        All further options depend on the specific module.
+     * @param array  $options An array of options for this spam protection module.
+     *                        General options are
+     *                         'continuous':  Whether to continue checking more
+     *                                        sources if a match has been found.
+     *                         'sources':     List of blacklist nameservers. Indexed
      *
      * @since 0.5.0
      * @static
      * @access public
-     * @return object(Services_Trackback_SpamCheck) The newly created SpamCheck object.
+     * @return Services_Trackback_SpamCheck The newly created SpamCheck object.
      */
     function &create($type, $options = null)
     {
@@ -150,7 +151,10 @@ class Services_Trackback_SpamCheck
                 $this->_results[$id] = false;
                 break;
             } else {
-                $this->_results[$id] = $this->_checkSource($this->_options['sources'][$id], $trackback);
+                $result = $this->_checkSource($this->_options['sources'][$id],
+                                              $trackback);
+
+                $this->_results[$id] = $result;
 
                 $spam = ($spam || $this->_results[$id]);
             }

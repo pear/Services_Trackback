@@ -106,7 +106,7 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
      * @since 0.5.0
      * @access public
      *
-     * @return Services_Trackback_SpamCheck_DNSBL The newly created SpamCheck object.
+     * @return void
      */
     function Services_Trackback_SpamCheck_DNSBL($options = null)
     {

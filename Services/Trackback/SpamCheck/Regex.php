@@ -88,17 +88,23 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck
 
     /**
      * Constructor.
-     * Create a new instance of the Regex spam protection module.
+     * Create a new instance of the DNSBL spam protection module.
      *
-     * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
-     *                       'sources':     List of blacklist servers. Indexed.
-     *                       'comparefunc': A compare function callback with parameters $haystack, $needle (like 'stripos').
-     *                       'minmatches':  How many words have to be found to consider spam.
+     * @param array $options An array of options for this spam protection module.
+     *                      General options are
+     *                       'continuous':  Whether to continue checking more sources
+     *                                      if a match has been found.
+     *                       'sources':     List of blacklist nameservers. Indexed.
+     *                       'comparefunc': A compare function callback with
+     *                                      parameters $haystack, $needle
+     *                                      (like 'stripos').
+     *                       'minmatches':  How many words have to be
+     *                                      found to consider spam.
      *
      * @since 0.5.0
      * @access public
-     * @return Services_Trackback_SpamCheck_WordList The newly created object
+     *
+     * @return void
      */
     function Services_Trackback_SpamCheck_Regex($options = null)
     {
@@ -130,11 +136,13 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck
     {
         $spamCount = 0;
         foreach (array_keys($this->_options['sources']) as $id) {
-            if ($spamCount >= $this->_options['minmatches']  && !$this->_options['continuous']) {
+            if ($spamCount >= $this->_options['minmatches']
+                && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
             } else {
-                $res = $this->_checkSource($this->_options['sources'][$id], $trackback);
+                $res = $this->_checkSource($this->_options['sources'][$id],
+                                           $trackback);
 
                 $spamCount += ($res === true) ? 1 : 0;
 
@@ -180,10 +188,17 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck
     // }}}
     // {{{ _stripos()
 
+    /**
+     * Checks source text for an element, regardless of case.
+     *
+     * @param string $source  Source text
+     * @param string $element Element text
+     *
+     * @return int
+     */
     function _stripos($source, $element)
     {
-        // echo "Search in " . strtolower($element) . " for '" . strtolower($source) . "'\n";
-        return (strpos(strtolower($element), strtolower($source)));
+        return strpos(strtolower($element), strtolower($source));
     }
 
     // }}}

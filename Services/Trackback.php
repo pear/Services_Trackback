@@ -162,31 +162,42 @@ class Services_Trackback
      * afterwards. See the specific methods for further info on which data is
      * required.
      *
-     * @param array $data    Data for the trackback, which is obligatory:
-     *                        'id'                The ID of the trackback target.
-     *                       Data which is optional (for construction, not for specific methods):
-     *                        'title'             string  Title of the trackback sending/receiving blog entry.
-     *                        'excerpt'           string  Abstract of the trackback sending/receiving blog entry.
-     *                        'blog_name'         string  Name of the trackback sending/receiving weblog.
-     *                        'url'               string  URL of the trackback sending/receiving blog entry.
-     *                        'trackback_url'     string  URL to send trackbacks to.
-     *                        'extra'             array   Content of $_SERVER, captured while doing
-     *                                                    Services_Trackback::receive().
-     * @param array $options Options to set for this trackback. Valid options:
-     *                       'strictness':       int     The default strictness to use in
-     *                                                   @see Services_Trackback::autodiscover().
-     *                       'timeout':          int     The default timeout for network operations in seconds.
-     *                       'fetchlines':       int     The max number of lines to fetch over the network.
-     *                       'httprequest'       array   The options utilized by HTTP_Request are stored here.
-     *                                                   The following options are the most commonly used for HTTP_Request in
-     *                                                   Services_Trackback. All other options are supported too,
-     *                                                   @see HTTP_Request::HTTP_Request() for more detailed documentation.
-     *                                                   Some options for HTTP_Request are overwritten through the global settings of
-     *                                                   Services_Trackback (such as timeout).
-     *                           'timeout':          float   THE TIMEOUT SETTING IS OVERWRITTEN BY THE GLOBAL Services_Trackback SETTING.
-     *                           'allowRedirects':   bool    Wether to follow HTTP redirects or not.
-     *                           'maxRedirects':     int     Maximum number of redirects.
-     *                           'useragent':        string  The user agent to use for HTTP requests.
+     * Data:
+     *      Required
+     *              id            The ID of the trackback target.
+     *      Optional
+     *              title         string  Title of the trackback.
+     *              excerpt       string  Abstract of the trackback.
+     *              blog_name     string  Name of the trackback blog.
+     *              url           string  URL of the trackback.
+     *              trackback_url string  URL to send trackbacks to.
+     *              extra         array   Content of $_SERVER, captured
+     *                                    while doing
+     *                                    Services_Trackback::receive().
+     * Options:
+     *     strictness     int     The default strictness to use in
+     *                            Services_Trackback::autodiscover().
+     *     timeout        int     The default timeout for network operations
+     *                            in seconds.
+     *     fetchlines     int     The max number of lines to fetch over the network.
+     *     httprequest    array   The options utilized by HTTP_Request are stored
+     *                            here.
+     *                            The following options are the most commonly used
+     *                            for HTTP_Request in Services_Trackback.
+     *                            All other options are supported too, see
+     *                            HTTP_Request::HTTP_Request() for more detailed
+     *                            documentation.
+     *                            Some options for HTTP_Request are overwritten
+     *                            through the global settings of
+     *                            Services_Trackback (such as timeout).
+     *     timeout        float   THE TIMEOUT SETTING IS OVERWRITTEN BY THE GLOBAL
+     *                            Services_Trackback SETTING.
+     *     allowRedirects bool    Wether to follow HTTP redirects or not.
+     *     maxRedirects   int     Maximum number of redirects.
+     *     useragent      string  The user agent to use for HTTP requests.
+     *
+     * @param array $data    Data for the trackback, which is obligatory.
+     * @param array $options Options to set for this trackback.
      *
      * @since 0.2.0
      * @static
@@ -222,7 +233,8 @@ class Services_Trackback
      * setOptions
      * Set options for the trackback.
      *
-     * @param array $options Pairs of 'option' => 'value' as described at @see Services_Trackback::create().
+     * @param array $options Pairs of 'option' => 'value' as described at
+     *                       Services_Trackback::create().
      *
      * @since 0.4.0
      * @access public
@@ -234,33 +246,40 @@ class Services_Trackback
     {
         foreach ($options as $option => $value) {
             if (!isset($this->_options[$option])) {
-                return PEAR::raiseError('Desired option "'.$option.'" not available.');
+                $error = 'Desired option "'.$option.'" not available.';
+                return PEAR::raiseError($error);
             }
+
+            $error = 'Invalid value for option "%s", must be %s.';
 
             switch ($option) {
             case 'strictness':
                 if (!is_int($value) || ($value < 1) || ($value > 3)) {
-                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be one of SERVICES_TRACKBACK_STRICTNESS_LOW, SERVICES_TRACKBACK_STRICTNESS_MIDDLE, SERVICES_TRACKBACK_STRICTNESS_HIGH.');
+                    $allowed = array('SERVICES_TRACKBACK_STRICTNESS_LOW',
+                                     'SERVICES_TRACKBACK_STRICTNESS_MIDDLE',
+                                     'SERVICES_TRACKBACK_STRICTNESS_HIGH');
+                    return PEAR::raiseError(sprintf($error, $option,
+                                                    implode(', ', $allowed)));
                 }
                 break;
             case 'timeout':
                 if (!is_int($value) || ($value < 0)) {
-                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 0.');
+                    return PEAR::raiseError(sprintf($error, $option, 'int >= 0'));
                 }
                 break;
             case 'fetchlines':
                 if (!is_int($value) || ($value < 1)) {
-                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be int >= 1.');
+                    return PEAR::raiseError(sprintf($error, $option, 'int >= 1'));
                 }
                 break;
             case 'fetchextra':
                 if (!is_bool($value)) {
-                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be bool.');
+                    return PEAR::raiseError(sprintf($error, $option, 'bool'));
                 }
                 break;
             case 'httprequest':
                 if (!is_array($value)) {
-                    return PEAR::raiseError('Invalid value for option "'.$option.'", must be array.');
+                    return PEAR::raiseError(sprintf($error, $option, 'array'));
                 }
                 break;
             }
@@ -310,16 +329,16 @@ class Services_Trackback
         $url = $this->_data['url'];
 
         /*
-            Sample autodiscovery code
-            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
-                <rdf:Description
-                    rdf:about="http://pear.php.net/package/Net_FTP"
-                    dc:identifier="http://pear.php.net/package/Net_FTP"
-                    dc:title="Net_FTP"
-                    trackback:ping="http://pear.php.net/trackback/trackback.php?id=Net_FTP" />
-            </rdf:RDF>
+        Sample autodiscovery code
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+          xmlns:dc="http://purl.org/dc/elements/1.1/"
+          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+          <rdf:Description
+            rdf:about="http://pear.php.net/package/Net_FTP"
+            dc:identifier="http://pear.php.net/package/Net_FTP"
+            dc:title="Net_FTP"
+            trackback:ping="http://pear.php.net/trackback/trackback.php?id=Net_FTP"/>
+        </rdf:RDF>
         */
 
         // Receive file contents.
@@ -330,18 +349,19 @@ class Services_Trackback
 
         $matches = array();
         // Get trackback identifier
-        if (!preg_match('@dc:identifier\s*=\s*["\'](http:[^"\']+)"@i', $content, $matches)) {
+        if (!preg_match('@dc:identifier\s*=\s*["\'](http:[^"\']+)"@i',
+                        $content, $matches)) {
             return PEAR::raiseError('No trackback RDF found in "'.$url.'".');
         }
         $identifier = trim($matches[1]);
 
         // Get trackback URI
-        if (!preg_match('@trackback:ping\s*=\s*["\'](http:[^"\']+)"@i', $content, $matches)) {
+        if (!preg_match('@trackback:ping\s*=\s*["\'](http:[^"\']+)"@i',
+                        $content, $matches)) {
             return PEAR::raiseError('No trackback URI found in "'.$url.'".');
         }
         $trackbackUrl = trim($matches[1]);
 
-        // Check if the URL to trackback matches the identifier from the autodiscovery code
         $res = $this->_checkURLs($url, $identifier, $this->_options['strictness']);
         if (PEAR::isError($res)) {
             return $res;
@@ -359,14 +379,17 @@ class Services_Trackback
      * This method sends a trackback to the trackback_url saved in it. The
      * data array of the trackback object can be completed by submitting the
      * necessary data through the $data parameter of this method.
+     *
      * The following data has to be set to call this method:
-     *              'title'             Title of the weblog entry sending the trackback.
-     *              'url'               URL of the weblog entry sending the trackback.
-     *              'excerpt'           Excerpt of the weblog entry sending the trackback.
-     *              'blog_name'         Name of the weblog sending the trackback.
+     *              'title'             Title of the weblog entry.
+     *              'url'               URL of the weblog entry.
+     *              'excerpt'           Excerpt of the weblog entry.
+     *              'blog_name'         Name of the weblog.
      *              'trackback_url'     URL to send the trackback to.
-     * Services_Trackback::send() requires PEAR::HTTP_Request. The options for the HTTP_Request
-     * object are stored in the global options array using the key 'http_request'.
+     *
+     * Services_Trackback::send() requires PEAR::HTTP_Request. The options
+     * for the HTTP_Request object are stored in the global options array using
+     * the key 'http_request'.
      *
      * @param string $data Additional data to complete the trackback.
      *
@@ -488,8 +511,8 @@ EOD;
 
     /**
      * receive
-     * Receives a trackback. The following data has to be set in the data array to fulfill this
-     * operation:
+     * Receives a trackback. The following data has to be set in
+     * the data array to fulfill this operation:
      *      'id'
      *
      * @param mixed[] $data An array of data, ie, from $_POST.

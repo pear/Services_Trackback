@@ -95,13 +95,15 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      * Constructor.
      * Create a new instance of the Akismet spam protection module.
      *
-     * @param array $options An array of options for this spam protection module. General options are
-     *                       'continuous':  Whether to continue checking more sources, if a match has been found.
-     *                       'sources':     List of Akismet servers URIs.
+     * @param array $options An array of options for this spam protection module.
+     *                       General options are
+     *                       'continuous': Whether to continue checking more sources
+     *                                     if a match has been found.
+     *                       'sources':    List of Akismet servers URIs.
      *
      * @since 0.5.0
      * @access public
-     * @return object(Services_Trackback_SpamCheck_Akismet) The newly created SpamCheck object.
+     * @return void
      */
     function Services_Trackback_SpamCheck_Akismet($options = null)
     {
@@ -131,25 +133,20 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      */
     function check($trackback)
     {
-        if (empty($this->_options['url'])) {
-            return PEAR::raiseError('Missing option "url". Cannot procede without it.', 0);
+        $result = $this->_validateOptions($this->_options, $trackback);
+        if (PEAR::isError($result)) {
+            return $result;
         }
-        if (empty($this->_options['key'])) {
-            return PEAR::raiseError('Missing option "key". Cannot procede without it.', 0);
-        }
-        if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
-            return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
-        }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
-            return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
-        }
+
         $foundSpam = false;
         foreach (array_keys($this->_options['sources']) as $id) {
             if ($foundSpam && !$this->_options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
             } else {
-                if (PEAR::isError($res = $this->_checkSource($this->_options['sources'][$id], $trackback))) {
+                $res = $this->_checkSource($this->_options['sources'][$id],
+                                           $trackback);
+                if (PEAR::isError($res)) {
                     return $res;
                 }
 
@@ -164,22 +161,24 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     // }}}
     // {{{ submitSpam()
 
+    /**
+     * Submit an invalid, spammy trackback
+     *
+     * @param Services_Trackback $trackback The trackback
+     * @param int                $sourceId  The source ID.
+     *
+     * @return bool
+     */
     function submitSpam($trackback, $sourceId = 0)
     {
-        if (empty($this->_options['url'])) {
-            return PEAR::raiseError('Missing option "url". Cannot procede without it.', 0);
+        $result = $this->_validateOptions($this->_options, $trackback);
+        if (PEAR::isError($result)) {
+            return $result;
         }
-        if (empty($this->_options['key'])) {
-            return PEAR::raiseError('Missing option "key". Cannot procede without it.', 0);
-        }
-        if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
-            return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
-        }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
-            return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
-        }
+
         $action = 'submit-spam';
-        $res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action);
+        $res    = $this->_sendAkismetRequest($this->_options['sources'][$sourceId],
+                                             $trackback, $action);
         if (PEAR::isError($res)) {
             return $res;
         }
@@ -189,22 +188,25 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     // }}}
     // {{{ submitHam()
 
+    /**
+     * Submit a valid, non spam trackback
+     *
+     * @param Services_Trackback $trackback The trackback
+     * @param int                $sourceId  The source ID.
+     *
+     * @return bool
+     */
     function submitHam($trackback, $sourceId = 0)
     {
-        if (empty($this->_options['url'])) {
-            return PEAR::raiseError('Missing option "url". Cannot procede without it.', 0);
+        $result = $this->_validateOptions($this->_options, $trackback);
+        if (PEAR::isError($result)) {
+            return $result;
         }
-        if (empty($this->_options['key'])) {
-            return PEAR::raiseError('Missing option "key". Cannot procede without it.', 0);
-        }
-        if (!is_array($this->_options['sources']) || count($this->_options['sources']) < 1) {
-            return PEAR::raiseError('Missing option "sources". Cannot procede without it.', 0);
-        }
-        if (!is_array(($extra = $trackback->get('extra'))) || count($extra) < 1) {
-            return PEAR::raiseError('Missing data "extra". Cannot procede without it.', 0);
-        }
+
         $action = 'submit-ham';
-        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][$sourceId], $trackback, $action))) {
+        $res    = $this->_sendAkismetRequest($this->_options['sources'][$sourceId],
+                                             $trackback, $action);
+        if (PEAR::isError($res)) {
             return $res;
         }
         return $res === '';
@@ -213,10 +215,18 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     // }}}
     // {{{ verifyKey()
 
+    /**
+     * Verify your Akismet key is valid
+     *
+     * @return bool
+     */
     function verifyKey()
     {
-        $tmpTrack = Services_Trackback::create(array('id' => 1));
-        if (PEAR::isError($res = $this->_sendAkismetRequest($this->_options['sources'][0], $tmpTrack))) {
+        $trackback = Services_Trackback::create(array('id' => 1));
+
+        $res = $this->_sendAkismetRequest($this->_options['sources'][0],
+                                          $trackback);
+        if (PEAR::isError($res)) {
             return $res;
         }
         return $res == 'valid';
@@ -243,7 +253,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
             return $res;
         }
         if ($res == 'invalid') {
-            return PEAR::raiseError('Invalid Akismet request send. Maybe your key is invalid?');
+            $error = 'Invalid Akismet request send. Maybe your key is invalid?';
+            return PEAR::raiseError($error);
         }
         return ($res == 'true');
     }
@@ -251,6 +262,16 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     // }}}
     // {{{ _sendAkismetRequest()
 
+    /**
+     * Submits a
+     *
+     * @param string             $baseUri   URI of akisment service
+     * @param Services_Trackback $trackback The trackback in question
+     * @param string             $action    Action to do
+     *
+     * @access protected
+     * @return string
+     */
     function _sendAkismetRequest($baseUri, $trackback, $action = 'verify-key')
     {
         $action = strtolower($action);
@@ -290,7 +311,9 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
 
             $extra = $trackback->get('extra');
             $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
-            $req->addPostData('referrer', isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '');
+
+            $referrer = isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '';
+            $req->addPostData('referrer', $referrer);
             break;
         default:
             return PEAR::raiseError('Invalid Akismet action: "'.$action.'".');
@@ -302,8 +325,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         }
 
         if ($req->getResponseCode() !== 200) {
-            $error = 'Could not open URL "'.$url .'". Code: "'.$req->getResponseCode().'".';
-            return PEAR::raiseError($error);
+            $error = 'Could not open URL "%s". Code: "%s".';
+            return PEAR::raiseError(sprintf($error, $url, $req->getResponseCode()));
         }
 
         return trim($req->getResponseBody());
@@ -311,4 +334,35 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
 
     // }}}
 
+    /**
+     * Validate an array of options
+     *
+     * @param mixed[]            $options   Options to validate
+     * @param Services_Trackback $trackback Trackback to be used
+     *
+     * @access private
+     * @return bool
+     */
+    function _validateOptions($options, $trackback)
+    {
+        $error = 'Missing option "%s". Cannot proceed without it.';
+
+        if (empty($options['url'])) {
+            return PEAR::raiseError(sprintf($error, 'url'), 0);
+        }
+        if (empty($options['key'])) {
+            return PEAR::raiseError(sprintf($error, 'key'), 0);
+        }
+        if (!is_array($options['sources'])
+            || count($options['sources']) < 1) {
+            return PEAR::raiseError(sprintf($error, 'sources'), 0);
+        }
+
+        $extra = $trackback->get('extra');
+        if (!is_array($extra) || count($extra) < 1) {
+            return PEAR::raiseError(sprintf($error, 'extra'), 0);
+        }
+
+        return true;
+    }
 }
