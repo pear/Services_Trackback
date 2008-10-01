@@ -23,8 +23,9 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
             if ($extension !== 'xml') {
                 continue;
             }
+            $full_path = $path . "/" . $file;
 
-            $xml = file_get_contents($path . "/" . $file);
+            $xml = file_get_contents($full_path);
             $this->xml[$testName] = trim($xml);
         }
     }
@@ -189,13 +190,19 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testGetResponseSuccess()
     {
         $xml = $this->xml['testGetResponseSuccess'];
-        $this->assertTrue(Services_Trackback::getResponseSuccess() == $xml);
+        $this->assertTrue(!empty($xml), "Test was unable to locate sample data");
+
+        $generated_response = Services_Trackback::getResponseSuccess();
+        $this->assertSame($xml, $generated_response);
     }
 
     function testGetResponseError()
     {
         $xml = $this->xml['testGetResponseError'];
-        $this->assertTrue(Services_Trackback::getResponseError('Me & you', -2) == $xml);
+        $this->assertTrue(!empty($xml), "Test was unable to locate sample data");
+
+        $generated_error = Services_Trackback::getResponseError('Me & you', -2);
+        $this->assertSame($xml, $generated_error);
     }
 
     function testAddSpamCheckSuccess()
@@ -439,5 +446,3 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $this->assertTrue(PEAR::isError($res));
     }
 }
-?>
-cl
