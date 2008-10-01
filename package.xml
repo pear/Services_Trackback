@@ -27,67 +27,67 @@ Upgraded to work with PHPUnit 3
 PHPCS improvements</notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="dc821308b8cc8d4404069a4e326951ae" name="Services/Trackback.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="97de2c7a4803a54e10a22d5646c6b738" name="Services/Trackback/SpamCheck.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="e91c246de0bbe93f270bb4d83146b938" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="5d665470e17922024acd56f0115be2b2" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="37872d81a61870b8a02da53f92df5b6a" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
-   <file baseinstalldir="/" md5sum="f40be87b97eede567cd6330ea907aa42" name="Services/Trackback/SpamCheck/Regex.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/Regex.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="f6be862507e538960c910a6c341100ac" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="c661f4fd9ec477fed6e934afdbaf1ffc" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
+   <file baseinstalldir="/" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="eed1c637a9649c74cec6380bfcf0baf7" name="test/akismet_key.php" role="test">
+   <file baseinstalldir="/" name="test/akismet_key.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="5afe5fe4bf54b92890d9ce1983ef55d2" name="test/failed_tests.sh" role="test">
+   <file baseinstalldir="/" name="test/failed_tests.sh" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="3e7d5d395e4f7fa32fe7d398413b9803" name="test/Services_Trackback_AllTests.php" role="php" />
-   <file baseinstalldir="/" md5sum="29414be51e9c1ce701f7d77bde0606f6" name="test/Services_Trackback_SpamCheck_Akismet_Test.php" role="test">
+   <file baseinstalldir="/" name="test/Services_Trackback_AllTests.php" role="test" />
+   <file baseinstalldir="/" name="test/Services_Trackback_SpamCheck_Akismet_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="81a3c53472a4a7c90ed80be91fdb54b2" name="test/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test">
+   <file baseinstalldir="/" name="test/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="f7c421aa90ef7edc64f4d0923e3c3b1e" name="test/Services_Trackback_SpamCheck_Regex_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="070c6a6f297bd96228ccbc38878ed2c7" name="test/Services_Trackback_SpamCheck_SURBL_Test.php" role="test">
+   <file baseinstalldir="/" name="test/Services_Trackback_SpamCheck_SURBL_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="996ec24121df63108459b6bd439487fc" name="test/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test">
+   <file baseinstalldir="/" name="test/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="479ae8fb1b258b03adb93edf16e84be7" name="test/Services_Trackback_Test.php" role="test">
+   <file baseinstalldir="/" name="test/Services_Trackback_Test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="5981eae3fc39eb389ce8546f2e755869" name="test/simple_test.php" role="test">
+   <file baseinstalldir="/" name="test/simple_test.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="e845486cc1cc740c93000808b969b24a" name="test/trackback_data.php" role="test">
+   <file baseinstalldir="/" name="test/trackback_data.php" role="test">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="ab54ab94168e909705fe70be9204e423" name="test/data/Services_Trackback_Test/testGetAutodiscoveryCodeComments.xml" role="data" />
-   <file baseinstalldir="/" md5sum="b6a26c659b5d0018958fdf50b530649f" name="test/data/Services_Trackback_Test/testGetAutodiscoveryCodeNoComments.xml" role="data" />
-   <file baseinstalldir="/" md5sum="6652c43aa363beef6f25804e59236b29" name="test/data/Services_Trackback_Test/testGetResponseError.xml" role="data" />
-   <file baseinstalldir="/" md5sum="0f6689bc56481893a167db8deb291f7e" name="test/data/Services_Trackback_Test/testGetResponseSuccess.xml" role="data" />
-   <file baseinstalldir="/" md5sum="2b1c0d16a8e9210094151a766fd332bb" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseFailure.xml" role="data" />
-   <file baseinstalldir="/" md5sum="a28ecd5ee4af9718de88027437625208" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseInvalid1.xml" role="data" />
-   <file baseinstalldir="/" md5sum="73d3987a8fe6bf830d6de24f71e5b35f" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseInvalid2.xml" role="data" />
-   <file baseinstalldir="/" md5sum="23e23cb3bb679c9f5b9d99b0b04801b7" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseSuccess.xml" role="data" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testGetAutodiscoveryCodeComments.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testGetAutodiscoveryCodeNoComments.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testGetResponseError.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testGetResponseSuccess.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseFailure.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseInvalid1.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseInvalid2.xml" role="test" />
+   <file baseinstalldir="/" name="test/data/Services_Trackback_Test/testInterpretTrackbackResponseSuccess.xml" role="test" />
   </dir>
  </contents>
  <dependencies>
