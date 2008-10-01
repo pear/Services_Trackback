@@ -1,9 +1,5 @@
 <?php
-
-// Includepath for local CVS development
-// set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
-
-    // {{{ require_once
+// {{{ require_once
 
 // Services_Trackback classes
 require_once 'Services/Trackback.php';
@@ -13,7 +9,7 @@ require_once 'Services/Trackback/SpamCheck/DNSBL.php';
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
 
-    // }}}
+// }}}
 
 class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
 {
@@ -63,7 +59,7 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
     function test_check_failure_title() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['title']));
     }
-    function test_check_faulire_excerpt() {
+    function test_check_failure_excerpt() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['excerpt']));
     }
     function test_check_failure_url() {
@@ -87,8 +83,10 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
         $this->spamCheck->reset();
+
         $fakeCheck = Services_Trackback_SpamCheck::create('DNSBL');
         $fakeCheck->_dnsbl->blacklists = array('bl.spamcop.net');
+
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }
 

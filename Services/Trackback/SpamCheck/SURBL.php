@@ -151,8 +151,9 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      */
     function reset()
     {
-        $this->_urls    = array();
-        $this->_results = array();
+        parent::reset();
+        $this->_urls  = array();
+        $this->_surbl = new Net_DNSBL_SURBL();
     }
 
     // }}}

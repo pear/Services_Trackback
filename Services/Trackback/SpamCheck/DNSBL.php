@@ -139,4 +139,25 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
 
     // }}}
 
+    // {{{ reset()
+
+    /**
+     * Reset results.
+     * Reset results to reuse SpamCheck.
+     *
+     * @since 0.5.0
+     * @static
+     * @access public
+     * @return null
+     */
+    function reset()
+    {
+        parent::reset();
+
+        //This should really call Net_DNSBL::reset() or similar, which doesn't exist
+        $this->_dnsbl->results = array();
+    }
+
+    // }}}
+
 }

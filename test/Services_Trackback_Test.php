@@ -1,6 +1,7 @@
 <?php
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
+require_once 'Services/Trackback/SpamCheck/Mock.php';
 
 require_once 'PHPUnit/Framework/TestCase.php';
 
@@ -200,10 +201,10 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testAddSpamCheckSuccess()
     {
         $trackback = new Services_Trackback();
-        $spamCheck = new Services_Trackback_SpamCheck();
+        $spamCheck = new Services_Trackback_SpamCheck_Mock();
 
         $result = $trackback->addSpamCheck($spamCheck);
-        $this->assertTrue($result === true);
+        $this->assertFalse(PEAR::isError($result));
     }
 
     function testAddSpamCheckFailure()
@@ -232,11 +233,13 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testRemoveSpamCheckSuccess()
     {
         $trackback = new Services_Trackback();
-        $spamCheck = new Services_Trackback_SpamCheck();
+        $spamCheck = new Services_Trackback_SpamCheck_Mock();
         $trackback->addSpamCheck($spamCheck);
+        
+        $this->assertFalse(PEAR::isError($result), "Failed to add SpamCheck, can't complete test");
 
         $result = $trackback->removeSpamCheck($spamCheck);
-        $this->assertTrue($result === true);
+        $this->assertFalse(PEAR::isError($result));
     }
 
     function testRemoveSpamCheckFailure()
