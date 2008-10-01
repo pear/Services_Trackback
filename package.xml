@@ -5,10 +5,16 @@
  <summary>Trackback - A generic class for sending and receiving trackbacks.</summary>
  <description>A generic class for sending and receiving trackbacks.</description>
  <lead>
+  <name>Daniel O'Connor</name>
+  <user>doconnor</user>
+  <email>doconnor@php.net</email>
+  <active>yes</active>
+ </lead>
+ <lead>
   <name>Tobias Schlitt</name>
   <user>toby</user>
   <email>toby@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </lead>
  <date>2008-10-01</date>
  <time>22:37:58</time>
