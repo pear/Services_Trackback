@@ -241,7 +241,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck_Mock();
-        $trackback->addSpamCheck($spamCheck);
+        $result = $trackback->addSpamCheck($spamCheck);
         
         $this->assertFalse(PEAR::isError($result), "Failed to add SpamCheck, can't complete test");
 
