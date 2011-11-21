@@ -376,7 +376,12 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $strictness = Services_Trackback::STRICTNESS_MIDDLE;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
-        $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
+
+        try {
+            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testCheckURLsFalse3()
@@ -384,7 +389,11 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $strictness = Services_Trackback::STRICTNESS_HIGH;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";
-        $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
+        try {
+            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testCheckURLsInvalid1()
@@ -405,7 +414,11 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url1 = "http:///trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
 
-        $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
+        try {
+            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testCheckURLsInvalid3()
@@ -416,7 +429,11 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";
 
-        $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
+        try {
+            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testInterpretTrackbackResponseSuccess()
