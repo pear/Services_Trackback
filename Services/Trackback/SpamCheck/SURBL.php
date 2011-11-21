@@ -29,11 +29,6 @@
      // {{{ require_once
 
 /**
- * Load PEAR error handling
- */
-require_once 'PEAR.php';
-
-/**
  * Load SpamCheck base.
  */
 require_once 'Services/Trackback/SpamCheck.php';

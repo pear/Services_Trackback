@@ -30,13 +30,7 @@
  */
 
     // {{{ require_once
-
-/**
- * Load PEAR error handling
- */
-
-require_once 'PEAR.php';
-
+require_once 'Services/Trackback/Exception.php';
     // }}}
 
 /**
@@ -118,7 +112,7 @@ class Services_Trackback_SpamCheck
         // We now definitly have to have the class available else the spam check
         // contained errors / is unavailable.
         if (!class_exists($classname)) {
-            return PEAR::raiseError('SpamCheck ' . $type . ' not found.');
+            throw new Services_Trackback_Exception('SpamCheck ' . $type . ' not found.');
         }
         $res = new $classname(@$options);
         return $res;
@@ -206,11 +200,11 @@ class Services_Trackback_SpamCheck
      * @since 0.5.0
      * @access protected
      * @abstract
-     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     * @return bool True if trackback is spam, false, if not, Services_Trackback_Exception on error.
      */
     function _checkSource($source, $trackback)
     {
-        return PEAR::raiseError('Method not implemented.', -1);
+        throw new Services_Trackback_Exception('Method not implemented.', -1);
     }
 
     // }}}

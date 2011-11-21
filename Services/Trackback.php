@@ -28,11 +28,7 @@
 
     // {{{ require_once
 
-/**
- * Load PEAR error handling
- */
-
-require_once 'PEAR.php';
+require_once 'Services/Trackback/Exception.php';
 
 /**
  * PEAR::HTTP_Request is required only when needed.
@@ -199,14 +195,7 @@ class Services_Trackback
 
         $res = $trackback->_fromArray($data);
 
-        if (PEAR::isError($res)) {
-            return $res;
-        }
-
         $res = $trackback->setOptions($options);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
 
         return $trackback;
     }
@@ -225,14 +214,14 @@ class Services_Trackback
      * @access public
      * @see Services_Trackback::create()
      * @see Services_Trackback::getOptions()
-     * @return mixed Bool true on success, otherwise PEAR_Error.
+     * @return mixed Bool true on success, otherwise Services_Trackback_Exception.
      */
     public function setOptions($options)
     {
         foreach ($options as $option => $value) {
             if (!isset($this->_options[$option])) {
                 $error = 'Desired option "'.$option.'" not available.';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             }
 
             $error = 'Invalid value for option "%s", must be %s.';
@@ -243,28 +232,28 @@ class Services_Trackback
                     $allowed = array('SERVICES_TRACKBACK_STRICTNESS_LOW',
                                      'SERVICES_TRACKBACK_STRICTNESS_MIDDLE',
                                      'SERVICES_TRACKBACK_STRICTNESS_HIGH');
-                    return PEAR::raiseError(sprintf($error, $option,
+                    throw new Services_Trackback_Exception(sprintf($error, $option,
                                                     implode(', ', $allowed)));
                 }
                 break;
             case 'timeout':
                 if (!is_int($value) || ($value < 0)) {
-                    return PEAR::raiseError(sprintf($error, $option, 'int >= 0'));
+                    throw new Services_Trackback_Exception(sprintf($error, $option, 'int >= 0'));
                 }
                 break;
             case 'fetchlines':
                 if (!is_int($value) || ($value < 1)) {
-                    return PEAR::raiseError(sprintf($error, $option, 'int >= 1'));
+                    throw new Services_Trackback_Exception(sprintf($error, $option, 'int >= 1'));
                 }
                 break;
             case 'fetchextra':
                 if (!is_bool($value)) {
-                    return PEAR::raiseError(sprintf($error, $option, 'bool'));
+                    throw new Services_Trackback_Exception(sprintf($error, $option, 'bool'));
                 }
                 break;
             case 'httprequest':
                 if (!is_array($value)) {
-                    return PEAR::raiseError(sprintf($error, $option, 'array'));
+                    throw new Services_Trackback_Exception(sprintf($error, $option, 'array'));
                 }
                 break;
             }
@@ -307,9 +296,6 @@ class Services_Trackback
         $necessaryData = array('url');
 
         $res = $this->_checkData($necessaryData);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
 
         $url = $this->_data['url'];
 
@@ -328,29 +314,25 @@ class Services_Trackback
 
         // Receive file contents.
         $content = $this->_getContent($url);
-        if (PEAR::isError($content)) {
-            return $content;
-        }
+
 
         $matches = array();
         // Get trackback identifier
         if (!preg_match('@dc:identifier\s*=\s*["\'](http:[^"\']+)"@i',
                         $content, $matches)) {
-            return PEAR::raiseError('No trackback RDF found in "'.$url.'".');
+            throw new Services_Trackback_Exception('No trackback RDF found in "'.$url.'".');
         }
         $identifier = trim($matches[1]);
 
         // Get trackback URI
         if (!preg_match('@trackback:ping\s*=\s*["\'](http:[^"\']+)"@i',
                         $content, $matches)) {
-            return PEAR::raiseError('No trackback URI found in "'.$url.'".');
+            throw new Services_Trackback_Exception('No trackback URI found in "'.$url.'".');
         }
         $trackbackUrl = trim($matches[1]);
 
         $res = $this->_checkURLs($url, $identifier, $this->_options['strictness']);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
+
 
         $this->_data['trackback_url'] = $trackbackUrl;
         return true;
@@ -387,7 +369,7 @@ class Services_Trackback
         // Load HTTP_Request
         include_once 'HTTP/Request.php';
         if (!class_exists('HTTP_Request')) {
-            return PEAR::raiseError('Unable to load PEAR::HTTP_Request.');
+            throw new Services_Trackback_Exception('Unable to load PEAR::HTTP_Request.');
         }
 
         // Consistancy check
@@ -401,9 +383,7 @@ class Services_Trackback
                                'blog_name', 'trackback_url');
 
         $res = $this->_checkData($necessaryData);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
+
 
         // Get URL
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
@@ -435,7 +415,7 @@ class Services_Trackback
         // Check return code
         if ($req->getResponseCode() != 200) {
             $error = 'Host returned Error '.$req->getResponseCode().'.';
-            return PEAR::raiseError($error);
+            throw new Services_Trackback_Exception($error);
         }
 
         return $this->_interpretTrackbackResponse($req->getResponseBody());
@@ -465,9 +445,6 @@ class Services_Trackback
         $necessaryData = array('title', 'url', 'trackback_url');
 
         $res = $this->_checkData($necessaryData);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
 
         $data = $this->_getEncodedData($necessaryData);
         $res  = <<<EOD
@@ -517,14 +494,8 @@ EOD;
         $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name', 'host');
 
         $res = $this->_checkData(array('id'));
-        if (PEAR::isError($res)) {
-            return $res;
-        }
 
         $res = $this->_checkData($necessaryPostData, $data);
-        if (PEAR::isError($res)) {
-            return PEAR::raiseError('POST data incomplete: '.$res->getMessage());
-        }
 
         $decodedData = $this->_getDecodedData($necessaryPostData, $data);
         $this->_data = array_merge($this->_data, $decodedData);
@@ -612,7 +583,7 @@ EOD;
     {
         $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck');
         if (!is_object($spamCheck) || !$subclass) {
-            return PEAR::raiseError('Invalid spam check module.', -1);
+            throw new Services_Trackback_Exception('Invalid spam check module.', -1);
         }
         $this->_spamChecks[$priority][] = $spamCheck;
         return $spamCheck;
@@ -647,7 +618,7 @@ EOD;
         if (!class_exists($createfunc[0])) {
             if (!file_exists($filename)) {
                 $error = 'SpamCheck subclass not found. Broken installation!';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             } else {
                 include_once $filename;
             }
@@ -656,7 +627,7 @@ EOD;
         // SpamCheck class successfully included?
         if (!class_exists($createfunc[0])) {
             $error = 'SpamCheck subclass not found. Broken installation!';
-            return PEAR::raiseError($error);
+            throw new Services_Trackback_Exception($error);
         }
 
         $spamCheck = call_user_func($createfunc, $spamCheckType, $options);
@@ -692,7 +663,7 @@ EOD;
                 }
             }
         }
-        return PEAR::raiseError('Given spam check module not found.', -1);
+        throw new Services_Trackback_Exception('Given spam check module not found.', -1);
     }
 
     // }}}
@@ -752,8 +723,10 @@ EOD;
     function get($key)
     {
         $error = 'Key '.$key.' not found.';
-        return isset($this->_data[$key]) ?
-                        $this->_data[$key] : PEAR::raiseError($error);
+        if (!isset($this->_data[$key])) {
+            throw new Services_Trackback_Exception($error);
+        }
+        return $this->_data[$key];
     }
 
     // }}}
@@ -793,9 +766,6 @@ EOD;
     function _fromArray($data)
     {
         $res = $this->_checkData(array('id'), $data);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
         $this->_data = $data;
 
         return true;
@@ -818,7 +788,7 @@ EOD;
     {
         $handle = @fopen($url, 'r');
         if (!is_resource($handle)) {
-            return PEAR::raiseError('Could not open URL "'.$url.'"');
+            throw new Services_Trackback_Exception('Could not open URL "'.$url.'"');
         }
         stream_set_timeout($handle, $this->_options['timeout']);
 
@@ -907,7 +877,7 @@ EOD;
 
         foreach ($keys as $key) {
             if (empty($data[$key])) {
-                return PEAR::raiseError('Invalid data. Key "'.$key.'" missing.');
+                throw new Services_Trackback_Exception('Invalid data. Key "'.$key.'" missing.');
             }
         }
         return true;
@@ -937,7 +907,7 @@ EOD;
         case Services_Trackback::STRICTNESS_HIGH:
             if ($url1 !== $url2) {
                 $error = 'URLs mismatch. "'.$url1.'" !== "'.$url2.'".';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             }
             break;
 
@@ -949,7 +919,7 @@ EOD;
             $res = preg_match($domainRegex, $url1, $matches);
             if (!$res) {
                 $error = 'Invalid URL1, no domain part found ("'.$url1.'").';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             }
 
             $domain1 = $matches[1];
@@ -957,13 +927,13 @@ EOD;
             $res = preg_match($domainRegex, $url2, $matches);
             if (!$res) {
                 $error = 'Invalid URL1, no domain part found ("'.$url1.'").';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             }
 
             $domain2 = $matches[1];
             if ($domain1 !== $domain2) {
                 $error = 'URLs missmatch. "'.$domain1.'" !== "'.$domain2.'".';
-                return PEAR::raiseError($error);
+                throw new Services_Trackback_Exception($error);
             }
             break;
 
@@ -993,7 +963,7 @@ EOD;
         $matches = array();
         if (!preg_match('@<error>([0-9]+)</error>@', $response, $matches)) {
             $error = 'Invalid trackback response, error code not found.';
-            return PEAR::raiseError($error);
+            throw new Services_Trackback_Exception($error);
         }
         $errorCode = $matches[1];
 
@@ -1004,14 +974,14 @@ EOD;
 
         if (!preg_match('@<message>([^<]+)</message>@', $response, $matches)) {
             $error = 'Error code '.$errorCode.', no message received.';
-            return PEAR::raiseError($error);
+            throw new Services_Trackback_Exception($error);
         }
 
 
         $error = 'Error code ' . $errorCode
                     . ', message "' . $matches[1] . '" received.';
 
-        return PEAR::raiseError($error);
+        throw new Services_Trackback_Exception($error);
     }
 
     // }}}
