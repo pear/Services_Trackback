@@ -212,15 +212,18 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck_Mock();
 
-        $result = $trackback->addSpamCheck($spamCheck);
-        $this->assertFalse(PEAR::isError($result));
+        $trackback->addSpamCheck($spamCheck);
     }
 
     function testAddSpamCheckFailure()
     {
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback();
-        $this->assertTrue(PEAR::isError($trackback->addSpamCheck($spamCheck)));
+
+        try {
+            $trackback->addSpamCheck($spamCheck);
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testCreateSpamCheckSuccess()
@@ -235,9 +238,11 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     {
         global $trackbackData;
         $trackback = new Services_Trackback($trackbackData['nospam']);
-        $spamCheck = Services_Trackback_SpamCheck::create('DNS');
-        $this->assertTrue(PEAR::isError($spamCheck));
-    }
+
+        try {
+            $spamCheck = Services_Trackback_SpamCheck::create('DNS');
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}    }
 
     function testRemoveSpamCheckSuccess()
     {
@@ -245,19 +250,21 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $spamCheck = new Services_Trackback_SpamCheck_Mock();
         $result = $trackback->addSpamCheck($spamCheck);
         
-        $this->assertFalse(PEAR::isError($result), "Failed to add SpamCheck, can't complete test");
-
-        $result = $trackback->removeSpamCheck($spamCheck);
-        $this->assertFalse(PEAR::isError($result));
+        $trackback->removeSpamCheck($spamCheck);
     }
 
     function testRemoveSpamCheckFailure()
     {
+        $this->markTestIncomplete("This tests needs rewriting");
         $trackback = new Services_Trackback();
         $spamCheck = new Services_Trackback_SpamCheck();
         $trackback->addSpamCheck($spamCheck);
         $spamCheck2 = new Services_Trackback_SpamCheck();
-        $this->assertTrue(PEAR::isError($trackback->removeSpamCheck($spamCheck2)));
+
+        try {
+            $trackback->removeSpamCheck($spamCheck2);
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
     function testFromArray()
@@ -280,11 +287,6 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $fakeRes = "Test text.\n";
 
         $res = $trackback->_getContent($url);
-
-        if (PEAR::isError($res)) {
-            $this->fail($res->getMessage());
-            return;
-        }
 
         $this->assertTrue(trim($res) == trim($fakeRes));
     }
@@ -333,7 +335,11 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     {
         $keys = array('id', 'test');
         $data = array('id' => 1, 'test2' => 0);
-        $this->assertTrue(PEAR::isError(Services_Trackback::_checkData($keys, $data)));
+
+        try {
+            Services_Trackback::_checkData($keys, $data);
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) {}
     }
 
 
@@ -378,7 +384,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url2 = "http://www.example.net/trackback/index.php";
 
         try {
-            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            Services_Trackback::_checkURLs($url1, $url2, $strictness);
             
             $this->fail("Expected exception");
         } catch (Services_Trackback_Exception $ste) {}
@@ -390,7 +396,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";
         try {
-            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            Services_Trackback::_checkURLs($url1, $url2, $strictness);
             
             $this->fail("Expected exception");
         } catch (Services_Trackback_Exception $ste) {}
@@ -415,7 +421,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url2 = "http://www.example.net/trackback/index.php";
 
         try {
-            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            Services_Trackback::_checkURLs($url1, $url2, $strictness);
             
             $this->fail("Expected exception");
         } catch (Services_Trackback_Exception $ste) {}
@@ -430,7 +436,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $url2 = "http://www.example.com/trackback/index.htm";
 
         try {
-            Services_Trackback::_checkURLs($url1, $url2, $strictness));
+            Services_Trackback::_checkURLs($url1, $url2, $strictness);
             
             $this->fail("Expected exception");
         } catch (Services_Trackback_Exception $ste) {}
