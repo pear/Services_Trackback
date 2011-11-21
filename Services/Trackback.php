@@ -355,8 +355,8 @@ class Services_Trackback
      *              'blog_name'         Name of the weblog.
      *              'trackback_url'     URL to send the trackback to.
      *
-     * Services_Trackback::send() requires HTTP_Request. The options
-     * for the HTTP_Request object are stored in the global options array using
+     * Services_Trackback::send() requires HTTP_Request2. The options
+     * for the HTTP_Request2 object are stored in the global options array using
      * the key 'http_request'.
      *
      * @param string $data Additional data to complete the trackback.
@@ -367,12 +367,6 @@ class Services_Trackback
      */
     function send($data = null)
     {
-        // Load HTTP_Request
-        include_once 'HTTP/Request.php';
-        if (!class_exists('HTTP_Request')) {
-            throw new Services_Trackback_Exception('Unable to load HTTP_Request.');
-        }
-
         // Consistancy check
         if (!isset($data)) {
             $data = array();
@@ -389,37 +383,34 @@ class Services_Trackback
         // Get URL
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
 
-        // Changed in 0.5.0 All HTTP_Request options are now supported.
+        // Changed in 0.5.0 All HTTP_Request2 options are now supported.
         $options = $this->_options['httprequest'];
 
         $options['timeout'] = $this->_options['timeout'];
 
-        // Create new HTTP_Request
-        $req = new HTTP_Request($url, $options);
-        $req->setMethod(HTTP_REQUEST_METHOD_POST);
+        // Create new HTTP_Request2
+        $req = new HTTP_Request2($url, $options);
+        $req->setMethod(Http_Request2::METHOD_POST);
 
         // Add HTTP headers
-        $req->addHeader("User-Agent", $options['useragent']);
+        $req->setHeader("User-Agent", $options['useragent']);
 
         // Adding data to send
-        $req->addPostData('url', $this->_data['url']);
-        $req->addPostData('title', $this->_data['title']);
-        $req->addPostData('blog_name', $this->_data['blog_name']);
-        $req->addPostData('excerpt', strip_tags($this->_data['excerpt']));
+        $req->addPostParameter('url', $this->_data['url']);
+        $req->addPostParameter('title', $this->_data['title']);
+        $req->addPostParameter('blog_name', $this->_data['blog_name']);
+        $req->addPostParameter('excerpt', strip_tags($this->_data['excerpt']));
 
         // Send POST request
-        $res = $req->sendRequest();
-        if (PEAR::isError($res)) {
-            return $res;
-        }
+        $response = $req->send();
 
         // Check return code
-        if ($req->getResponseCode() != 200) {
-            $error = 'Host returned Error '.$req->getResponseCode().'.';
+        if ($response->getStatus() != 200) {
+            $error = 'Host returned Error '.$response->getStatus().'.';
             throw new Services_Trackback_Exception($error);
         }
 
-        return $this->_interpretTrackbackResponse($req->getResponseBody());
+        return $this->_interpretTrackbackResponse($response->getBody());
     }
 
     // }}}

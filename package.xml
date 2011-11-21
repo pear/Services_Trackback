@@ -17,7 +17,7 @@
   <active>no</active>
  </lead>
  <date>2011-11-22</date>
- <time>01:36:03</time>
+ <time>01:48:34</time>
  <version>
   <release>0.7.0</release>
   <api>0.7.0</api>
@@ -31,17 +31,18 @@
 PHP5 support only
 Introduce exceptions
 Remove PEAR depedency (mostly)
+Swap to HTTP_Request2 - you may need to migrate if you have set httprequest options
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="2e2395a4d213e1467457825052dcfa82" name="Services/Trackback.php" role="php">
+   <file baseinstalldir="/" md5sum="833ceb908e8cb36002d2a29cf2ba5ea9" name="Services/Trackback.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="8103c08e502b710426224640badbd2df" name="Services/Trackback/Exception.php" role="php" />
    <file baseinstalldir="/" md5sum="4c73deecaa99372f57a45d6b1aa91da7" name="Services/Trackback/SpamCheck.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="c085680d53a135eece359fd80423f642" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
+   <file baseinstalldir="/" md5sum="c743ac04b3dbd1ec2aa0abc11fcc3e55" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="f2622e1b4b73cc96d8aad6827778a335" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
@@ -89,6 +90,10 @@ Remove PEAR depedency (mostly)
    </pearinstaller>
    <package>
     <name>Var_Dump</name>
+    <channel>pear.php.net</channel>
+   </package>
+   <package>
+    <name>HTTP_Request2</name>
     <channel>pear.php.net</channel>
    </package>
    <package>
@@ -162,6 +167,7 @@ PHPCS improvements
 PHP5 support only
 Introduce exceptions
 Remove PEAR depedency (mostly)
+Swap to HTTP_Request2 - you may need to migrate if you have set httprequest options
    </notes>
   </release>
  </changelog>

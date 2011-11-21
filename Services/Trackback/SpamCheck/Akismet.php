@@ -39,9 +39,9 @@ require_once 'Services/Trackback/SpamCheck.php';
 
 
 /**
- * HTTP_Request for sending POST requests to Akismet
+ * HTTP_Request2 for sending POST requests to Akismet
  */
-require_once 'HTTP/Request.php';
+require_once 'HTTP/Request2.php';
 
     // }}}
 
@@ -259,35 +259,35 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         case 'verify-key':
             $url = 'http://' . $baseUri . $action;
 
-            $req = new HTTP_Request($url, $httpRequestOptions);
-            $req->setMethod(HTTP_REQUEST_METHOD_POST);
+            $req = new HTTP_Request2($url, $httpRequestOptions);
+            $req->setMethod(HTTP_Request2::METHOD_POST);
 
-            $req->addPostData('key', $this->_options['key']);
-            $req->addPostData('blog', $this->_options['url']);
+            $req->addPostParameter('key', $this->_options['key']);
+            $req->addPostParameter('blog', $this->_options['url']);
             break;
         case 'comment-check':
         case 'submit-spam':
         case 'submit-ham':
             $url = 'http://' . $this->_options['key'] . '.' . $baseUri . $action;
 
-            $req = new HTTP_Request($url, $httpRequestOptions);
-            $req->setMethod(HTTP_REQUEST_METHOD_POST);
+            $req = new HTTP_Request2($url, $httpRequestOptions);
+            $req->setMethod(HTTP_Request2::METHOD_POST);
 
-            $req->addHeader('User-Agent', $httpRequestOptions['useragent']);
-            $req->addPostData('comment_type', 'trackback');
+            $req->setHeader('User-Agent', $httpRequestOptions['useragent']);
+            $req->addPostParameter('comment_type', 'trackback');
 
-            $req->addPostData('key', $this->_options['key']);
-            $req->addPostData('blog', $this->_options['url']);
+            $req->addPostParameter('key', $this->_options['key']);
+            $req->addPostParameter('blog', $this->_options['url']);
 
-            $req->addPostData('comment_author', $trackback->get('blog_name'));
-            $req->addPostData('comment_author_url', $trackback->get('url'));
-            $req->addPostData('user_ip', $trackback->get('host'));
+            $req->addPostParameter('comment_author', $trackback->get('blog_name'));
+            $req->addPostParameter('comment_author_url', $trackback->get('url'));
+            $req->addPostParameter('user_ip', $trackback->get('host'));
 
             $extra = $trackback->get('extra');
-            $req->addPostData('user_agent', $extra['HTTP_USER_AGENT']);
+            $req->addPostParameter('user_agent', $extra['HTTP_USER_AGENT']);
 
             $referrer = isset($extra['HTTP_REFERER']) ? $extra['HTTP_REFERER'] : '';
-            $req->addPostData('referrer', $referrer);
+            $req->addPostParameter('referrer', $referrer);
             break;
         default:
             throw new Services_Trackback_Exception(
@@ -296,16 +296,14 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
             break;
         }
 
-        if (($res = $req->sendRequest()) !== true) {
-            return $res;
-        }
+        $response = $req->send();
 
-        if ($req->getResponseCode() !== 200) {
+        if ($response->getStatus() !== 200) {
             $error = 'Could not open URL "%s". Code: "%s".';
-            throw new Services_Trackback_Exception(sprintf($error, $url, $req->getResponseCode()));
+            throw new Services_Trackback_Exception(sprintf($error, $url, $response->getStatus()));
         }
 
-        return trim($req->getResponseBody());
+        return trim($response->getBody());
     }
 
     // }}}
