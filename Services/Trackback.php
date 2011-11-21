@@ -8,7 +8,7 @@
  * This is the main file of the Services_Trackback package. This file has to be
  * included for usage of Services_Trackback.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -42,28 +42,6 @@ require_once 'PEAR.php';
 
 
     // }}}
-    // {{{ Constants
-
-/**
- * This constant is used with the @see Services_Trackback::autodiscover() method.
- * Using this constant you supress the URL check described in the trackback specs.
- */
-define('SERVICES_TRACKBACK_STRICTNESS_LOW', 1);
-
-/**
- * This constant is used with the @see Services_Trackback::autodiscover() method.
- * Using this constant you use a not so strict URL check than described in the
- * trackback specs. Only the domain name is checked.
- */
-define('SERVICES_TRACKBACK_STRICTNESS_MIDDLE', 2);
-
-/**
- * This constant is used with the @see Services_Trackback::autodiscover() method.
- * Using this constant activate the URL check described in the trackback specs.
- */
-define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
-
-    // }}}
 
 /**
  * Trackback
@@ -81,6 +59,24 @@ define('SERVICES_TRACKBACK_STRICTNESS_HIGH', 3);
  */
 class Services_Trackback
 {
+    /**
+     * This constant is used with the @see Services_Trackback::autodiscover() method.
+     * Using this constant you supress the URL check described in the trackback specs.
+     */
+    const STRICTNESS_LOW = 1;
+
+    /**
+     * This constant is used with the @see Services_Trackback::autodiscover() method.
+     * Using this constant you use a not so strict URL check than described in the
+     * trackback specs. Only the domain name is checked.
+     */
+    const STRICTNESS_MIDDLE = 2;
+
+    /**
+     * This constant is used with the @see Services_Trackback::autodiscover() method.
+     * Using this constant activate the URL check described in the trackback specs.
+     */
+    const STRICTNESS_HIGH = 3;
 
     // {{{ var $_data
 
@@ -137,17 +133,6 @@ class Services_Trackback
 
     // {{{ Services_Trackback()
 
-    /**
-     * Constructor
-     * Creates a new Trackback object. Private because of factory use.
-     *
-     * @since 0.1.0
-     * @access protected
-     * @return void
-     */
-    function Services_Trackback()
-    {
-    }
 
     // }}}
     // {{{ create()
@@ -204,7 +189,7 @@ class Services_Trackback
      * @access public
      * @return Services_Trackback The newly created Trackback.
      */
-    function &create($data, $options = null)
+    public static function create($data, $options = null)
     {
         // Sanity check
         $options = isset($options) && is_array($options) ? $options : array();
@@ -242,7 +227,7 @@ class Services_Trackback
      * @see Services_Trackback::getOptions()
      * @return mixed Bool true on success, otherwise PEAR_Error.
      */
-    function setOptions($options)
+    public function setOptions($options)
     {
         foreach ($options as $option => $value) {
             if (!isset($this->_options[$option])) {
@@ -301,7 +286,7 @@ class Services_Trackback
      * @see Services_Trackback::create()
      * @return array The currently active options.
      */
-    function getOptions()
+    public function getOptions()
     {
         return $this->_options;
     }
@@ -623,13 +608,13 @@ EOD;
      * @return mixed Added SpamCheck module instance on success, otherwise
      *               PEAR_Error.
      */
-    function &addSpamCheck(&$spamCheck, $priority = 0)
+    function addSpamCheck($spamCheck, $priority = 0)
     {
         $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck');
         if (!is_object($spamCheck) || !$subclass) {
             return PEAR::raiseError('Invalid spam check module.', -1);
         }
-        $this->_spamChecks[$priority][] =& $spamCheck;
+        $this->_spamChecks[$priority][] = $spamCheck;
         return $spamCheck;
     }
 
@@ -653,7 +638,7 @@ EOD;
      * @see Services_Trackback::checkSpam()
      * @return mixed Instance of the created SpamCheck module or PEAR_Error.
      */
-    function &createSpamCheck($spamCheckType, $options = array(), $priority = 0)
+    function createSpamCheck($spamCheckType, $options = array(), $priority = 0)
     {
         $filename   = dirname(__FILE__).'/Trackback/SpamCheck.php';
         $createfunc = array('Services_Trackback_SpamCheck', 'create');
@@ -674,9 +659,9 @@ EOD;
             return PEAR::raiseError($error);
         }
 
-        $spamCheck =& call_user_func($createfunc, $spamCheckType, $options);
+        $spamCheck = call_user_func($createfunc, $spamCheckType, $options);
 
-        $res =& $this->addSpamCheck($spamCheck, $priority);
+        $res = $this->addSpamCheck($spamCheck, $priority);
 
         return $res;
     }
@@ -697,7 +682,7 @@ EOD;
      * @see Services_Trackback::checkSpam()
      * @return bool True on success, otherwise PEAR_Error.
      */
-    function removeSpamCheck(&$spamCheck)
+    function removeSpamCheck($spamCheck)
     {
         foreach ($this->_spamChecks as $priority => $spamChecks) {
             foreach ($spamChecks as $id => $spamCheck) {
@@ -862,7 +847,7 @@ EOD;
     function _getEncodedData($keys, $data =  null)
     {
         if (!isset($data)) {
-            $data =& $this->_data;
+            $data = $this->_data;
         }
 
         foreach ($keys as $key) {
@@ -889,7 +874,7 @@ EOD;
     function _getDecodedData($keys, $data =  null)
     {
         if (!isset($data)) {
-            $data =& $this->_data;
+            $data = $this->_data;
         }
 
         foreach ($keys as $key) {
@@ -917,7 +902,7 @@ EOD;
     function _checkData($keys, $data = null)
     {
         if (!isset($data)) {
-            $data =& $this->_data;
+            $data = $this->_data;
         }
 
         foreach ($keys as $key) {
@@ -949,14 +934,14 @@ EOD;
     function _checkURLs($url1, $url2, $strictness)
     {
         switch ($strictness) {
-        case SERVICES_TRACKBACK_STRICTNESS_HIGH:
+        case Services_Trackback::STRICTNESS_HIGH:
             if ($url1 !== $url2) {
                 $error = 'URLs mismatch. "'.$url1.'" !== "'.$url2.'".';
                 return PEAR::raiseError($error);
             }
             break;
 
-        case SERVICES_TRACKBACK_STRICTNESS_MIDDLE:
+        case Services_Trackback::STRICTNESS_MIDDLE:
             $matches = array();
 
             $domainRegex = "@http://([^/]+).*@";
@@ -982,7 +967,7 @@ EOD;
             }
             break;
 
-        case SERVICES_TRACKBACK_STRICTNESS_LOW:
+        case Services_Trackback::STRICTNESS_LOW:
         default:
             // No checks, when strictness is low.
             break;
@@ -1030,17 +1015,4 @@ EOD;
     }
 
     // }}}
-
-    /**
-     * Overloading
-     *
-     * @since 0.1.0
-     * @access public
-     * @deprecated
-     */
-    /*
-
-    // Removed since 0.2.0
-
-    */
 }

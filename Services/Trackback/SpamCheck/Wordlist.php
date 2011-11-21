@@ -8,7 +8,7 @@
  * This spam detection module for Services_Trackback searches a given trackback
  * for word matches.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -144,7 +144,7 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
      * @access public
      * @return Services_Trackback_SpamCheck_WordList The newly created object.
      */
-    function Services_Trackback_SpamCheck_Wordlist($options = null)
+    function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {

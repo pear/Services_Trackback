@@ -10,7 +10,7 @@
  * Each SpamCheck implementation has to extend this class and implement all of it's
  * abstract methods.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -100,7 +100,7 @@ class Services_Trackback_SpamCheck
      * @access public
      * @return Services_Trackback_SpamCheck The newly created SpamCheck object.
      */
-    function &create($type, $options = null)
+    public static function create($type, $options = null)
     {
         $filename     = 'Services/Trackback/SpamCheck/' . $type . '.php';
         $filepathes[] = dirname(__FILE__).'/SpamCheck/'.$type.'.php';

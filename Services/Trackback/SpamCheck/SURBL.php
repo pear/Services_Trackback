@@ -8,7 +8,7 @@
  * This spam detection module for Services_Trackback utilizes SUR
  * blacklists for detection of URLs used in spam.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -127,7 +127,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      * @access public
      * @return Services_Trackback_SpamCheck_SURBL The newly created SpamCheck object.
      */
-    function Services_Trackback_SpamCheck_SURBL($options = null)
+    function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {

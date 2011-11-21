@@ -7,7 +7,7 @@
  *
  * A non functional spam check module for unit test purposes
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -71,7 +71,7 @@ class Services_Trackback_SpamCheck_Mock extends Services_Trackback_SpamCheck
      * @access public
      * @return Services_Trackback_SpamCheck_WordList The newly created object.
      */
-    function Services_Trackback_SpamCheck_Mock($options = null)
+    function __construct($options = null)
     {
         //By default, we find spam
         $this->_options['found_spam'] = true;

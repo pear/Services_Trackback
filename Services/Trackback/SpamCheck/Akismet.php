@@ -10,7 +10,7 @@
  * provided by {@link http://wordpress.com}. ATTENTION: To use this spam check,
  * you need a valid WordPress.com API key.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -105,7 +105,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      * @access public
      * @return void
      */
-    function Services_Trackback_SpamCheck_Akismet($options = null)
+    function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
