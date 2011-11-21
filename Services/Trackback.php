@@ -29,9 +29,10 @@
     // {{{ require_once
 
 require_once 'Services/Trackback/Exception.php';
+require_once 'PEAR.php';
 
 /**
- * PEAR::HTTP_Request is required only when needed.
+ * HTTP_Request is required only when needed.
  * @see Services_Trackback::send().
  */
 // require_once 'HTTP/Request.php';
@@ -108,7 +109,7 @@ class Services_Trackback
 
     var $_options = array(
         // Options for Services_Trackback directly
-        'strictness'        => SERVICES_TRACKBACK_STRICTNESS_LOW,
+        'strictness'        => Services_Trackback::STRICTNESS_LOW,
         'timeout'           => 30,          // seconds
         'fetchlines'        => 30,
         'fetchextra'        => true,
@@ -116,7 +117,7 @@ class Services_Trackback
         'httprequest'       => array(
             'allowRedirects'    => true,
             'maxRedirects'      => 2,
-            'useragent'         => 'PEAR::Services_Trackback v@package_version@'
+            'useragent'         => 'PEAR Services_Trackback v@package_version@'
         ),
     );
 
@@ -229,9 +230,9 @@ class Services_Trackback
             switch ($option) {
             case 'strictness':
                 if (!is_int($value) || ($value < 1) || ($value > 3)) {
-                    $allowed = array('SERVICES_TRACKBACK_STRICTNESS_LOW',
-                                     'SERVICES_TRACKBACK_STRICTNESS_MIDDLE',
-                                     'SERVICES_TRACKBACK_STRICTNESS_HIGH');
+                    $allowed = array('Services_Trackback::STRICTNESS_LOW',
+                                     'Services_Trackback::STRICTNESS_MIDDLE',
+                                     'Services_Trackback::STRICTNESS_HIGH');
                     throw new Services_Trackback_Exception(sprintf($error, $option,
                                                     implode(', ', $allowed)));
                 }
@@ -354,7 +355,7 @@ class Services_Trackback
      *              'blog_name'         Name of the weblog.
      *              'trackback_url'     URL to send the trackback to.
      *
-     * Services_Trackback::send() requires PEAR::HTTP_Request. The options
+     * Services_Trackback::send() requires HTTP_Request. The options
      * for the HTTP_Request object are stored in the global options array using
      * the key 'http_request'.
      *
@@ -369,7 +370,7 @@ class Services_Trackback
         // Load HTTP_Request
         include_once 'HTTP/Request.php';
         if (!class_exists('HTTP_Request')) {
-            throw new Services_Trackback_Exception('Unable to load PEAR::HTTP_Request.');
+            throw new Services_Trackback_Exception('Unable to load HTTP_Request.');
         }
 
         // Consistancy check
@@ -894,7 +895,7 @@ EOD;
      * @param string   $url1       The first URL.
      * @param string   $url2       The second URL.
      * @param constant $strictness How strict to check URLs. Use one of
-     *                             SERVICES_TRACKBACK_STRICTNESS_* constants.
+     *                             Services_Trackback::STRICTNESS_* constants.
      *
      * @see Services_Trackback::autodiscover()
      * @since 0.2.0

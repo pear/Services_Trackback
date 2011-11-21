@@ -34,7 +34,7 @@ require_once 'Services/Trackback/Exception.php';
 /**
  * Load SpamCheck base class
  */
-x
+
 require_once 'Services/Trackback/SpamCheck.php';
 
 

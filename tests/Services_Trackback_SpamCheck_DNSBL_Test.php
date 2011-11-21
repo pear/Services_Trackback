@@ -85,7 +85,7 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
         $this->spamCheck->reset();
 
         $fakeCheck = Services_Trackback_SpamCheck::create('DNSBL');
-        $fakeCheck->_dnsbl->blacklists = array('bl.spamcop.net');
+        $fakeCheck->_dnsbl->setBlacklists(array('bl.spamcop.net'));
 
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }

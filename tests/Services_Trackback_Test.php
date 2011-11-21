@@ -35,7 +35,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         global $trackbackData;
 
         $options = array(
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
+            'strictness'        => Services_Trackback::STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
             'fetchextra'        => true,
@@ -57,7 +57,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testSetOptionsSuccess()
     {
         $options = array(
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
+            'strictness'        => Services_Trackback::STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
             'fetchextra'        => true,
@@ -81,7 +81,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testGetOptionsSuccess()
     {
         $options = array(
-            'strictness'        => SERVICES_TRACKBACK_STRICTNESS_HIGH,
+            'strictness'        => Services_Trackback::STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
             'httpRequest'       => array(
@@ -337,7 +337,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsTrue1()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
+        $strictness = Services_Trackback::STRICTNESS_LOW;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.net/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
@@ -345,7 +345,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsTrue2()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
+        $strictness = Services_Trackback::STRICTNESS_MIDDLE;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
@@ -353,7 +353,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsTrue3()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
+        $strictness = Services_Trackback::STRICTNESS_HIGH;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.php";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
@@ -363,7 +363,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testCheckURLsFalse1()
     {
         // No real test, should always return true
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
+        $strictness = Services_Trackback::STRICTNESS_LOW;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "https://test.net/trackbike/index.htm";
         $this->assertTrue(Services_Trackback::_checkURLs($url1, $url2, $strictness));
@@ -371,7 +371,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsFalse2()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
+        $strictness = Services_Trackback::STRICTNESS_MIDDLE;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
@@ -379,7 +379,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsFalse3()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
+        $strictness = Services_Trackback::STRICTNESS_HIGH;
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";
         $this->assertTrue(PEAR::isError(Services_Trackback::_checkURLs($url1, $url2, $strictness)));
@@ -388,7 +388,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testCheckURLsInvalid1()
     {
         // No real test, should always return true
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_LOW;
+        $strictness = Services_Trackback::STRICTNESS_LOW;
 
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "https://test.net/trackbike/index.htm";
@@ -398,7 +398,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
 
     function testCheckURLsInvalid2()
     {
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_MIDDLE;
+        $strictness = Services_Trackback::STRICTNESS_MIDDLE;
 
         $url1 = "http:///trackback/index.php";
         $url2 = "http://www.example.net/trackback/index.php";
@@ -409,7 +409,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     function testCheckURLsInvalid3()
     {
         // No real test, URLs are not invalid, but unequal
-        $strictness = SERVICES_TRACKBACK_STRICTNESS_HIGH;
+        $strictness = Services_Trackback::STRICTNESS_HIGH;
 
         $url1 = "http://www.example.com/trackback/index.php";
         $url2 = "http://www.example.com/trackback/index.htm";

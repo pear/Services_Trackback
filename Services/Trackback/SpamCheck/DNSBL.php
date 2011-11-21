@@ -150,7 +150,7 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
         parent::reset();
 
         //This should really call Net_DNSBL::reset() or similar, which doesn't exist
-        $this->_dnsbl->results = array();
+        $this->_dnsbl = new Net_DNSBL();
     }
 
     // }}}
