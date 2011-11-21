@@ -124,8 +124,10 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         );
 
         $track1 = Services_Trackback::create($data);
-        $res    = $track1->autodiscover();
-        $this->fail("Expected exception"); } catch (Services_Trackback_Exception $ste) { }
+        try {
+            $res    = $track1->autodiscover();
+            $this->fail("Expected exception"); 
+        } catch (Services_Trackback_Exception $ste) { }
     }
 
     function testSend()
@@ -428,22 +430,27 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
     {
         $xml = $this->xml['testInterpretTrackbackResponseFailure'];
         try {
-        $res = Services_Trackback::_interpretTrackbackResponse($xml);
-        $this->fail("Expected exception"); } catch (Services_Trackback_Exception $ste) { }
+            $res = Services_Trackback::_interpretTrackbackResponse($xml);
+            $this->fail("Expected exception");
+        } catch (Services_Trackback_Exception $ste) { }
     }
 
     function testInterpretTrackbackResponseInvalid1()
     {
         $xml = $this->xml['testInterpretTrackbackResponseInvalid1'];
-        $res = Services_Trackback::_interpretTrackbackResponse($xml);
-        $this->fail("Expected exception"); } catch (Services_Trackback_Exception $ste) { }
+        try {
+            $res = Services_Trackback::_interpretTrackbackResponse($xml);
+            $this->fail("Expected exception"); 
+        } catch (Services_Trackback_Exception $ste) { }
     }
 
     function testInterpretTrackbackResponseInvalid2()
     {
         $xml = $this->xml['testInterpretTrackbackResponseInvalid2'];
 
-        $res = Services_Trackback::_interpretTrackbackResponse($xml);
-        $this->fail("Expected exception"); } catch (Services_Trackback_Exception $ste) { }
+        try {
+            $res = Services_Trackback::_interpretTrackbackResponse($xml);
+            $this->fail("Expected exception"); 
+        } catch (Services_Trackback_Exception $ste) { }
     }
 }
