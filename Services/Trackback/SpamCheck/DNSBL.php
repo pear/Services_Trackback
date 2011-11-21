@@ -29,11 +29,6 @@
     // {{{ require_once
 
 /**
- * Load PEAR error handling
- */
-require_once 'PEAR.php';
-
-/**
  * Load Net_DNSBL for spam cheching
  */
 require_once 'Net/DNSBL.php';
