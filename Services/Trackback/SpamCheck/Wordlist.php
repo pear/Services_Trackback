@@ -26,15 +26,11 @@
  * @since     File available since Release 0.5.0
  */
 
-    // {{{ require_once
-
 /**
  * Load SpamCheck base class
  */
 
 require_once 'Services/Trackback/SpamCheck.php';
-
-    // }}}
 
 /**
  * Wordlist
@@ -53,16 +49,13 @@ require_once 'Services/Trackback/SpamCheck.php';
 class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
 {
 
-    // {{{ _options
-
     /**
      * Options for the Wordlist.
      *
      * @var array
      * @since 0.5.0
-     * @access protected
      */
-    var $_options = array(
+    protected $options = array(
         'continuous'    => false,
         'sources'       => array(
             'acne',
@@ -117,9 +110,6 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
         'minmatches'    => 1,
     );
 
-    // }}}
-    // {{{ Services_Trackback_SpamCheck_Wordlist()
-
     /**
      * Constructor.
      * Create a new instance of the Wordlist spam protection module.
@@ -143,20 +133,17 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
-                $this->_options[$key] = $val;
+                $this->options[$key] = $val;
             }
         }
     }
-
-    // }}}
-    // {{{ check()
 
     /**
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam.
      * Generally this method may not be overwritten, but it can be, if necessary.
      * This method calls the _checkSource() method for each source defined in the
-     * $_options array (depending on the 'continuous' option), saves the
+     * $options array (depending on the 'continuous' option), saves the
      * results and returns the spam status determined by the check.
      *
      * @param Services_Trackback $trackback The trackback to check.
@@ -168,13 +155,13 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     function check($trackback)
     {
         $spamCount = 0;
-        foreach (array_keys($this->_options['sources']) as $id) {
-            if ($spamCount >= $this->_options['minmatches']
-                && !$this->_options['continuous']) {
+        foreach (array_keys($this->options['sources']) as $id) {
+            if ($spamCount >= $this->options['minmatches']
+                && !$this->options['continuous']) {
                 // We already found spam and shall not continue
                 $this->_results[$id] = false;
             } else {
-                $res = $this->_checkSource($this->_options['sources'][$id],
+                $res = $this->_checkSource($this->options['sources'][$id],
                                            $trackback);
 
                 $spamCount += ($res === true) ? 1 : 0;
@@ -182,11 +169,8 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
                 $this->_results[$id] = $res;
             }
         }
-        return ($spamCount >= $this->_options['minmatches']);
+        return ($spamCount >= $this->options['minmatches']);
     }
-
-    // }}}
-    // {{{ _checkSource()
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -201,11 +185,11 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     function _checkSource($source, $trackback)
     {
         $spam = false;
-        foreach ($this->_options['elements'] as $element) {
+        foreach ($this->options['elements'] as $element) {
             $elements[$element] = html_entity_decode($trackback->get($element));
         }
         foreach ($elements as $element) {
-            $result = call_user_func($this->_options['comparefunc'], $source,
+            $result = call_user_func($this->options['comparefunc'], $source,
                                      $element);
             if (false !== $result) {
                 $spam = true;
@@ -214,9 +198,6 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
         }
         return $spam;
     }
-
-    // }}}
-    // {{{ _stripos()
 
     /**
      * Checks source text for an element, regardless of case.
@@ -230,7 +211,5 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     {
         return strpos(strtolower($element), strtolower($source));
     }
-
-    // }}}
 
 }

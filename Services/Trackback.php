@@ -74,16 +74,14 @@ class Services_Trackback
      */
     const STRICTNESS_HIGH = 3;
 
-    // {{{ var $_data
 
     /**
      * The necessary trackback data.
      *
      * @var array
      * @since 0.1.0
-     * @access protected
      */
-    var $_data = array(
+    protected $_data = array(
         'id'            => '',
         'title'         => '',
         'excerpt'       => '',
@@ -94,19 +92,14 @@ class Services_Trackback
         'extra'         => array(),
     );
 
-    // }}}
-    // {{{ var $_options
-
     /**
      * Options to influence Services_Trackback.
      *
      * @see Services_Trackback::create()
      * @since 0.4.0
      * @var array
-     * @access protected
      */
-
-    var $_options = array(
+     protected $options = array(
         // Options for Services_Trackback directly
         'strictness'        => Services_Trackback::STRICTNESS_LOW,
         'timeout'           => 30,          // seconds
@@ -120,18 +113,7 @@ class Services_Trackback
         ),
     );
 
-    // }}}
-     // {{{ var $_spamChecks
-
-    var $_spamChecks = array();
-
-    // }}}
-
-    // {{{ Services_Trackback()
-
-
-    // }}}
-    // {{{ create()
+    protected $_spamChecks = array();
 
     /**
      * Factory
@@ -219,7 +201,7 @@ class Services_Trackback
     public function setOptions($options)
     {
         foreach ($options as $option => $value) {
-            if (!isset($this->_options[$option])) {
+            if (!isset($this->options[$option])) {
                 $error = 'Desired option "'.$option.'" not available.';
                 throw new Services_Trackback_Exception($error);
             }
@@ -257,7 +239,7 @@ class Services_Trackback
                 }
                 break;
             }
-            $this->_options[$option] = $value;
+            $this->options[$option] = $value;
         }
         return true;
     }
@@ -277,7 +259,7 @@ class Services_Trackback
      */
     public function getOptions()
     {
-        return $this->_options;
+        return $this->options;
     }
 
     // }}}
@@ -331,7 +313,7 @@ class Services_Trackback
         }
         $trackbackUrl = trim($matches[1]);
 
-        $res = $this->_checkURLs($url, $identifier, $this->_options['strictness']);
+        $res = $this->_checkURLs($url, $identifier, $this->options['strictness']);
 
 
         $this->_data['trackback_url'] = $trackbackUrl;
@@ -383,9 +365,9 @@ class Services_Trackback
         $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
 
         // Changed in 0.5.0 All HTTP_Request2 options are now supported.
-        $options = $this->_options['httprequest'];
+        $options = $this->options['httprequest'];
 
-        $options['timeout'] = $this->_options['timeout'];
+        $options['timeout'] = $this->options['timeout'];
 
         // Create new HTTP_Request2
         $req = new HTTP_Request2($url, $options);
@@ -490,7 +472,7 @@ EOD;
 
         $decodedData = $this->_getDecodedData($necessaryPostData, $data);
         $this->_data = array_merge($this->_data, $decodedData);
-        if ($this->_options['fetchextra'] === true) {
+        if ($this->options['fetchextra'] === true) {
             $this->_data['extra'] = $_SERVER;
         }
         return true;
@@ -780,10 +762,10 @@ EOD;
         if (!is_resource($handle)) {
             throw new Services_Trackback_Exception('Could not open URL "'.$url.'"');
         }
-        stream_set_timeout($handle, $this->_options['timeout']);
+        stream_set_timeout($handle, $this->options['timeout']);
 
         $content = '';
-        for ($i = 0; ($i < $this->_options['fetchlines']) && !feof($handle);$i++) {
+        for ($i = 0; ($i < $this->options['fetchlines']) && !feof($handle);$i++) {
             $content .= fgets($handle);
         }
 

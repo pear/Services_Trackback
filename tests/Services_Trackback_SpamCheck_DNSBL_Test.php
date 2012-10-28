@@ -14,13 +14,11 @@ require_once dirname(__FILE__).'/trackback_data.php';
 class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
 {
 
-    var $trackbacks = array();
+    public $trackbacks = array();
 
-    var $spamCheck;
+    public $spamCheck;
 
-    // {{{ setup()
-
-    function setUp() {
+    public function setUp() {
         global $trackbackData;
         foreach ($trackbackData as $id => $set) {
             $this->trackbacks[$id] = Services_Trackback::create($set);
@@ -28,59 +26,53 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
         $this->spamCheck = Services_Trackback_SpamCheck::create('DNSBL');
     }
 
-    // }}}
-    // {{{ tearDown()
-
-    function tearDown() {
+    public function tearDown() {
     }
 
-    // }}}
-    // {{{ Test create()
-
-    function test_create() {
+    public function test_create() {
         $realCheck = new Services_Trackback_SpamCheck_DNSBL();
         $this->assertTrue($this->spamCheck == $realCheck);
     }
 
-    // }}}
-    // {{{ Test check()
-    function test_check_failure_nospam() {
+    public function test_check_failure_nospam() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['nospam']));
     }
-    function test_check_failure_undetected() {
+
+    public function test_check_failure_undetected() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['undetected']));
     }
-    function test_check_success_all() {
+
+    public function test_check_success_all() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
     }
-    function test_check_success_host() {
+
+    public function test_check_success_host() {
         $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
     }
-    function test_check_failure_title() {
+
+    public function test_check_failure_title() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['title']));
     }
-    function test_check_failure_excerpt() {
+
+    public function test_check_failure_excerpt() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['excerpt']));
     }
-    function test_check_failure_url() {
+
+    public function test_check_failure_url() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['url']));
     }
-    function test_check_failure_blog_name() {
+
+    public function test_check_failure_blog_name() {
         $this->assertTrue(!$this->spamCheck->check($this->trackbacks['blog_name']));
     }
-    // }}}
-    // {{{ Test getResults()
 
-    function test_getResults() {
+    public function test_getResults() {
         $this->spamCheck->check($this->trackbacks['all']);
         $results = $this->spamCheck->getResults();
         $this->assertTrue($results[0]);
     }
 
-    // }}}
-    // {{{ Test reset()
-
-    function test_reset() {
+    public function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
         $this->spamCheck->reset();
 
@@ -90,7 +82,4 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }
 
-    // }}}
-
 }
-
