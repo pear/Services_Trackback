@@ -30,7 +30,7 @@ class Services_Trackback_SpamCheck_Wordlist_Test extends PHPUnit_Framework_TestC
 
     function test_create() {
         $realCheck = new Services_Trackback_SpamCheck_Wordlist();
-        $this->assertTrue($this->spamCheck == $realCheck);
+        $this->assertEquals($this->spamCheck, $realCheck);
     }
 
     function test_check_failure_nospam() {
@@ -77,8 +77,8 @@ class Services_Trackback_SpamCheck_Wordlist_Test extends PHPUnit_Framework_TestC
 
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
-        $this->spamCheck->_results = array();
+        $this->spamCheck->setResults(array());
         $fakeCheck = Services_Trackback_SpamCheck::create('Wordlist');
-        $this->assertTrue($this->spamCheck == $fakeCheck);
+        $this->assertEquals($this->spamCheck, $fakeCheck);
     }
 }

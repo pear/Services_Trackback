@@ -151,6 +151,10 @@ class Services_Trackback_SpamCheck
         return $this->results;
     }
 
+    public function setResults($results)
+    {
+        $this->results = $results;
+    }
 
     /**
      * Reset results.
