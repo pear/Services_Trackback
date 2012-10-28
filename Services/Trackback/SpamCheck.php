@@ -29,9 +29,7 @@
  * @since     File available since Release 0.5.0
  */
 
-    // {{{ require_once
 require_once 'Services/Trackback/Exception.php';
-    // }}}
 
 /**
  * SpamCheck
@@ -45,38 +43,28 @@ require_once 'Services/Trackback/Exception.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.5.0
- * @access    public
  */
 class Services_Trackback_SpamCheck
 {
 
-    // {{{ _options
     /**
      * Options for the spam check module. General and module specific.
      *
      * @var array
      * @since 0.5.0
-     * @access protected
      */
-    var $_options = array(
+    protected $options = array(
         'continuous'    => false,
         'sources'       => array(),
     );
-
-    // }}}
-    // {{{ _results
 
     /**
      * Array of results, indexed analogue to the 'sources'
      * option (boolean result value per source).
      *
      * @var array
-     * @access protected
      */
-    var $_results = array();
-
-    // }}}
-    // {{{ create()
+    protected $results = array();
 
     /**
      * Factory.
@@ -91,7 +79,6 @@ class Services_Trackback_SpamCheck
      *
      * @since 0.5.0
      * @static
-     * @access public
      * @return Services_Trackback_SpamCheck The newly created SpamCheck object.
      */
     public static function create($type, $options = null)
@@ -118,9 +105,6 @@ class Services_Trackback_SpamCheck
         return $res;
     }
 
-    // }}}
-    // {{{ check()
-
     /**
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam.
@@ -132,64 +116,53 @@ class Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access public
      * @return bool Whether the checked object is spam or not.
      */
-    function check($trackback)
+    public function check($trackback)
     {
         $this->reset();
         $spam = false;
-        foreach (array_keys($this->_options['sources']) as $id) {
-            if ($spam && !$this->_options['continuous']) {
+        foreach (array_keys($this->options['sources']) as $id) {
+            if ($spam && !$this->options['continuous']) {
                 // We already found spam and shall not continue
-                $this->_results[$id] = false;
+                $this->results[$id] = false;
                 break;
             } else {
-                $result = $this->_checkSource($this->_options['sources'][$id],
+                $result = $this->checkSource($this->options['sources'][$id],
                                               $trackback);
 
-                $this->_results[$id] = $result;
+                $this->results[$id] = $result;
 
-                $spam = ($spam || $this->_results[$id]);
+                $spam = ($spam || $this->results[$id]);
             }
         }
         return $spam;
     }
-    // }}}
-    // {{{ getResults()
 
     /**
      * Get spam check results.
      * Receive the results determined by the spam check.
      *
      * @since 0.5.0
-     * @access public
      * @return array Array of specific spam check results.
      */
-    function getResults()
+    public function getResults()
     {
-        return $this->_results;
+        return $this->results;
     }
 
-    // }}}
-    // {{{ reset()
 
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
      *
      * @since 0.5.0
-     * @static
-     * @access public
      * @return null
      */
-    function reset()
+    public function reset()
     {
-        $this->_results = array();
+        $this->results = array();
     }
-
-    // }}}
-    // {{{ _checkSource()
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -198,15 +171,12 @@ class Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access protected
      * @abstract
      * @return bool True if trackback is spam, false, if not, Services_Trackback_Exception on error.
      */
-    function _checkSource($source, $trackback)
+    protected function checkSource($source, $trackback)
     {
         throw new Services_Trackback_Exception('Method not implemented.', -1);
     }
-
-    // }}}
 
 }

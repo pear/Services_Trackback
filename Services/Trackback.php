@@ -26,18 +26,8 @@
  * @since     File available since Release 0.1.0
  */
 
-    // {{{ require_once
 
 require_once 'Services/Trackback/Exception.php';
-
-/**
- * HTTP_Request is required only when needed.
- * @see Services_Trackback::send().
- */
-// require_once 'HTTP/Request.php';
-
-
-    // }}}
 
 /**
  * Trackback
@@ -51,7 +41,6 @@ require_once 'Services/Trackback/Exception.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.1.0
- * @access    public
  */
 class Services_Trackback
 {
@@ -81,7 +70,7 @@ class Services_Trackback
      * @var array
      * @since 0.1.0
      */
-    protected $_data = array(
+    protected $data = array(
         'id'            => '',
         'title'         => '',
         'excerpt'       => '',
@@ -113,7 +102,7 @@ class Services_Trackback
         ),
     );
 
-    protected $_spamChecks = array();
+    protected $spamChecks = array();
 
     /**
      * Factory
@@ -175,15 +164,12 @@ class Services_Trackback
         // Create trackback
         $trackback = new Services_Trackback();
 
-        $res = $trackback->_fromArray($data);
+        $res = $trackback->fromArray($data);
 
         $res = $trackback->setOptions($options);
 
         return $trackback;
     }
-
-    // }}}
-    // {{{ setOptions()
 
     /**
      * setOptions
@@ -193,7 +179,6 @@ class Services_Trackback
      *                       Services_Trackback::create().
      *
      * @since 0.4.0
-     * @access public
      * @see Services_Trackback::create()
      * @see Services_Trackback::getOptions()
      * @return mixed Bool true on success, otherwise Services_Trackback_Exception.
@@ -244,15 +229,11 @@ class Services_Trackback
         return true;
     }
 
-    // }}}
-    // {{{ getOptions()
-
     /**
      * getOptions
      * Get the currently set option set.
      *
      * @since 0.4.0
-     * @access public
      * @see Services_Trackback::setOptions()
      * @see Services_Trackback::create()
      * @return array The currently active options.
@@ -262,24 +243,20 @@ class Services_Trackback
         return $this->options;
     }
 
-    // }}}
-    // {{{ autodiscover()
-
     /**
      * autodiscover
      * Checks a given URL for trackback autodiscovery code.
      *
      * @since 0.2.0
-     * @access public
      * @return bool True on success.
      */
-    function autodiscover()
+    public function autodiscover()
     {
         $necessaryData = array('url');
 
-        $res = $this->_checkData($necessaryData);
+        $res = $this->checkData($necessaryData);
 
-        $url = $this->_data['url'];
+        $url = $this->data['url'];
 
         /*
         Sample autodiscovery code
@@ -295,7 +272,7 @@ class Services_Trackback
         */
 
         // Receive file contents.
-        $content = $this->_getContent($url);
+        $content = $this->getContent($url);
 
 
         $matches = array();
@@ -313,15 +290,12 @@ class Services_Trackback
         }
         $trackbackUrl = trim($matches[1]);
 
-        $res = $this->_checkURLs($url, $identifier, $this->options['strictness']);
+        $res = $this->checkURLs($url, $identifier, $this->options['strictness']);
 
 
-        $this->_data['trackback_url'] = $trackbackUrl;
+        $this->data['trackback_url'] = $trackbackUrl;
         return true;
     }
-
-    // }}}
-    // {{{ send()
 
     /**
      * send
@@ -343,26 +317,25 @@ class Services_Trackback
      * @param string $data Additional data to complete the trackback.
      *
      * @since 0.3.0
-     * @access public
      * @return mixed True on success.
      */
-    function send($data = null)
+    public function send($data = null)
     {
         // Consistancy check
         if (!isset($data)) {
             $data = array();
         }
 
-        $this->_data = array_merge($this->_data, $data);
+        $this->data = array_merge($this->data, $data);
 
         $necessaryData = array('title', 'url', 'excerpt',
                                'blog_name', 'trackback_url');
 
-        $res = $this->_checkData($necessaryData);
+        $res = $this->checkData($necessaryData);
 
 
         // Get URL
-        $url = str_replace('&amp;', '&', $this->_data['trackback_url']);
+        $url = str_replace('&amp;', '&', $this->data['trackback_url']);
 
         // Changed in 0.5.0 All HTTP_Request2 options are now supported.
         $options = $this->options['httprequest'];
@@ -377,10 +350,10 @@ class Services_Trackback
         $req->setHeader("User-Agent", $options['useragent']);
 
         // Adding data to send
-        $req->addPostParameter('url', $this->_data['url']);
-        $req->addPostParameter('title', $this->_data['title']);
-        $req->addPostParameter('blog_name', $this->_data['blog_name']);
-        $req->addPostParameter('excerpt', strip_tags($this->_data['excerpt']));
+        $req->addPostParameter('url', $this->data['url']);
+        $req->addPostParameter('title', $this->data['title']);
+        $req->addPostParameter('blog_name', $this->data['blog_name']);
+        $req->addPostParameter('excerpt', strip_tags($this->data['excerpt']));
 
         // Send POST request
         $response = $req->send();
@@ -391,11 +364,8 @@ class Services_Trackback
             throw new Services_Trackback_Exception($error);
         }
 
-        return $this->_interpretTrackbackResponse($response->getBody());
+        return $this->interpretTrackbackResponse($response->getBody());
     }
-
-    // }}}
-    // {{{ getAutodiscoveryCode()
 
     /**
      * getAutodiscoverCode
@@ -410,16 +380,15 @@ class Services_Trackback
      * @param bool $comments Whether to include HTML comments around the RDF
      *
      * @since 0.1.0
-     * @access public
      * @return string RDF code
      */
-    function getAutodiscoveryCode($comments = true)
+    public function getAutodiscoveryCode($comments = true)
     {
         $necessaryData = array('title', 'url', 'trackback_url');
 
-        $res = $this->_checkData($necessaryData);
+        $res = $this->checkData($necessaryData);
 
-        $data = $this->_getEncodedData($necessaryData);
+        $data = $this->getEncodedData($necessaryData);
         $res  = <<<EOD
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -441,9 +410,6 @@ EOD;
         return $res."\n";
     }
 
-    // }}}
-    // {{{ receive()
-
     /**
      * receive
      * Receives a trackback. The following data has to be set in
@@ -453,10 +419,9 @@ EOD;
      * @param mixed[] $data An array of data, ie, from $_POST.
      *
      * @since 0.1.0
-     * @access public
      * @return object Services_Trackback
      */
-    function receive($data = null)
+    public function receive($data = null)
     {
         if (!isset($data)) {
             $data = $_POST;
@@ -466,31 +431,26 @@ EOD;
 
         $necessaryPostData = array('title', 'excerpt', 'url', 'blog_name', 'host');
 
-        $res = $this->_checkData(array('id'));
+        $res = $this->checkData(array('id'));
 
-        $res = $this->_checkData($necessaryPostData, $data);
+        $res = $this->checkData($necessaryPostData, $data);
 
-        $decodedData = $this->_getDecodedData($necessaryPostData, $data);
-        $this->_data = array_merge($this->_data, $decodedData);
+        $decodedData = $this->getDecodedData($necessaryPostData, $data);
+        $this->data = array_merge($this->data, $decodedData);
         if ($this->options['fetchextra'] === true) {
-            $this->_data['extra'] = $_SERVER;
+            $this->data['extra'] = $_SERVER;
         }
         return true;
     }
-
-    // }}}
-    // {{{ getResponseSuccess()
 
     /**
      * getResponseSuccess
      * Returns an XML response for a successful trackback.
      *
      * @since 0.1.0
-     * @access public
-     * @static
      * @return string The XML code
      */
-    function getResponseSuccess()
+    public function getResponseSuccess()
     {
         return <<<EOD
 <?xml version="1.0" encoding="iso-8859-1"?>
@@ -500,9 +460,6 @@ EOD;
 EOD;
     }
 
-    // }}}
-    // {{{ getResponseError()
-
     /**
      * getResponseError
      * Returns an XML response for a trackback error.
@@ -511,12 +468,11 @@ EOD;
      * @param int    $code    The error code
      *
      * @since 0.1.0
-     * @access public
      * @return void
      */
-    function getResponseError($message, $code)
+    public function getResponseError($message, $code)
     {
-        $data = Services_Trackback::_getEncodedData(array('code', 'message'),
+        $data = $this->getEncodedData(array('code', 'message'),
                                                     array('code' => $code,
                                                           'message' => $message));
 
@@ -529,9 +485,6 @@ EOD;
 EOD;
         return sprintf($res, $data['code'], $data['message']);
     }
-
-    // }}}
-    // {{{ addSpamCheck()
 
     /**
      * addSpamCheck
@@ -546,23 +499,19 @@ EOD;
      *                                                 0 is assumed.
      *
      * @since 0.5.0
-     * @access public
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
      * @return mixed Added SpamCheck module instance on succes
      */
-    function addSpamCheck($spamCheck, $priority = 0)
+    public function addSpamCheck($spamCheck, $priority = 0)
     {
         $subclass = is_subclass_of($spamCheck, 'Services_Trackback_SpamCheck');
         if (!is_object($spamCheck) || !$subclass) {
             throw new Services_Trackback_Exception('Invalid spam check module.', -1);
         }
-        $this->_spamChecks[$priority][] = $spamCheck;
+        $this->spamChecks[$priority][] = $spamCheck;
         return $spamCheck;
     }
-
-    // }}}
-    // {{{ createSpamCheck()
 
     /**
      * createSpamCheck
@@ -575,13 +524,12 @@ EOD;
      *                              If no priority level is set, 0 is assumed.
      *
      * @since 0.5.0
-     * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
      * @return mixed Instance of the created SpamCheck module
      */
-    function createSpamCheck($spamCheckType, $options = array(), $priority = 0)
+    public function createSpamCheck($spamCheckType, $options = array(), $priority = 0)
     {
         $filename   = dirname(__FILE__).'/Trackback/SpamCheck.php';
         $createfunc = array('Services_Trackback_SpamCheck', 'create');
@@ -609,9 +557,6 @@ EOD;
         return $res;
     }
 
-    // }}}
-    // {{{ removeSpamCheck()
-
     /**
      * removeSpamCheck
      * Remove a spam check module from the trackback.
@@ -620,26 +565,22 @@ EOD;
      *                                                         to remove.
      *
      * @since 0.5.0
-     * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::checkSpam()
      * @return bool True on success.
      */
-    function removeSpamCheck($spamCheck)
+    public function removeSpamCheck($spamCheck)
     {
-        foreach ($this->_spamChecks as $priority => $spamChecks) {
+        foreach ($this->spamChecks as $priority => $spamChecks) {
             foreach ($spamChecks as $id => $spamCheck) {
-                if ($this->_spamChecks[$priority][$id] === $spamCheck) {
-                    unset($this->_spamChecks[$priority][$id]);
+                if ($this->spamChecks[$priority][$id] === $spamCheck) {
+                    unset($this->spamChecks[$priority][$id]);
                     return true;
                 }
             }
         }
         throw new Services_Trackback_Exception('Given spam check module not found.', -1);
     }
-
-    // }}}
-    // {{{ checkSpam()
 
     /**
      * checkSpam
@@ -652,23 +593,22 @@ EOD;
      *                         result.
      *
      * @since 0.5.0
-     * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::removeSpamCheck()
      * @return bool True, if one of the sources
      */
-    function checkSpam($continouse = false)
+    public function checkSpam($continouse = false)
     {
         $spam = false;
-        foreach ($this->_spamChecks as $priority => $spamChecks) {
+        foreach ($this->spamChecks as $priority => $spamChecks) {
             foreach (array_keys($spamChecks) as $id) {
                 if (!$continouse && $spam) {
                     // No need to check further
-                    $this->_spamChecksResults[$priority][$id] = false;
+                    $this->spamChecksResults[$priority][$id] = false;
                 } else {
-                    $tmpRes = $this->_spamChecks[$priority][$id]->check($this);
+                    $tmpRes = $this->spamChecks[$priority][$id]->check($this);
 
-                    $this->_spamChecksResults[$priority][$id] = $tmpRes;
+                    $this->spamChecksResults[$priority][$id] = $tmpRes;
 
                     $spam = ($spam || $tmpRes);
                 }
@@ -676,10 +616,6 @@ EOD;
         }
         return $spam;
     }
-
-    // }}}
-
-    // {{{ get()
 
     /**
      * get
@@ -689,20 +625,16 @@ EOD;
      * @param string $key The key to fetch a value for.
      *
      * @since 0.2.0
-     * @access public
      * @return mixed A string value.
      */
-    function get($key)
+    public function get($key)
     {
         $error = 'Key '.$key.' not found.';
-        if (!isset($this->_data[$key])) {
+        if (!isset($this->data[$key])) {
             throw new Services_Trackback_Exception($error);
         }
-        return $this->_data[$key];
+        return $this->data[$key];
     }
-
-    // }}}
-    // {{{ set()
 
     /**
      * set
@@ -713,18 +645,13 @@ EOD;
      * @param string $val The value for the key.
      *
      * @since 0.2.0
-     * @access public
      * @return mixed Boolean true on success.
      */
-    function set($key, $val)
+    public function set($key, $val)
     {
-        $this->_data[$key] = $val;
+        $this->data[$key] = $val;
         return true;
     }
-
-    // }}}
-
-    // {{{ _fromArray()
 
     /**
      * Create a Trackback from a $data array.
@@ -732,31 +659,26 @@ EOD;
      * @param array $data The data array (@see Services_Trackback::create()).
      *
      * @since 0.2.0
-     * @access protected
      * @return mixed True on success.
      */
-    function _fromArray($data)
+    protected function fromArray($data)
     {
-        $res = $this->_checkData(array('id'), $data);
-        $this->_data = $data;
+        $res = $this->checkData(array('id'), $data);
+        $this->data = $data;
 
         return true;
     }
 
-    // }}}
-    // {{{ _getContent()
-
     /**
-     * _getContent
+     * getContent
      * Receive the content from a specific URL.
      *
      * @param string $url The URL to download data from.
      *
      * @since 0.4.0
-     * @access protected
      * @return string The content.
      */
-    function _getContent($url)
+    protected function getContent($url)
     {
         $handle = @fopen($url, 'r');
         if (!is_resource($handle)) {
@@ -772,24 +694,20 @@ EOD;
         return $content;
     }
 
-    // }}}
-    // {{{ _getEncodedData()
-
     /**
-     * _getEncodedData
+     * getEncodedData
      * Receives a number of data from the internal data store, encoded for XML usage.
      *
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
      *
      * @since 0.1.0
-     * @access protected
      * @return void
      */
-    function _getEncodedData($keys, $data =  null)
+    protected function getEncodedData($keys, $data =  null)
     {
         if (!isset($data)) {
-            $data = $this->_data;
+            $data = $this->data;
         }
 
         foreach ($keys as $key) {
@@ -799,24 +717,20 @@ EOD;
         return $res;
     }
 
-    // }}}
-    // {{{ _getDecodedData()
-
     /**
-     * _getDecodedData
+     * getDecodedData
      * Receives a number of data from the internal data store.
      *
      * @param array $keys Data keys to receive
      * @param array $data Optionally the data to check (default is the object data).
      *
      * @since 0.1.0
-     * @access protected
      * @return void
      */
-    function _getDecodedData($keys, $data =  null)
+    protected function getDecodedData($keys, $data =  null)
     {
         if (!isset($data)) {
-            $data = $this->_data;
+            $data = $this->data;
         }
 
         foreach ($keys as $key) {
@@ -826,25 +740,21 @@ EOD;
         return $res;
     }
 
-    // }}}
-    // {{{ _checkData()
-
     /**
-     * _checkData
+     * checkData
      * Checks a given array of keys for the validity of their data.
      *
      * @param array $keys Data keys to check.
      * @param array $data Optionally the data to check (default is the object data).
      *
      * @since 0.1.0
-     * @access protected
      *
      * @return void
      */
-    function _checkData($keys, $data = null)
+    protected function checkData($keys, $data = null)
     {
         if (!isset($data)) {
-            $data = $this->_data;
+            $data = $this->data;
         }
 
         foreach ($keys as $key) {
@@ -855,11 +765,8 @@ EOD;
         return true;
     }
 
-    // }}}
-    // {{{ _checkURLs()
-
     /**
-     * _checkURLs
+     * checkURLs
      * This little method checks if 2 URLs (the URL to trackback against the
      * trackback identifier found in the autodiscovery code) are equal.
      *
@@ -870,10 +777,9 @@ EOD;
      *
      * @see Services_Trackback::autodiscover()
      * @since 0.2.0
-     * @access protected
      * @return mixed True on success.
      */
-    function _checkURLs($url1, $url2, $strictness)
+    protected function checkURLs($url1, $url2, $strictness)
     {
         switch ($strictness) {
         case Services_Trackback::STRICTNESS_HIGH:
@@ -917,9 +823,6 @@ EOD;
         return true;
     }
 
-    // }}}
-    // {{{ _interpretTrackbackResponse()
-
     /**
      * Interpret the returned XML code, when sending a trackback.
      *
@@ -927,10 +830,9 @@ EOD;
      *
      * @see Services_Trackback::send()
      * @since 0.3.0
-     * @access protected
      * @return void Mixed true on success.
      */
-    function _interpretTrackbackResponse($response)
+    protected function _interpretTrackbackResponse($response)
     {
         $matches = array();
         if (!preg_match('@<error>([0-9]+)</error>@', $response, $matches)) {
@@ -955,6 +857,4 @@ EOD;
 
         throw new Services_Trackback_Exception($error);
     }
-
-    // }}}
 }
