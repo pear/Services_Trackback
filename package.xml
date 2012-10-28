@@ -17,10 +17,10 @@
   <active>no</active>
  </lead>
  <date>2012-10-28</date>
- <time>10:29:59</time>
+ <time>14:36:27</time>
  <version>
-  <release>0.7.1</release>
-  <api>0.7.0</api>
+  <release>0.8.0</release>
+  <api>0.8.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -28,44 +28,45 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Bug #19678 PEAR.php not required anymore
+Promote a number of methods to public
+Drop unenforced static annotations
+Cleanup
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="1e9467943b8cddeaf1e6287dae2d5a6e" name="Services/Trackback.php" role="php">
+   <file baseinstalldir="/" md5sum="779ee5b5aa7dedccfd7c7d449a70c620" name="Services/Trackback.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="8103c08e502b710426224640badbd2df" name="Services/Trackback/Exception.php" role="php" />
-   <file baseinstalldir="/" md5sum="4c73deecaa99372f57a45d6b1aa91da7" name="Services/Trackback/SpamCheck.php" role="php">
+   <file baseinstalldir="/" md5sum="231fde81446c69436bc6a32514b88505" name="Services/Trackback/SpamCheck.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="c743ac04b3dbd1ec2aa0abc11fcc3e55" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
+   <file baseinstalldir="/" md5sum="133e8b31ab34d7e9c1e9ca6f0e2b2c33" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="ad68a12b2398e49b7fd8fc3285988327" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
+   <file baseinstalldir="/" md5sum="13b80cf6a9c33a94ca2ca8b6743fb104" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="30e31870887797e0d0568df608633af0" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
-   <file baseinstalldir="/" md5sum="d2eae97f07244aba1352157d8368b861" name="Services/Trackback/SpamCheck/Regex.php" role="php">
+   <file baseinstalldir="/" md5sum="8f229b206585120065c264beb33ef7e7" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
+   <file baseinstalldir="/" md5sum="9f71a0713cc0e395b121bf60f275717e" name="Services/Trackback/SpamCheck/Regex.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="b48e36ba91f985a6fc0f1bc3caa46ff5" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
+   <file baseinstalldir="/" md5sum="6903f88c56e36241b4c88b3e5f10384e" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="b98f97a7dbcf1844ef893865a655252c" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
+   <file baseinstalldir="/" md5sum="8b58b52ccdcc4819deeb5fd1523b7cd9" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="eed1c637a9649c74cec6380bfcf0baf7" name="tests/akismet_key.php" role="test" />
    <file baseinstalldir="/" md5sum="5afe5fe4bf54b92890d9ce1983ef55d2" name="tests/failed_tests.sh" role="test" />
-   <file baseinstalldir="/" md5sum="3e7d5d395e4f7fa32fe7d398413b9803" name="tests/Services_Trackback_AllTests.php" role="test" />
-   <file baseinstalldir="/" md5sum="29414be51e9c1ce701f7d77bde0606f6" name="tests/Services_Trackback_SpamCheck_Akismet_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="545e374567d2faa734d170d66882fb2b" name="tests/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="f7c421aa90ef7edc64f4d0923e3c3b1e" name="tests/Services_Trackback_SpamCheck_Regex_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="070c6a6f297bd96228ccbc38878ed2c7" name="tests/Services_Trackback_SpamCheck_SURBL_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="996ec24121df63108459b6bd439487fc" name="tests/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="3118540bee257f4a80dcd97e08c042f5" name="tests/Services_Trackback_Test.php" role="test" />
-   <file baseinstalldir="/" md5sum="95a63ab22d25a1ebb8f1a88a22c8ed16" name="tests/simple_test.php" role="test" />
-   <file baseinstalldir="/" md5sum="e845486cc1cc740c93000808b969b24a" name="tests/trackback_data.php" role="test" />
+   <file baseinstalldir="/" md5sum="deb0085379cd5a58122e09a21d37b25e" name="tests/Services_Trackback_SpamCheck_Akismet_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="b70453ce8f2a824d0e049821f3129739" name="tests/Services_Trackback_SpamCheck_DNSBL_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="1bd3adf65e69ff422dd7567a7ae778ce" name="tests/Services_Trackback_SpamCheck_Regex_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="dcb150a5425fd05d56fbda3e8e288cc5" name="tests/Services_Trackback_SpamCheck_SURBL_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="02ea0e0dfd9ce889b80a25e3ac7f6dbf" name="tests/Services_Trackback_SpamCheck_Wordlist_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="b20bbeaaa3d7e4801e9e800874d229f7" name="tests/Services_Trackback_Test.php" role="test" />
+   <file baseinstalldir="/" md5sum="ed1ef67c7a4b031c10c5d600f1b2be7b" name="tests/simple_test.php" role="test" />
+   <file baseinstalldir="/" md5sum="b87b2c3adf4fd299d493d9e038692d46" name="tests/trackback_data.php" role="test" />
    <file baseinstalldir="/" md5sum="ab54ab94168e909705fe70be9204e423" name="tests/data/Services_Trackback_Test/testGetAutodiscoveryCodeComments.xml" role="test" />
    <file baseinstalldir="/" md5sum="b6a26c659b5d0018958fdf50b530649f" name="tests/data/Services_Trackback_Test/testGetAutodiscoveryCodeNoComments.xml" role="test" />
    <file baseinstalldir="/" md5sum="6652c43aa363beef6f25804e59236b29" name="tests/data/Services_Trackback_Test/testGetResponseError.xml" role="test" />
@@ -180,6 +181,23 @@ Swap to HTTP_Request2 - you may need to migrate if you have set httprequest opti
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>
 Bug #19678 PEAR.php not required anymore
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.8.0</release>
+    <api>0.8.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-10-28</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Promote a number of methods to public
+Drop unenforced static annotations
+Cleanup
    </notes>
   </release>
  </changelog>
