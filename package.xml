@@ -16,10 +16,10 @@
   <email>toby@php.net</email>
   <active>no</active>
  </lead>
- <date>2011-11-22</date>
- <time>01:48:34</time>
+ <date>2012-10-28</date>
+ <time>10:29:59</time>
  <version>
-  <release>0.7.0</release>
+  <release>0.7.1</release>
   <api>0.7.0</api>
  </version>
  <stability>
@@ -28,14 +28,11 @@
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-PHP5 support only
-Introduce exceptions
-Remove PEAR depedency (mostly)
-Swap to HTTP_Request2 - you may need to migrate if you have set httprequest options
+Bug #19678 PEAR.php not required anymore
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="833ceb908e8cb36002d2a29cf2ba5ea9" name="Services/Trackback.php" role="php">
+   <file baseinstalldir="/" md5sum="1e9467943b8cddeaf1e6287dae2d5a6e" name="Services/Trackback.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="8103c08e502b710426224640badbd2df" name="Services/Trackback/Exception.php" role="php" />
@@ -45,17 +42,17 @@ Swap to HTTP_Request2 - you may need to migrate if you have set httprequest opti
    <file baseinstalldir="/" md5sum="c743ac04b3dbd1ec2aa0abc11fcc3e55" name="Services/Trackback/SpamCheck/Akismet.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="f2622e1b4b73cc96d8aad6827778a335" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
+   <file baseinstalldir="/" md5sum="ad68a12b2398e49b7fd8fc3285988327" name="Services/Trackback/SpamCheck/DNSBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="d3ffa428f14dd90375dbd3c47ed18c57" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
-   <file baseinstalldir="/" md5sum="68f7d3d2733f92170afd44538647dcb1" name="Services/Trackback/SpamCheck/Regex.php" role="php">
+   <file baseinstalldir="/" md5sum="30e31870887797e0d0568df608633af0" name="Services/Trackback/SpamCheck/Mock.php" role="php" />
+   <file baseinstalldir="/" md5sum="d2eae97f07244aba1352157d8368b861" name="Services/Trackback/SpamCheck/Regex.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="c0f64d59d628e5bed2f74c885f5c8341" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
+   <file baseinstalldir="/" md5sum="b48e36ba91f985a6fc0f1bc3caa46ff5" name="Services/Trackback/SpamCheck/SURBL.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
-   <file baseinstalldir="/" md5sum="35cc79ef23eccea4f19125d0829c79ba" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
+   <file baseinstalldir="/" md5sum="b98f97a7dbcf1844ef893865a655252c" name="Services/Trackback/SpamCheck/Wordlist.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" md5sum="eed1c637a9649c74cec6380bfcf0baf7" name="tests/akismet_key.php" role="test" />
@@ -168,6 +165,21 @@ PHP5 support only
 Introduce exceptions
 Remove PEAR depedency (mostly)
 Swap to HTTP_Request2 - you may need to migrate if you have set httprequest options
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.7.1</release>
+    <api>0.7.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-10-28</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Bug #19678 PEAR.php not required anymore
    </notes>
   </release>
  </changelog>
