@@ -102,7 +102,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      * @since 0.5.0
      * @return Services_Trackback_SpamCheck_SURBL The newly created SpamCheck object.
      */
-    function __construct($options = null)
+    public function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {

@@ -1,8 +1,4 @@
 <?php
-
-// Includepath for local CVS development
-// set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
-
 // Services_Trackback classes
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';

@@ -100,4 +100,3 @@ $trackbackData['decode'] = array(
     'trackback_url' => 'http://www.example.com/',
 );
 
-?>
