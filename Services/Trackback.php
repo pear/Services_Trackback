@@ -29,7 +29,6 @@
     // {{{ require_once
 
 require_once 'Services/Trackback/Exception.php';
-require_once 'PEAR.php';
 
 /**
  * HTTP_Request is required only when needed.
@@ -290,7 +289,7 @@ class Services_Trackback
      *
      * @since 0.2.0
      * @access public
-     * @return bool True on success, otherwise PEAR_Error.
+     * @return bool True on success.
      */
     function autodiscover()
     {
@@ -363,7 +362,7 @@ class Services_Trackback
      *
      * @since 0.3.0
      * @access public
-     * @return mixed True on success, otherwise PEAR_Error.
+     * @return mixed True on success.
      */
     function send($data = null)
     {
@@ -568,8 +567,7 @@ EOD;
      * @access public
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @return mixed Added SpamCheck module instance on success, otherwise
-     *               PEAR_Error.
+     * @return mixed Added SpamCheck module instance on succes
      */
     function addSpamCheck($spamCheck, $priority = 0)
     {
@@ -599,7 +597,7 @@ EOD;
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::removeSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @return mixed Instance of the created SpamCheck module or PEAR_Error.
+     * @return mixed Instance of the created SpamCheck module
      */
     function createSpamCheck($spamCheckType, $options = array(), $priority = 0)
     {
@@ -643,7 +641,7 @@ EOD;
      * @access public
      * @see Services_Trackback::addSpamCheck()
      * @see Services_Trackback::checkSpam()
-     * @return bool True on success, otherwise PEAR_Error.
+     * @return bool True on success.
      */
     function removeSpamCheck($spamCheck)
     {
@@ -704,13 +702,13 @@ EOD;
     /**
      * get
      * Get data from the trackback. Returns the value of a given
-     * key or PEAR_Error.
+     * key.
      *
      * @param string $key The key to fetch a value for.
      *
      * @since 0.2.0
      * @access public
-     * @return mixed A string value or a PEAR_Error on failure.
+     * @return mixed A string value.
      */
     function get($key)
     {
@@ -727,14 +725,14 @@ EOD;
     /**
      * set
      * Set data of the trackback. Saves the value of a given
-     * key , returning true on success, PEAR_Error on faulure.
+     * key, returning true on success.
      *
      * @param string $key The key to set a value for.
      * @param string $val The value for the key.
      *
      * @since 0.2.0
      * @access public
-     * @return mixed Boolean true on success or a PEAR_Error on failure.
+     * @return mixed Boolean true on success.
      */
     function set($key, $val)
     {
@@ -753,7 +751,7 @@ EOD;
      *
      * @since 0.2.0
      * @access protected
-     * @return mixed True on success, otherwise PEAR_Error.
+     * @return mixed True on success.
      */
     function _fromArray($data)
     {
@@ -891,7 +889,7 @@ EOD;
      * @see Services_Trackback::autodiscover()
      * @since 0.2.0
      * @access protected
-     * @return mixed True on success, otherwise PEAR_Error.
+     * @return mixed True on success.
      */
     function _checkURLs($url1, $url2, $strictness)
     {
@@ -948,7 +946,7 @@ EOD;
      * @see Services_Trackback::send()
      * @since 0.3.0
      * @access protected
-     * @return void Mixed true on success, otherwise PEAR_Error.
+     * @return void Mixed true on success.
      */
     function _interpretTrackbackResponse($response)
     {

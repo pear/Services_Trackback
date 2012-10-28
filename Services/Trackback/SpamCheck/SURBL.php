@@ -163,7 +163,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      * @since 0.5.0
      * @access protected
      * @abstract
-     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     * @return bool True if trackback is spam.
      */
     function _checkSource($source, $trackback)
     {

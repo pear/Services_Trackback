@@ -29,11 +29,6 @@
     // {{{ require_once
 
 /**
- * Load PEAR error handling
- */
-require_once 'PEAR.php';
-
-/**
  * Load SpamCheck base class
  */
 
@@ -201,7 +196,7 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
      *
      * @since 0.5.0
      * @access protected
-     * @return bool True if trackback is spam, false, if not, PEAR_Error on error.
+     * @return bool True if trackback is spam, false, if not.
      */
     function _checkSource($source, $trackback)
     {
