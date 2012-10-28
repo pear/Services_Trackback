@@ -3,8 +3,6 @@
 // Includepath for local CVS development
 // set_include_path('/cvs/pear/Services_Trackback'.PATH_SEPARATOR.get_include_path());
 
-    // {{{ require_once
-
 // Services_Trackback classes
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
@@ -15,8 +13,6 @@ require_once 'PHPUnit/Framework/TestCase.php';
 
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
-
-    // }}}
 
 class Services_Trackback_SpamCheck_SURBL_Test extends PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,4 @@
 <?php
-// {{{ require_once
-
 // Services_Trackback classes
 require_once 'Services/Trackback.php';
 require_once 'Services/Trackback/SpamCheck.php';
@@ -8,8 +6,6 @@ require_once 'Services/Trackback/SpamCheck/DNSBL.php';
 
 // Testdata
 require_once dirname(__FILE__).'/trackback_data.php';
-
-// }}}
 
 class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
 {
