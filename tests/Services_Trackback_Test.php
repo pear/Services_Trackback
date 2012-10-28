@@ -40,12 +40,12 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
             'strictness'        => Services_Trackback::STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
-            'fetchextra'        => true,
             'httprequest'       => array(
                 'allowRedirects'    => false,
                 'maxRedirects'      => 0,
                 'useragent'         => 'Mozilla 10.0',
             ),
+            'fetchextra' => true
         );
 
         $fakeTrack = new Services_Trackback;
@@ -62,18 +62,19 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
             'strictness'        => Services_Trackback::STRICTNESS_HIGH,
             'timeout'           => 10,
             'fetchlines'        => 100,
-            'httpRequest'       => array(
+            'httprequest'       => array(
                 'allowRedirects'    => false,
                 'maxRedirects'      => 0,
                 'useragent'         => 'Mozilla 10.0',
             ),
+            'fetchextra' => false
         );
 
         $track = new Services_Trackback;
 
         $track->setOptions($options);
 
-        $this->assertTrue($track->getOptions() == $options);
+        $this->assertEquals($options, $track->getOptions());
     }
 
 
