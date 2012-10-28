@@ -67,7 +67,7 @@ class Services_Trackback_SpamCheck_Regex_Test extends PHPUnit_Framework_TestCase
 
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
-        $this->spamCheck->_results = array();
+        $this->spamCheck->reset();
         $fakeCheck = Services_Trackback_SpamCheck::create('Regex');
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }

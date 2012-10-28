@@ -31,7 +31,7 @@ class Services_Trackback_SpamCheck_SURBL_Test extends PHPUnit_Framework_TestCase
 
     function test_create() {
         $realCheck = new Services_Trackback_SpamCheck_SURBL();
-        $this->assertTrue($this->spamCheck == $realCheck);
+        $this->assertEquals($this->spamCheck, $realCheck);
     }
 
     function test_check_failure_nospam() {
@@ -77,7 +77,7 @@ class Services_Trackback_SpamCheck_SURBL_Test extends PHPUnit_Framework_TestCase
         $this->spamCheck->reset();
 
         $fakeCheck = Services_Trackback_SpamCheck::create('SURBL');
-        $this->assertTrue($this->spamCheck == $fakeCheck);
+        $this->assertEquals($this->spamCheck, $fakeCheck);
     }
 
 }
