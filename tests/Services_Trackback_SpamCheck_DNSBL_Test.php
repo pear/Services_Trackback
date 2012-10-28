@@ -26,9 +26,6 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
         $this->spamCheck = Services_Trackback_SpamCheck::create('DNSBL');
     }
 
-    public function tearDown() {
-    }
-
     public function test_create() {
         $realCheck = new Services_Trackback_SpamCheck_DNSBL();
         $this->assertTrue($this->spamCheck == $realCheck);
@@ -77,7 +74,7 @@ class Services_Trackback_SpamCheck_DNSBL_Test extends PHPUnit_Framework_TestCase
         $this->spamCheck->reset();
 
         $fakeCheck = Services_Trackback_SpamCheck::create('DNSBL');
-        $fakeCheck->_dnsbl->setBlacklists(array('bl.spamcop.net'));
+        $fakeCheck->getDNSBL()->setBlacklists(array('bl.spamcop.net'));
 
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }

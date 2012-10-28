@@ -94,7 +94,17 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
                 $this->options[$key] = $val;
             }
         }
-        $this->dnsbl = new Net_DNSBL();
+        $this->setDNSBL(new Net_DNSBL());
+    }
+
+    public function setDNSBL(Net_DNSBL $dnsbl)
+    {
+       $this->dnsbl = $dnsbl;
+    }
+
+    public function getDNSBL() 
+    {
+       return $this->dnsbl;
     }
 
     /**
