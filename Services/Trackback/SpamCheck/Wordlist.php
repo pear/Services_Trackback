@@ -156,14 +156,14 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
             if ($spamCount >= $this->options['minmatches']
                 && !$this->options['continuous']) {
                 // We already found spam and shall not continue
-                $this->_results[$id] = false;
+                $this->results[$id] = false;
             } else {
-                $res = $this->_checkSource($this->options['sources'][$id],
+                $res = $this->checkSource($this->options['sources'][$id],
                                            $trackback);
 
                 $spamCount += ($res === true) ? 1 : 0;
 
-                $this->_results[$id] = $res;
+                $this->results[$id] = $res;
             }
         }
         return ($spamCount >= $this->options['minmatches']);
