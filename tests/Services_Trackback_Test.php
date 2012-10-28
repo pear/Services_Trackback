@@ -172,7 +172,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $xml = $this->xml['testGetResponseSuccess'];
         $this->assertTrue(!empty($xml), "Test was unable to locate sample data");
 
-        $generated_response = Services_Trackback::getResponseSuccess();
+        $generated_response = $this->trackback->getResponseSuccess();
         $this->assertSame($xml, $generated_response);
     }
 
@@ -181,7 +181,7 @@ class Services_Trackback_Test extends PHPUnit_Framework_TestCase
         $xml = $this->xml['testGetResponseError'];
         $this->assertTrue(!empty($xml), "Test was unable to locate sample data");
 
-        $generated_error = Services_Trackback::getResponseError('Me & you', -2);
+        $generated_error = $this->trackback->getResponseError('Me & you', -2);
         $this->assertSame($xml, $generated_error);
     }
 
