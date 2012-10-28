@@ -244,6 +244,20 @@ class Services_Trackback
     }
 
     /**
+     * setData
+     * Accessor for data
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * autodiscover
      * Checks a given URL for trackback autodiscovery code.
      *
@@ -326,7 +340,7 @@ class Services_Trackback
             $data = array();
         }
 
-        $this->data = array_merge($this->data, $data);
+        $this->setData(array_merge($this->getData(), $data));
 
         $necessaryData = array('title', 'url', 'excerpt',
                                'blog_name', 'trackback_url');
@@ -436,7 +450,7 @@ EOD;
         $res = $this->checkData($necessaryPostData, $data);
 
         $decodedData = $this->getDecodedData($necessaryPostData, $data);
-        $this->data = array_merge($this->data, $decodedData);
+        $this->setData(array_merge($this->getData(), $decodedData));
         if ($this->options['fetchextra'] === true) {
             $this->data['extra'] = $_SERVER;
         }
@@ -661,10 +675,10 @@ EOD;
      * @since 0.2.0
      * @return mixed True on success.
      */
-    protected function fromArray($data)
+    public function fromArray($data)
     {
         $res = $this->checkData(array('id'), $data);
-        $this->data = $data;
+        $this->setData($data);
 
         return true;
     }
@@ -678,7 +692,7 @@ EOD;
      * @since 0.4.0
      * @return string The content.
      */
-    protected function getContent($url)
+    public function getContent($url)
     {
         $handle = @fopen($url, 'r');
         if (!is_resource($handle)) {
@@ -704,10 +718,10 @@ EOD;
      * @since 0.1.0
      * @return void
      */
-    protected function getEncodedData($keys, $data =  null)
+    public function getEncodedData($keys, $data = null)
     {
         if (!isset($data)) {
-            $data = $this->data;
+            $data = $this->getData();
         }
 
         foreach ($keys as $key) {
@@ -727,10 +741,10 @@ EOD;
      * @since 0.1.0
      * @return void
      */
-    protected function getDecodedData($keys, $data =  null)
+    public function getDecodedData($keys, $data =  null)
     {
         if (!isset($data)) {
-            $data = $this->data;
+            $data = $this->getData();
         }
 
         foreach ($keys as $key) {
@@ -751,10 +765,10 @@ EOD;
      *
      * @return void
      */
-    protected function checkData($keys, $data = null)
+    public function checkData($keys, $data = null)
     {
         if (!isset($data)) {
-            $data = $this->data;
+            $data = $this->getData();
         }
 
         foreach ($keys as $key) {
@@ -779,7 +793,7 @@ EOD;
      * @since 0.2.0
      * @return mixed True on success.
      */
-    protected function checkURLs($url1, $url2, $strictness)
+    public function checkURLs($url1, $url2, $strictness)
     {
         switch ($strictness) {
         case Services_Trackback::STRICTNESS_HIGH:
@@ -832,7 +846,7 @@ EOD;
      * @since 0.3.0
      * @return void Mixed true on success.
      */
-    protected function _interpretTrackbackResponse($response)
+    public function interpretTrackbackResponse($response)
     {
         $matches = array();
         if (!preg_match('@<error>([0-9]+)</error>@', $response, $matches)) {
