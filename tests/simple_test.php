@@ -23,8 +23,6 @@ $conf = array(
     'online' => true,
 );
 
-// {{{ Var_Dump
-
 // For more readable dumping of variables
 require_once 'Var_Dump.php';
 
@@ -70,7 +68,6 @@ if (isset($_SERVER['REQUEST_URI'])) {
     }
 }
 
-// }}}
 
 require_once 'Services/Trackback.php';
 require_once dirname(__FILE__).'/trackback_data.php';

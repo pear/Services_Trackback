@@ -99,9 +99,6 @@ class Services_Trackback_SpamCheck_Regex extends Services_Trackback_SpamCheck
         }
     }
 
-    // }}}
-    // {{{ check()
-
     /**
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam.

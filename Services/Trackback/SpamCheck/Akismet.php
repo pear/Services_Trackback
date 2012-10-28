@@ -28,7 +28,6 @@
  * @since     File available since Release 0.6.0
  */
 
-    // {{{ require_once
 require_once 'Services/Trackback/Exception.php';
 
 /**
@@ -42,8 +41,6 @@ require_once 'Services/Trackback/SpamCheck.php';
  * HTTP_Request2 for sending POST requests to Akismet
  */
 require_once 'HTTP/Request2.php';
-
-    // }}}
 
 /**
  * Akismet
@@ -61,7 +58,6 @@ require_once 'HTTP/Request2.php';
 class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
 {
 
-    // {{{ _options
 
     /**
      * Options for the Wordlist.
@@ -83,8 +79,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
                                                    'url',
                                                    'host'));
 
-    // }}}
-    // {{{ Services_Trackback_SpamCheck_Akismet()
 
     /**
      * Constructor.
@@ -142,9 +136,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         return $foundSpam;
     }
 
-    // }}}
-    // {{{ submitSpam()
-
     /**
      * Submit an invalid, spammy trackback
      *
@@ -162,9 +153,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
                                              $trackback, $action);
         return $res === '';
     }
-
-    // }}}
-    // {{{ submitHam()
 
     /**
      * Submit a valid, non spam trackback
@@ -184,9 +172,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         return $res === '';
     }
 
-    // }}}
-    // {{{ verifyKey()
-
     /**
      * Verify your Akismet key is valid
      *
@@ -200,10 +185,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
                                           $trackback);
         return $res == 'valid';
     }
-
-    // }}}
-
-    // {{{ _checkSource()
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -293,8 +274,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
 
         return trim($response->getBody());
     }
-
-    // }}}
 
     /**
      * Validate an array of options
