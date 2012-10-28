@@ -36,15 +36,15 @@ class Services_Trackback_SpamCheck_Akismet_Test extends PHPUnit_Framework_TestCa
                 )
             );
         }
-        $this->_options = array(
+        $this->options = array(
             'url' => 'http://www.schlitt.info/applications/blog/',
             'key' => $akismetApiKey,
         );
-        $this->spamCheck = Services_Trackback_SpamCheck::create('Akismet', $this->_options);
+        $this->spamCheck = Services_Trackback_SpamCheck::create('Akismet', $this->options);
     }
 
     function test_create() {
-        $realCheck = new Services_Trackback_SpamCheck_Akismet($this->_options);
+        $realCheck = new Services_Trackback_SpamCheck_Akismet($this->options);
         $this->assertTrue($this->spamCheck == $realCheck);
     }
 
@@ -69,7 +69,7 @@ class Services_Trackback_SpamCheck_Akismet_Test extends PHPUnit_Framework_TestCa
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
         $this->spamCheck->reset();
-        $fakeCheck = Services_Trackback_SpamCheck::create('Akismet', $this->_options);
+        $fakeCheck = Services_Trackback_SpamCheck::create('Akismet', $this->options);
         $this->assertTrue($this->spamCheck == $fakeCheck);
     }
 
@@ -78,7 +78,7 @@ class Services_Trackback_SpamCheck_Akismet_Test extends PHPUnit_Framework_TestCa
     }
 
     function test_verifyKey_failure() {
-        $this->spamCheck->_options['key'] = 'foobar';
+        $this->spamCheck->options['key'] = 'foobar';
         $this->assertFalse($this->spamCheck->verifyKey());
     }
 

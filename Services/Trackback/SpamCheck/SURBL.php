@@ -109,9 +109,18 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
                 $this->options[$key] = $val;
             }
         }
-        $this->surbl = new Net_DNSBL_SURBL();
+        $this->setSURBL(new Net_DNSBL_SURBL());
     }
 
+    public function setSURBL(Net_DNSBL_SURBL $surbl)
+    {
+       $this->surbl = $surbl;
+    }
+
+    public function getSURBL()
+    {
+       return $this->surbl;
+    }
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
@@ -123,13 +132,12 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
     {
         parent::reset();
         $this->urls  = array();
-        $this->surbl = new Net_DNSBL_SURBL();
     }
 
     /**
      * Check a specific source if a trackback has to be considered spam.
      *
-     * @param mixed              $source    Element of the _sources array to check.
+     * @param mixed              $source    Element of the sources array to check.
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
@@ -141,10 +149,10 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
         if (count($this->urls) == 0) {
             $this->extractURLs($trackback);
         }
-        $this->surbl->setBlacklists(array($source));
+        $this->getSURBL()->setBlacklists(array($source));
         $spam = false;
         foreach ($this->urls as $url) {
-            $spam = ($spam || $this->surbl->isListed($url));
+            $spam = ($spam || $this->getSURBL()->isListed($url));
             if ($spam) {
                 break;
             }
@@ -159,10 +167,9 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      *
      * @return void
      */
-    function extractURLs($trackback)
+    function extractURLs(Services_Trackback $trackback)
     {
         $matches = array();
-
         $urls = '(?:http|file|ftp)';
         $ltrs = 'a-z0-9';
         $gunk = '.-';
