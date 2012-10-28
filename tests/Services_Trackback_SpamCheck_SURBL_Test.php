@@ -23,46 +23,81 @@ class Services_Trackback_SpamCheck_SURBL_Test extends PHPUnit_Framework_TestCase
             $this->trackbacks[$id] = Services_Trackback::create($set);
         }
         $this->spamCheck = Services_Trackback_SpamCheck::create('SURBL');
-    }
+        $this->mock = $this->getMock('Net_DNSBL_SURBL');
+        $this->spamCheck->setSURBL($this->mock);
 
-    function test_create() {
-        $realCheck = new Services_Trackback_SpamCheck_SURBL();
-        $this->assertEquals($this->spamCheck, $realCheck);
     }
 
     function test_check_failure_nospam() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['nospam']));
+        $this->mock->expects($this->any())
+             ->method('isListed')
+             ->will($this->returnValue(false));
+
+        $this->assertFalse($this->spamCheck->check($this->trackbacks['nospam']));
     }
 
     function test_check_failure_undetected() {
-        $this->assertTrue(!$this->spamCheck->check($this->trackbacks['undetected']));
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(false));
+
+        $this->assertFalse($this->spamCheck->check($this->trackbacks['undetected']));
     }
 
     function test_check_success_all() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['all']));
     }
 
     function test_check_success_host() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['host']));
     }
 
     function test_check_failure_title() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['title']));
     }
 
     function test_check_success_excerpt() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['excerpt']));
     }
 
     function test_check_success_url() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['url']));
     }
 
     function test_check_success() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->will($this->returnValue(true));
+
         $this->assertTrue($this->spamCheck->check($this->trackbacks['blog_name']));
     }
 
     function test_getResults() {
+        $this->mock->expects($this->once())
+             ->method('isListed')
+             ->with('http://www.e-poker-777.com')
+             ->will($this->returnValue(true));
+
         $this->spamCheck->check($this->trackbacks['all']);
         $results = $this->spamCheck->getResults();
         $this->assertTrue($results[0]);
@@ -71,6 +106,7 @@ class Services_Trackback_SpamCheck_SURBL_Test extends PHPUnit_Framework_TestCase
     function test_reset() {
         $this->spamCheck->check($this->trackbacks['all']);
         $this->spamCheck->reset();
+        $this->spamCheck->setSURBL(new Net_DNSBL_SURBL);
 
         $fakeCheck = Services_Trackback_SpamCheck::create('SURBL');
         $this->assertEquals($this->spamCheck, $fakeCheck);
