@@ -153,7 +153,6 @@ class Services_Trackback
      *
      * @since 0.2.0
      * @static
-     * @access public
      * @return Services_Trackback The newly created Trackback.
      */
     public static function create($data, $options = null)

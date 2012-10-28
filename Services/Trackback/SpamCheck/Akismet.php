@@ -57,7 +57,6 @@ require_once 'HTTP/Request2.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.6.0
- * @access    public
  */
 class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
 {
@@ -69,9 +68,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      *
      * @var array
      * @since 0.5.0
-     * @access protected
      */
-    var $_options = array('continuous'    => false,
+    protected $options = array('continuous'    => false,
                           'sources'       => array('rest.akismet.com/1.1/'),
 
                           // URL of the blog sending the Akismet request
@@ -99,49 +97,44 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      *                       'sources':    List of Akismet servers URIs.
      *
      * @since 0.5.0
-     * @access public
      * @return void
      */
-    function __construct($options = null)
+    public function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
-                $this->_options[$key] = $val;
+                $this->options[$key] = $val;
             }
         }
     }
-
-    // }}}
-    // {{{ check()
 
     /**
      * Check for spam using this module.
      * This method is utilized by a Services_Trackback object to check for spam.
      * Generally this method may not be overwritten, but it can be, if necessary.
      * This method calls the _checkSource() method for each source defined in the
-     * $_options array (depending on the 'continuous' option), saves the
+     * $options array (depending on the 'continuous' option), saves the
      * results and returns the spam status determined by the check.
      *
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access public
      * @return bool Whether the checked object is spam or not.
      */
-    function check($trackback)
+    public function check($trackback)
     {
-        $result = $this->_validateOptions($this->_options, $trackback);
+        $result = $this->validateOptions($this->options, $trackback);
 
         $foundSpam = false;
-        foreach (array_keys($this->_options['sources']) as $id) {
-            if ($foundSpam && !$this->_options['continuous']) {
+        foreach (array_keys($this->options['sources']) as $id) {
+            if ($foundSpam && !$this->options['continuous']) {
                 // We already found spam and shall not continue
-                $this->_results[$id] = false;
+                $this->results[$id] = false;
             } else {
-                $res = $this->_checkSource($this->_options['sources'][$id],
+                $res = $this->checkSource($this->options['sources'][$id],
                                            $trackback);
 
-                $this->_results[$id] = $res;
+                $this->results[$id] = $res;
 
                 $foundSpam = $foundSpam || $res;
             }
@@ -162,10 +155,10 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      */
     function submitSpam($trackback, $sourceId = 0)
     {
-        $result = $this->_validateOptions($this->_options, $trackback);
+        $result = $this->validateOptions($this->options, $trackback);
 
         $action = 'submit-spam';
-        $res    = $this->_sendAkismetRequest($this->_options['sources'][$sourceId],
+        $res    = $this->sendAkismetRequest($this->options['sources'][$sourceId],
                                              $trackback, $action);
         return $res === '';
     }
@@ -183,10 +176,10 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      */
     function submitHam($trackback, $sourceId = 0)
     {
-        $result = $this->_validateOptions($this->_options, $trackback);
+        $result = $this->validateOptions($this->options, $trackback);
 
         $action = 'submit-ham';
-        $res    = $this->_sendAkismetRequest($this->_options['sources'][$sourceId],
+        $res    = $this->sendAkismetRequest($this->options['sources'][$sourceId],
                                              $trackback, $action);
         return $res === '';
     }
@@ -203,7 +196,7 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
     {
         $trackback = Services_Trackback::create(array('id' => 1));
 
-        $res = $this->_sendAkismetRequest($this->_options['sources'][0],
+        $res = $this->sendAkismetRequest($this->options['sources'][0],
                                           $trackback);
         return $res == 'valid';
     }
@@ -219,12 +212,11 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access protected
      * @return bool True if trackback is spam, false, if not, Services_Trackback_Exception.
      */
-    function _checkSource($source, $trackback)
+    function checkSource($source, $trackback)
     {
-        $res = $this->_sendAkismetRequest($source, $trackback, 'comment-check');
+        $res = $this->sendAkismetRequest($source, $trackback, 'comment-check');
         if ($res == 'invalid') {
             throw new Services_Trackback_Exception(
                 'Invalid Akismet request send. Maybe your key is invalid?'
@@ -233,9 +225,6 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
         return ($res == 'true');
     }
 
-    // }}}
-    // {{{ _sendAkismetRequest()
-
     /**
      * Submits a
      *
@@ -243,10 +232,9 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback in question
      * @param string             $action    Action to do
      *
-     * @access protected
      * @return string
      */
-    function _sendAkismetRequest($baseUri, $trackback, $action = 'verify-key')
+    function sendAkismetRequest($baseUri, $trackback, $action = 'verify-key')
     {
         $action = strtolower($action);
         $req    = null;
@@ -262,13 +250,13 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
             $req = new HTTP_Request2($url, $httpRequestOptions);
             $req->setMethod(HTTP_Request2::METHOD_POST);
 
-            $req->addPostParameter('key', $this->_options['key']);
-            $req->addPostParameter('blog', $this->_options['url']);
+            $req->addPostParameter('key', $this->options['key']);
+            $req->addPostParameter('blog', $this->options['url']);
             break;
         case 'comment-check':
         case 'submit-spam':
         case 'submit-ham':
-            $url = 'http://' . $this->_options['key'] . '.' . $baseUri . $action;
+            $url = 'http://' . $this->options['key'] . '.' . $baseUri . $action;
 
             $req = new HTTP_Request2($url, $httpRequestOptions);
             $req->setMethod(HTTP_Request2::METHOD_POST);
@@ -276,8 +264,8 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
             $req->setHeader('User-Agent', $httpRequestOptions['useragent']);
             $req->addPostParameter('comment_type', 'trackback');
 
-            $req->addPostParameter('key', $this->_options['key']);
-            $req->addPostParameter('blog', $this->_options['url']);
+            $req->addPostParameter('key', $this->options['key']);
+            $req->addPostParameter('blog', $this->options['url']);
 
             $req->addPostParameter('comment_author', $trackback->get('blog_name'));
             $req->addPostParameter('comment_author_url', $trackback->get('url'));
@@ -314,10 +302,9 @@ class Services_Trackback_SpamCheck_Akismet extends Services_Trackback_SpamCheck
      * @param mixed[]            $options   Options to validate
      * @param Services_Trackback $trackback Trackback to be used
      *
-     * @access private
      * @return bool
      */
-    function _validateOptions($options, $trackback)
+    function validateOptions($options, $trackback)
     {
         $error = 'Missing option "%s". Cannot proceed without it.';
 

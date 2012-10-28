@@ -26,8 +26,6 @@
  * @since     File available since Release 0.5.0
  */
 
-     // {{{ require_once
-
 /**
  * Load SpamCheck base.
  */
@@ -37,8 +35,6 @@ require_once 'Services/Trackback/SpamCheck.php';
  * Load Net_SURBL for spam cheching
  */
 require_once 'Net/DNSBL/SURBL.php';
-
-    // }}}
 
 /**
  * SURBL
@@ -52,21 +48,17 @@ require_once 'Net/DNSBL/SURBL.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.5.0
- * @access    public
  */
 class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
 {
-
-    // {{{ _options
 
     /**
      * Options for the SpamCheck.
      *
      * @var array
      * @since 0.5.0
-     * @access protected
      */
-    var $_options = array(
+    protected $options = array(
         'continuous'    => false,
         'sources'       => array(
             'multi.surbl.org'
@@ -78,32 +70,21 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
         ),
     );
 
-    // }}}
-    // {{{ _surbl
-
     /**
      * The Net_DNSBL_SURBL object for checking.
      *
      * @var object(Net_DNSBL_SURBL)
      * @since 0.5.0
-     * @access protected
      */
-    var $_surbl;
-
-    // }}}
-    // {{{ _urls
+    protected $surbl;
 
     /**
      * URLs extracted from the trackback.
      *
      * @var array
-     * @access private
      * @since 0.5.0
      */
-    var $_urls = array();
-
-    // }}}
-    // {{{ Services_Trackback_SpamCheck_SURBL()
+    protected $urls = array();
 
     /**
      * Constructor.
@@ -119,40 +100,31 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      *                                      and 'excerpt').
      *
      * @since 0.5.0
-     * @access public
      * @return Services_Trackback_SpamCheck_SURBL The newly created SpamCheck object.
      */
     function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
-                $this->_options[$key] = $val;
+                $this->options[$key] = $val;
             }
         }
-        $this->_surbl = new Net_DNSBL_SURBL();
+        $this->surbl = new Net_DNSBL_SURBL();
     }
-
-    // }}}
-    // {{{ reset()
 
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
      *
      * @since 0.5.0
-     * @static
-     * @access public
      * @return null
      */
     function reset()
     {
         parent::reset();
-        $this->_urls  = array();
-        $this->_surbl = new Net_DNSBL_SURBL();
+        $this->urls  = array();
+        $this->surbl = new Net_DNSBL_SURBL();
     }
-
-    // }}}
-    // {{{ _checkSource()
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -161,19 +133,18 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access protected
      * @abstract
      * @return bool True if trackback is spam.
      */
-    function _checkSource($source, $trackback)
+    function checkSource($source, $trackback)
     {
-        if (count($this->_urls) == 0) {
-            $this->_extractURLs($trackback);
+        if (count($this->urls) == 0) {
+            $this->extractURLs($trackback);
         }
-        $this->_surbl->setBlacklists(array($source));
+        $this->surbl->setBlacklists(array($source));
         $spam = false;
-        foreach ($this->_urls as $url) {
-            $spam = ($spam || $this->_surbl->isListed($url));
+        foreach ($this->urls as $url) {
+            $spam = ($spam || $this->surbl->isListed($url));
             if ($spam) {
                 break;
             }
@@ -181,8 +152,6 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
         return $spam;
     }
 
-    // }}}
-    // {{{ _extractURLs()
     /**
      * Extract all URLS from the Trackback
      *
@@ -190,7 +159,7 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
      *
      * @return void
      */
-    function _extractURLs($trackback)
+    function extractURLs($trackback)
     {
         $matches = array();
 
@@ -211,15 +180,13 @@ class Services_Trackback_SpamCheck_SURBL extends Services_Trackback_SpamCheck
                       |
                       )
                   }x";
-        foreach ($this->_options['elements'] as $element) {
+        foreach ($this->options['elements'] as $element) {
             if (0 !== preg_match_all($regex, $trackback->get($element), $matches)) {
                 foreach ($matches[0] as $match) {
-                    $this->_urls[md5($match)] = $match;
+                    $this->urls[md5($match)] = $match;
                 }
             }
         }
     }
-
-    // }}}
 
 }

@@ -44,7 +44,6 @@ require_once 'Services/Trackback/SpamCheck.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.5.0
- * @access    public
  */
 class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
 {
@@ -126,10 +125,9 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
      *                                      consider spam.
      *
      * @since 0.5.0
-     * @access public
      * @return Services_Trackback_SpamCheck_WordList The newly created object.
      */
-    function __construct($options = null)
+    public function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
@@ -149,10 +147,9 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access public
      * @return bool Whether the checked object is spam or not.
      */
-    function check($trackback)
+    public function check($trackback)
     {
         $spamCount = 0;
         foreach (array_keys($this->options['sources']) as $id) {
@@ -175,14 +172,13 @@ class Services_Trackback_SpamCheck_Wordlist extends Services_Trackback_SpamCheck
     /**
      * Check a specific source if a trackback has to be considered spam.
      *
-     * @param mixed              $source    Element of the _sources array to check.
+     * @param mixed              $source    Element of the sources array to check.
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access protected
      * @return bool True if trackback is spam, false, if not.
      */
-    function _checkSource($source, $trackback)
+    function checkSource($source, $trackback)
     {
         $spam = false;
         foreach ($this->options['elements'] as $element) {

@@ -25,15 +25,12 @@
  * @since     File available since Release 0.5.0
  */
 
-    // {{{ require_once
 
 /**
  * Load SpamCheck base class
  */
 
 require_once 'Services/Trackback/SpamCheck.php';
-
-    // }}}
 
 /**
  * Mock
@@ -46,12 +43,9 @@ require_once 'Services/Trackback/SpamCheck.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.5.0
- * @access    public
  */
 class Services_Trackback_SpamCheck_Mock extends Services_Trackback_SpamCheck
 {
-
-    // {{{ Services_Trackback_SpamCheck_Mock()
 
     /**
      * Constructor.
@@ -63,23 +57,19 @@ class Services_Trackback_SpamCheck_Mock extends Services_Trackback_SpamCheck
      *                                        Act like we found spam or not.
      *
      * @since 0.5.0
-     * @access public
      * @return Services_Trackback_SpamCheck_WordList The newly created object.
      */
-    function __construct($options = null)
+    public function __construct($options = null)
     {
         //By default, we find spam
-        $this->_options['found_spam'] = true;
+        $this->options['found_spam'] = true;
 
         if (is_array($options)) {
             foreach ($options as $key => $val) {
-                $this->_options[$key] = $val;
+                $this->options[$key] = $val;
             }
         }
     }
-
-    // }}}
-    // {{{ check()
 
     /**
      * Check for spam using this module.
@@ -87,13 +77,10 @@ class Services_Trackback_SpamCheck_Mock extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access public
      * @return bool Whether the checked object is spam or not.
      */
-    function check($trackback)
+    public function check($trackback)
     {
-        return !empty($this->_options['found_spam']);
+        return !empty($this->options['found_spam']);
     }
-
-    // }}}
 }

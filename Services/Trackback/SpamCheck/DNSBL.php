@@ -26,8 +26,6 @@
  * @since     File available since Release 0.5.0
  */
 
-    // {{{ require_once
-
 /**
  * Load Net_DNSBL for spam cheching
  */
@@ -37,8 +35,6 @@ require_once 'Net/DNSBL.php';
  * Load SpamCheck base class
  */
 require_once 'Services/Trackback/SpamCheck.php';
-
-    // }}}
 
 /**
  * DNSBL
@@ -52,41 +48,30 @@ require_once 'Services/Trackback/SpamCheck.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Services_Trackback
  * @since     0.5.0
- * @access    public
  */
 class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
 {
-
-    // {{{ _options
 
     /**
      * Options for the SpamProtection.
      *
      * @var array
      * @since 0.5.0
-     * @access protected
      */
-    var $_options = array(
+    protected $options = array(
         'continuous'    => false,
         'sources'       => array(
             'bl.spamcop.net'
         ),
     );
 
-    // }}}
-    // {{{ _dnsbl
-
     /**
      * The Net_DNSBL object for checking.
      *
      * @var object(Net_DNSBL)
      * @since 0.5.0
-     * @access protected
      */
-    var $_dnsbl;
-
-    // }}}
-    // {{{ Services_Trackback_SpamCheck_DNSBL()
+    protected $dnsbl;
 
     /**
      * Constructor.
@@ -99,22 +84,18 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
      *                       'sources':     List of blacklist nameservers. Indexed.
      *
      * @since 0.5.0
-     * @access public
      *
      * @return void
      */
-    function __construct($options = null)
+    public function __construct($options = null)
     {
         if (is_array($options)) {
             foreach ($options as $key => $val) {
-                $this->_options[$key] = $val;
+                $this->options[$key] = $val;
             }
         }
-        $this->_dnsbl = new Net_DNSBL();
+        $this->dnsbl = new Net_DNSBL();
     }
-
-    // }}}
-    // {{{ _checkSource
 
     /**
      * Check a specific source if a trackback has to be considered spam.
@@ -123,26 +104,19 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
      * @param Services_Trackback $trackback The trackback to check.
      *
      * @since 0.5.0
-     * @access protected
      * @return bool True if trackback is spam, false, if not. 
      */
-    function _checkSource($source, $trackback)
+    function checkSource($source, $trackback)
     {
-        $this->_dnsbl->setBlacklists(array($source));
-        return $this->_dnsbl->isListed($trackback->get('host'));
+        $this->dnsbl->setBlacklists(array($source));
+        return $this->dnsbl->isListed($trackback->get('host'));
     }
-
-    // }}}
-
-    // {{{ reset()
 
     /**
      * Reset results.
      * Reset results to reuse SpamCheck.
      *
      * @since 0.5.0
-     * @static
-     * @access public
      * @return null
      */
     function reset()
@@ -150,9 +124,6 @@ class Services_Trackback_SpamCheck_DNSBL extends Services_Trackback_SpamCheck
         parent::reset();
 
         //This should really call Net_DNSBL::reset() or similar, which doesn't exist
-        $this->_dnsbl = new Net_DNSBL();
+        $this->dnsbl = new Net_DNSBL();
     }
-
-    // }}}
-
 }
